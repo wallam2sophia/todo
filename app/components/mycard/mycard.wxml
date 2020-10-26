@@ -1,0 +1,4 @@
+<!--components/mycard/mycard.wxml-->
+<view class="my-card">
+  <slot/>
+</view>

@@ -1,0 +1,32 @@
+/* pages/home/home.wxss */
+.home-container {
+padding:10rpx 20rpx;
+}
+.user-info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width:100%;
+}
+
+.avatar {
+  width: 100rpx;
+  height: 100rpx;
+  margin-right: 20rpx;
+  border-radius: 50%;
+}
+
+.nickname {
+  color: #000;
+}
+.task-lists {
+  margin-top:20rpx;
+
+}
+
+.task-item {
+  border:1px solid #ddd;
+  border-radius:5rpx;
+  padding:10rpx;
+  margin-bottom:20rpx;
+}

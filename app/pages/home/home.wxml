@@ -1,0 +1,22 @@
+<!--pages/home/home.wxml-->
+<view class="home-container">
+  <mycard>
+    <view class="user-info">
+      <image bindtap="bindViewTap" class="avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
+      <text class="nickname">{{userInfo.nickName}}</text>
+    </view>
+  </mycard>
+  <view class="my-news"></view>
+  <mycard>
+    <view>
+      <text>我的打卡任务</text>
+      <view class="task-lists">
+        <view class="task-item" wx:for="{{taskLists}}">
+          <view class="task-title">{{item.title}}</view>
+          <view class="task-creator">发起人 {{item.creator}}</view>
+        </view>
+      </view>
+    </view>
+
+  </mycard>
+</view>
