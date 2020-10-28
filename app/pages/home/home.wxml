@@ -17,6 +17,6 @@
         </view>
       </view>
     </view>
-
   </mycard>
+  <image mode="aspectFit" src="../../static/imgs/add.png" class="add-task"></image>
 </view>

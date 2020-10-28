@@ -1,6 +1,7 @@
 /* pages/home/home.wxss */
 .home-container {
 padding:10rpx 20rpx;
+/* background-image: url("../../static/imgs/home-bg.png"); */
 }
 .user-info {
   display: flex;
@@ -29,4 +30,13 @@ padding:10rpx 20rpx;
   border-radius:5rpx;
   padding:10rpx;
   margin-bottom:20rpx;
+}
+
+.add-task {
+  width:80rpx;
+  height:80rpx;
+  position: fixed;
+  bottom:20rpx;
+  right:20rpx;
+  z-index:999;
 }
