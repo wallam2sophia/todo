@@ -7,16 +7,26 @@
     </view>
   </mycard>
   <view class="my-news"></view>
-  <mycard>
-    <view>
-      <text>我的打卡任务</text>
-      <view class="task-lists">
-        <view class="task-item" wx:for="{{taskLists}}" wx:key="id">
-          <view class="task-title">{{item.title}}</view>
-          <view class="task-creator">发起人 {{item.creator}}</view>
-        </view>
+  <view>
+    <view class="box-title">
+      <text >我的打卡任务</text>
+    </view>
+    <view class="task-lists">
+      <view class="task-item" wx:for="{{taskLists}}" wx:key="id">
+        <mycard>
+          <view class="task-row">
+            <text class="task-title">{{item.title}}</text>
+            <text class="task-creator">发起人：{{item.creator}}</text>
+          </view>
+          <view class="task-row">
+            <text class="task-period">{{item.period}}</text>
+            <button size="mini" class="my-btn primary-btn" wx:if="{{!item.status}}">打卡</button>
+            <button size="mini" class="my-btn disabled-btn" wx:else disabled>已打卡</button>
+          </view>
+        </mycard>
+
       </view>
     </view>
-  </mycard>
+  </view>
   <image mode="aspectFit" src="../../static/imgs/add.png" class="add-task"></image>
 </view>

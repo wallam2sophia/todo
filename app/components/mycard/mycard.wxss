@@ -1,8 +1,22 @@
 /* components/mycard/mycard.wxss */
 
 .my-card {
-  border: 1rpx solid #aaa;
-  border-radius: 4rpx;
-  padding:20rpx;
   margin: 20rpx 0rpx;
+  /* box-shadow: 0 2rpx 12rpx 0 rgba(0, 0, 0, .1); */
+  border-radius: 15rpx;
+  border: 1rpx solid #ebeef5;
+  background-color: #fff;
+  overflow: hidden;
+  color: #303133;
+  transition: .3s;
+  font-size:32rpx;
+}
+.my-card__header {
+  padding: 18rpx 20rpx;
+  border-bottom: 1rpx solid #ebeef5;
+  box-sizing: border-box;
+  font-size:36rpx;
+}
+.my-card__body {
+  padding: 20rpx;
 }

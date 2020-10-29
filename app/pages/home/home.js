@@ -16,7 +16,9 @@ Page({
         members: [],
         signType: "day",
         warnTime: "22:00",
-        creator:"多喝水"
+        period: "2020-10-29-2020-12-31",
+        creator: "多喝水",
+        status: 0,
       },
       {
         id: 2,
@@ -26,7 +28,9 @@ Page({
         members: [],
         signType: "day",
         warnTime: "22:00",
-        creator: "多喝水"
+        period: "2020-10-29-2020-12-31",
+        creator: "多喝水",
+        status: 1,
       },
       {
         id: 3,
@@ -36,27 +40,31 @@ Page({
         members: [],
         signType: "day",
         warnTime: "22:00",
-        creator: "多喝水"
+        period: "2020-10-29-2020-12-31",
+        creator: "多喝水",
+        status: 1,
       },
       {
-        id:4,
+        id: 4,
         title: '今天你跳了吗？',
         desc: "相约一起跳绳锻炼身体，需每日打卡，互相监督，有对应的奖惩规则!",
         bgImg: "",
         members: [],
         signType: "day",
+        period: "2020-10-29-2020-12-31",
         warnTime: "22:00",
-        creator: "多喝水"
+        creator: "多喝水",
+        status: 0,
       }
     ]
   },
   //事件处理函数
-  bindViewTap: function() {
+  bindViewTap: function () {
     wx.navigateTo({
       url: '../logs/logs'
     })
   },
-  onLoad: function() {
+  onLoad: function () {
     if (app.globalData.userInfo) {
       this.setData({
         userInfo: app.globalData.userInfo,
@@ -84,7 +92,7 @@ Page({
       })
     }
   },
-  getUserInfo: function(e) {
+  getUserInfo: function (e) {
     console.log(e)
     app.globalData.userInfo = e.detail.userInfo
     this.setData({

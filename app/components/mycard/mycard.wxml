@@ -1,4 +1,10 @@
 <!--components/mycard/mycard.wxml-->
 <view class="my-card">
-  <slot/>
+  <view class="my-card__header" wx:if="{{title}}">
+    {{title}}
+  </view>
+  <view class="my-card__body">
+    <slot/>
+  </view>
+ 
 </view>

@@ -6,22 +6,28 @@
     "components/mycard/mycard"
   ],
   "window": {
-    "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#fff",
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#303f9f",
     "navigationBarTitleText": "打卡吧",
-    "navigationBarTextStyle": "black"
+    "navigationBarTextStyle": "white"
   },
   "style": "v2",
   "sitemapLocation": "sitemap.json",
   "tabBar": {
-    "list": [
-      {
+    "backgroundColor": "#fff",
+    "color": "#888",
+    "selectedColor": "#ff5722",
+    "list": [{
         "pagePath": "pages/home/home",
-        "text": "首页"
+        "text": "首页",
+        "iconPath":"./static/imgs/home.png",
+        "selectedIconPath":"./static/imgs/home-active.png"
       },
       {
         "pagePath": "pages/statistic/statistic",
-        "text": "统计"
+        "text": "统计",
+        "iconPath":"./static/imgs/statistic.png",
+        "selectedIconPath":"./static/imgs/statistic-active.png"
       }
     ]
   }
