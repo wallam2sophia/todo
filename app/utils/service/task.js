@@ -1,0 +1,37 @@
+import { getJSON, postJSON } from "../request.js"
+
+export default {
+	// 新建任务
+	addTask(data){
+		return new Promise((resolve, reject) => {
+			let url = "api/add/task"
+			postJSON(url, data).then(res=>{
+				resolve(res)
+			}).catch(error => {
+				reject(error)
+			})
+		})
+	},
+	// 查询任务列表
+	listTask(data){
+		return new Promise((resolve, reject) => {
+			let url = "api/list/task"
+			postJSON(url, data).then(res=>{
+				resolve(res)
+			}).catch(error => {
+				reject(error)
+			})
+		})
+	},
+	// 查询任务详情
+	detailTask(taskId){
+		return new Promise((resolve, reject) => {
+			let url = "api/detail/task"
+			getJSON(url + "/" + taskId).then(res=>{
+				resolve(res)
+			}).catch(error => {
+				reject(error)
+			})
+		})
+	},
+}

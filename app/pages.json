@@ -1,0 +1,88 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/index/index"
+		},
+	    {
+            "path" : "pages/statistic/statistic"
+            
+        },
+        {
+            "path" : "pages/add-task/add-task",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "创建任务",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/task-detail/task-detail",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "任务详情",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/task-member/task-member",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+    ],
+	"globalStyle": {
+		"navigationBarTextStyle": "white",
+		"navigationBarTitleText": "打卡吧",
+		"navigationBarBackgroundColor": "#e54d42",
+		"backgroundColor": "#e54d42",
+		"usingComponents": {
+			"van-icon": "./wxcomponents/vant-weapp/icon/index",
+			"van-button":  "./wxcomponents/vant-weapp/button/index",
+			"van-cell": "./wxcomponents/vant-weapp/cell/index",
+			"van-cell-group": "./wxcomponents/vant-weapp/cell-group/index",
+			"van-field": "./wxcomponents/vant-weapp/field/index",
+			"van-datetime-picker": "./wxcomponents/vant-weapp/datetime-picker/index",
+			"van-popup": "./wxcomponents/vant-weapp/popup/index",
+			"van-action-sheet": "./wxcomponents/vant-weapp/action-sheet/index",
+			"van-card": "./wxcomponents/vant-weapp/card/index",
+			"van-panel": "./wxcomponents/vant-weapp/panel/index",
+			"van-divider": "./wxcomponents/vant-weapp/divider/index",
+			"van-notice-bar": "./wxcomponents/vant-weapp/notice-bar/index",
+			"van-tab": "./wxcomponents/vant-weapp/tab/index",
+			"van-tabs": "./wxcomponents/vant-weapp/tabs/index",
+			"van-notify": "./wxcomponents/vant-weapp/notify/index",
+			"van-empty": "./wxcomponents/vant-weapp/empty/index",
+			"van-search": "./wxcomponents/vant-weapp/search/index",
+			"van-tabbar": "./wxcomponents/vant-weapp/tabbar/index",
+			"van-tabbar-item": "./wxcomponents/vant-weapp/tabbar-item/index",
+			"van-index-bar": "./wxcomponents/vant-weapp/index-bar/index",
+			 "van-index-anchor": "./wxcomponents/vant-weapp/index-anchor/index"
+		}
+	},
+	"tabBar": {
+		"color": "#ccc",
+		"selectedColor":"#e54d42",
+		"borderStyle": "white",
+		"backgroundColor":"#f0f0f0",
+		"list": [
+			{
+				"pagePath":"pages/index/index",
+				"text":"首页",
+				"iconPath":"static/icon/home.png",
+				"selectedIconPath":"static/icon/home-active.png"
+			},
+			{
+				"pagePath":"pages/statistic/statistic",
+				"text":"统计",
+				"iconPath":"static/icon/news.png",
+				"selectedIconPath":"static/icon/news-active.png"
+			}
+			
+		]
+	}
+}
