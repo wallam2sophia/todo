@@ -1,4 +1,5 @@
 require("./sql.js"); // 连接数据库
+const path = require('path')
 const express = require('express')
 const bodyParser = require('body-parser');
 const router = require("./router/index")
@@ -10,5 +11,7 @@ app.use(bodyParser.urlencoded({
   extended: false
 }));
 app.use("/api", router);
+// 设置静态资源目录
+app.use(express.static(path.join(__dirname, 'static')));
 
 app.listen(port, () => console.log(`listening on port ${port}!`))
