@@ -50,7 +50,15 @@
 		methods: {
 			inviteMember(){
 				console.log('inviteMember')
-				uni.showShareMenu({ withShareTicket:false });
+				uni.showShareMenu({ 
+					withShareTicket:false,
+					success(res){
+						console.log(res)
+					},
+					fail(error){
+						console.log(error)
+					}
+					});
 			}
 		},
 		onLoad(options){
