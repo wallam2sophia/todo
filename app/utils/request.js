@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:2333/"
+const BASE_URL = "http://localhost:8090/"
 
 const request = (url, method="GET", data={}, )=>{
 	return new Promise((resolve, reject)=>{

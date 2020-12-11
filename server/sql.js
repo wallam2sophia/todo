@@ -2,8 +2,8 @@ const { Sequelize } = require('sequelize');
 const { task } = require("./models/task");
 const { sign } = require("./models/sign");
 // 连接数据库
-const sequelize = new Sequelize('todo', 'todosql', 'admin123', {
-  host: 'localhost',
+const sequelize = new Sequelize('todo', 'root', 'admin123', {
+  host: '8.131.60.165',
   port: 3306,
   dialect: 'mysql'
 })
