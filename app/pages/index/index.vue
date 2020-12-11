@@ -4,7 +4,6 @@
 			<image class="avatar" :src="userInfo.avatarUrl"></image>
 			<text class="nickname">{{userInfo.nickName}}</text>
 		</view>
-		<van-button type="primary" size="normal" @click="share">普通按钮</van-button>
 		<view class="my-news">
 			<!-- <van-divider contentPosition="center" customStyle="color: #e54d42;font-size: 14px;">我的消息</van-divider> -->
 			<van-notice-bar left-icon="music-o" text="笨笨刚刚签到了一起跳绳吧lalalallalalalalalalalalalalaallala" scrollable custom-class="news-item" />
@@ -17,7 +16,7 @@
 				</van-tab>
 			</van-tabs>
 		</view>
-		<image mode="aspectFit" src="../../static/imgs/add.png" class="add-task" @click="addTask"></image>
+		<image mode="aspectFit" :src="SERVER_URL+'imgs/add.png'" class="add-task" @click="addTask"></image>
 	</view>
 </template>
 
@@ -70,10 +69,6 @@
 		    }
 		},
 		methods: {
-			share(){
-				console.log("share")
-				uni.showShareMenu({ withShareTicket:false })
-			},
 			fetchTaskList(){
 				taskApi.listTask({user: this.userInfo.nickName, status: this.status}).then(res => {
 					this.taskLists = res.data;

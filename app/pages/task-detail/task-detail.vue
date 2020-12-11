@@ -1,6 +1,6 @@
 <template>
 	<view class="task-detail">
-		<view class="task-base" :style="{'background-image': 'url('+taskInfo.bgImg+')'}">
+		<view class="task-base" :style="{'background-image': 'url('+ SERVER_URL + taskInfo.bgImg+')'}">
 			<view class="title">
 				<text>{{taskInfo.title}}</text>
 			</view>
@@ -20,7 +20,7 @@
 				<view class="name">{{taskInfo.creator}}</view>
 				<view class="tag">发起人</view>
 			</view>
-			<view class="member-manage">
+			<view class="member-manage" @click="addMember">
 				<view>成员管理</view>
 				<van-icon name="arrow" custom-class="icon"/>
 			</view>
@@ -77,6 +77,11 @@
 				}
 				signApi.listSign(sendData).then(res => {
 					this.signLogs = res.data;
+				})
+			},
+			addMember(){
+				uni.navigateTo({
+					url: "../task-member/task-member?members=" + JSON.stringify(this.taskInfo.members)
 				})
 			},
 		},

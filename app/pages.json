@@ -29,7 +29,7 @@
             "path" : "pages/task-member/task-member",
             "style" :                                                                                    
             {
-                "navigationBarTitleText": "",
+                "navigationBarTitleText": "成员管理",
                 "enablePullDownRefresh": false
             }
             

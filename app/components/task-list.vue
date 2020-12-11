@@ -5,7 +5,7 @@
 				{{item.status ? '已打卡' : '未打卡'}}
 			</view> -->
 			<view class="task-img">
-				<image :src="item.bgImg" mode="aspectFit"></image>
+				<image :src="SERVER_URL + item.bgImg" mode="aspectFit"></image>
 				<view class="member-mask">
 					{{item.members.length || 0}}人参与
 				</view>
