@@ -4,7 +4,7 @@ const express = require('express')
 const bodyParser = require('body-parser');
 const router = require("./router/index")
 const app = express()
-const port = 2333
+const port = 8090
 //extended:false 不使用第三方模块处理参数，使用Nodejs内置模块querystring处理
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
