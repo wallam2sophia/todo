@@ -22,6 +22,17 @@ const taskApi = {
       console.log(error)
       return error;
     }
+  },
+
+  // 修改任务
+  editTask: async function (taskData) {
+    try {
+      await sequelize.models.Task.update(taskData,{where: {id: taskData.id}});
+      return '添加成功';
+    }catch(error){
+      console.log(error)
+      return error;
+    }
     
   },
   listTask: async function (params){

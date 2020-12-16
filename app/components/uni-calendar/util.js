@@ -49,7 +49,7 @@ class Calendar {
 	resetSatrtDate(startDate) {
 		// 范围开始
 		this.startDate = startDate
-
+		this._getWeek(this.selectDate.fullDate)
 	}
 
 	/**
@@ -58,6 +58,7 @@ class Calendar {
 	resetEndDate(endDate) {
 		// 范围结束
 		this.endDate = endDate
+		this._getWeek(this.selectDate.fullDate)
 	}
 
 	/**
@@ -147,6 +148,7 @@ class Calendar {
 				let dateCompAfter = this.dateCompare(fullDate, this.endDate)
 				disableAfter = this.dateCompare(nowDate, dateCompAfter ? this.endDate : fullDate)
 			}
+			let beforeNow = this.dateCompare(fullDate, nowDate);
 			let multiples = this.multipleStatus.data
 			let checked = false
 			let multiplesStatus = -1
@@ -170,10 +172,12 @@ class Calendar {
 				month: full.month,
 				lunar: this.getlunar(full.year, full.month, i),
 				disable: !disableBefore || !disableAfter,
-				isDay
+				isDay,
 			}
 			if (info) {
 				data.extraInfo = info
+			}else {
+				data.isSigned = disableBefore && disableAfter && beforeNow
 			}
 
 			dateArr.push(data)

@@ -21,7 +21,7 @@
 				<view class="tag">发起人</view>
 			</view>
 			<view class="member-manage" @click="addMember">
-				<view>成员管理</view>
+				<view>查看成员</view>
 				<van-icon name="arrow" custom-class="icon"/>
 			</view>
 		</view>
@@ -37,6 +37,50 @@
 				* 签到规则：{{taskInfo.desc}}
 			</view>
 		</view>
+		<view class="block-box tab-bars">
+			<van-button custom-class="bar-btn" open-type="share" @click="inviteMember">
+				<view class="btn-slot">
+					<van-icon name="share-o" custom-class="icon"></van-icon>
+					<text class='title'>分享</text>
+				</view>
+			</van-button>
+			<van-button custom-class="bar-btn" @click="goRank">
+				<view class="btn-slot">
+					<van-icon name="chart-trending-o" custom-class="icon"></van-icon>
+					<text class='title'>排行榜</text>
+				</view>
+			</van-button>
+			<van-button custom-class="bar-btn">
+				<view class="btn-slot">
+					<van-icon name="setting-o" custom-class="icon"></van-icon>
+					<text class='title'>设置</text>
+				</view>
+			</van-button>
+			<van-button custom-class="bar-btn" @click="goRecord">
+				<view class="btn-slot">
+					<van-icon name="records" custom-class="icon"></van-icon>
+					<text class='title'>我的记录</text>
+				</view>
+			</van-button>
+		</view>
+		<view class="oper-bar" v-if="taskInfo.members">
+			<view  class="my-btn primary-btn" v-if="taskInfo.members.includes(userInfo.nickName) && !taskInfo.isSigned">点击打卡</view>
+			<view class="my-btn disabled-btn" v-else-if="taskInfo.members.includes(userInfo.nickName) && taskInfo.isSigned">今日打卡已完成</view>
+			<view class="my-btn warning-btn" @click="joinPopShow=true" v-else>参与打卡</view>
+		</view>
+		<view class="ds-beetw card-box">
+			<view class="user">
+				<view class="avatar">
+					<image :src="userInfo.avatarUrl" mode="aspectFit"></image>
+				</view>
+				<view class="name">{{userInfo.nickName}}</view>
+				<view class="tag" v-if="taskInfo.creator === userInfo.nickName">发起人</view>
+			</view>
+			<view class="sign-calander" @click="addMember">
+				<view>打卡日志</view>
+				<van-icon name="arrow" custom-class="icon"/>
+			</view>
+		</view>
 		<view class="block-box task-log">
 			<text class="title">签到动态</text>
 			<text class="tag">全部</text>
@@ -44,9 +88,11 @@
 			<text class="tag">选择日期</text>
 		</view>
 		<view class="asign-logs">
-			<signLog :userInfo="userInfo" :signLogs="signLogs" v-if="signLogs.length > 0"></signLog>
-			<van-empty description="暂无数据" v-else/>
+			<signLog :taskId="taskId"></signLog>
 		</view>
+		<van-popup :show="joinPopShow" @close="joinPopShow=false" custom-class="join-task-popup">
+			<joinTaskPop :taskInfo="taskInfo" @close="joinPopShow=false" @submit="onJoinSubmit"></joinTaskPop>
+		</van-popup>
 	</view>
 </template>
 
@@ -54,15 +100,16 @@
 	import signLog from "../../components/sign-log.vue"
 	import taskApi from "../../utils/service/task.js"
 	import signApi from "../../utils/service/sign.js"
+	import joinTaskPop from "../../components/joinTaskPop.vue"
 	
 	export default {
-		components:{ signLog },
+		components:{ signLog, joinTaskPop },
 		data() {
 			return {
-				userInfo: {},
 				taskId: "",
 				taskInfo: {},
-				signLogs:[]
+				signLogs:[],
+				joinPopShow: false
 			}
 		},
 		methods: {
@@ -71,26 +118,30 @@
 					this.taskInfo = res.data;
 				})
 			},
-			fetchSignLogs(){
-				let sendData = {
-					taskId: this.taskId
-				}
-				signApi.listSign(sendData).then(res => {
-					this.signLogs = res.data;
-				})
-			},
+			
 			addMember(){
 				uni.navigateTo({
-					url: "../task-member/task-member?members=" + JSON.stringify(this.taskInfo.members)
+					url: "../task-member/task-member?members=" + JSON.stringify(this.taskInfo.members) + "&creator=" + this.taskInfo.creator
 				})
+			},
+			goRecord(){
+				uni.navigateTo({
+					url: `../my-logs/my-logs?taskId=${this.taskInfo.id}&beginTime=${this.taskInfo.beginTime}&endTime=${this.taskInfo.endTime}`
+				})
+			},
+			goRank(){
+				uni.navigateTo({
+					url: `../task-rank/task-rank?taskId=${this.taskInfo.id}`
+				})
+			},
+			onJoinSubmit(){
+				this.fetchTaskInfo();
+				this.joinPopShow = false;
 			},
 		},
 		onLoad(options){
 			this.taskId = options.taskId;
-			this.userInfo = uni.getStorageSync('userInfo');
 			this.fetchTaskInfo();
-			this.fetchSignLogs();
-			
 		}
 	}
 </script>
@@ -98,6 +149,7 @@
 <style lang="scss">
 .task-detail {
 	font-size: 26rpx;
+	background-color: #eee;
 	.task-base {
 		position: relative;
 		color: #fff;
@@ -184,12 +236,81 @@
 	.duration {
 		line-height: 1.6;
 		font-size: 24rpx;
-		color: #C0C0C0;
+		color: $uni-text-color-grey;
 	}
 	.rule {
 		line-height: 1.6;
 		font-size: 24rpx;
-		color: #C0C0C0;
+		color: $uni-text-color-grey;
+	}
+	.tab-bars {
+		display: flex;
+		align-items: center;
+		justify-content: space-around;
+		.bar-btn {
+			 border: none;
+			 cursor: pointer;
+			 
+			.btn-slot {
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				.icon {
+					font-size: 20px;
+					color: #0081FF;
+				}
+				.title {
+					margin-top: 2px;
+					color: $uni-text-color-grey;
+				}
+			}
+			
+		}
+	}
+	.oper-bar {
+		width: 80%;
+		margin: 10px auto;
+	}
+	.user {
+		display: flex;
+		align-items: center;
+		.avatar {
+			width: 20px;
+			height: 20px;
+			margin-right: 20rpx;
+			
+			image {
+				width: 100%;
+				height: 100%;
+				border-radius: 50%;
+			}
+		}
+		
+		.icon {
+			margin-right: 5px;
+			font-size: 16px;
+		}
+		.name {
+			margin-right: 5px;
+		}
+		.tag {
+			font-size: 8px;
+			padding: 3px 5px;
+			background-color: $main-bg-color;
+			color: #fff;
+			border: 1px solid $main-bg-color;
+			border-radius: 4px;
+		}
+	}
+	.sign-calander {
+		color: #0081FF;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		.icon {
+			margin-left: 5px;
+			font-size: 16px;
+		}
 	}
 	.task-log {
 		display: flex;
@@ -210,6 +331,29 @@
 	.block-box {
 		border-bottom: 1px solid #eee;
 		padding: 10px;
+		background-color: #fff;
+	}
+	.card-box {
+		padding: 10px;
+		margin: 10px auto;
+		background-color: #fff;
+	}
+	.join-task-popup {
+		width: 80%;
+	}
+	.asign-logs {
+		background-color: #fff;
+	}
+	.van-empty {
+		background-color: #fff !important;
+	}
+	.van-empty__image {
+		width: 100px;
+		height: 100px;
+	}
+	.van-empty__description {
+		padding: 0;
+		font-size: 12px;
 	}
 }
 </style>

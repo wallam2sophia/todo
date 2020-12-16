@@ -1,13 +1,30 @@
+const dayjs = require("dayjs")
 
-//时间戳格式化年月日字符串
-function timestampToString (timestampStr){
-  let year = timestampStr.getFullYear();
-  let month = `${(timestampStr.getMonth() + 1 + '').padStart(2, '0')}`;
-  let day = `${(timestampStr.getDate() + '').padStart(2, '0')}`;
-  let hour = timestampStr.getHours();
-  let minute = timestampStr.getMinutes();
-  let second = timestampStr.getSeconds();
-  return `${year}-${month}-${day} ${hour}:${minute}:${second}`
+function timeContinusData(timeArr){
+  let resultArr = []
+  let curArr = []
+  let maxC = 0;
+  let lastC = 0;
+  if(timeArr.length <= 1){
+    return [timeArr]
+  }
+  for(let i = 0; i <= timeArr.length-2; i++){
+    let cur = timeArr[i]
+    let next = timeArr[i + 1]
+    if(dayjs(next).diff(dayjs(cur), 'day') === 1){
+      curArr.push(cur)
+    }else {
+      curArr.length > 0 && resultArr.push([...curArr, cur]);
+      curArr = []
+    }
+  }
+  curArr.length > 0 && resultArr.push([...curArr, timeArr[timeArr.length -1]]) && (lastC = [...curArr, timeArr[timeArr.length -1]].length);
+  resultArr.forEach(item => {
+    if(item.length > maxC){
+      maxC = item.length
+    }
+  })
+  return [resultArr, lastC, maxC]
 }
 
-module.exports = { timestampToString }
+module.exports = { timeContinusData }

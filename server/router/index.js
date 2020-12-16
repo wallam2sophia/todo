@@ -16,6 +16,20 @@ router.post("/add/task", async (req, res) => {
     res.status(500);
     res.send(error);
   }
+})
+// 修改任务
+router.post("/edit/task", async (req, res) => {
+  try {
+    const result = await taskApi.editTask(req.body);
+    res.status(200);
+    res.send({
+      code: 100,
+      data: result
+    });
+  } catch (error) {
+    res.status(500);
+    res.send(error);
+  }
 
 })
 
@@ -72,8 +86,7 @@ router.post("/add/sign", async (req, res) => {
 // 获取打卡日志
 router.post("/list/sign", async (req, res) => {
   try {
-    const { taskId } = req.body;
-    const result = await signApi.listSign(taskId);
+    const result = await signApi.listSign(req.body);
     res.status(200);
     res.send({
       code: 100,
@@ -85,4 +98,33 @@ router.post("/list/sign", async (req, res) => {
   }
 })
 
+// 获取成员打卡统计
+router.post("/statistic/sign", async (req, res) => {
+  try {
+    const result = await signApi.statisticSign(req.body);
+    res.status(200);
+    res.send({
+      code: 100,
+      data: result
+    });
+  } catch (error) {
+    res.status(500);
+    res.send({msg: error});
+  }
+})
+
+// 获取任务打卡统计
+router.post("/statistic/task", async (req, res) => {
+  try {
+    const result = await signApi.taskSignRank(req.body.taskId);
+    res.status(200);
+    res.send({
+      code: 100,
+      data: result
+    });
+  } catch (error) {
+    res.status(500);
+    res.send({msg: error});
+  }
+})
 module.exports = router;

@@ -1,53 +1,75 @@
 <template>
 	<view class="log-lists">
-		<view class="log-item" v-for="item in signLogs" :key="item.id">
-			<view class="log-row">
-				<view class="avatar">
-					<image :src="item.avatarUrl" mode="aspectFit"></image>
-				</view>
-				<view class="member-info">
-					<view class="name">
-						<text>{{item.signer}}</text>
+		<view v-if="signLogs.length > 0">
+			<view class="log-item" v-for="item in signLogs" :key="item.id"  >
+				<view class="log-row">
+					<view class="avatar">
+						<image :src="item.avatarUrl" mode="aspectFit"></image>
 					</view>
-					<view class="asign-time">
-						{{item.signTime}}
+					<view class="member-info">
+						<view class="name">
+							<text>{{item.signer}}</text>
+						</view>
+						<view class="asign-time">
+							{{item.signTime}}
+						</view>
+					</view>
+				</view>
+				<view class="log-row desc">
+					<text>{{item.signText}}</text>
+				</view>
+				<view class="log-row action">
+					<view class="comment action-item">
+						<van-icon name="comment-o" custom-class="icon" />
+						<text>评论</text>
+					</view>
+					<view class="share action-item">
+						<van-icon name="share-o" custom-class="icon" />
+						<text>分享</text>
+					</view>
+					<view class="detail action-item">
+						<van-icon name="description" custom-class="icon"/>
+						<text>详情</text>
+					</view>
+					<view class="like action-item">
+						<van-icon name="good-job-o" custom-class="icon" />
 					</view>
 				</view>
 			</view>
-			<view class="log-row desc">
-				<text>{{item.signText}}</text>
-			</view>
-			<view class="log-row action">
-				<view class="comment action-item">
-					<van-icon name="comment-o" custom-class="icon" />
-					<text>评论</text>
-				</view>
-				<view class="share action-item">
-					<van-icon name="share-o" custom-class="icon" />
-					<text>分享</text>
-				</view>
-				<view class="detail action-item">
-					<van-icon name="description" custom-class="icon"/>
-					<text>详情</text>
-				</view>
-				<view class="like action-item">
-					<van-icon name="good-job-o" custom-class="icon" />
-				</view>
-			</view>
+		</view>
+		<view class="empty-box" v-else>
+			<van-empty description="目前还没有人签到过哦,赶紧做第一个抢沙发的人吧!" />
 		</view>
 	</view>
 </template>
 
 <script>
+	import signApi from "../utils/service/sign.js"
+	
 	export default {
-		props: ["userInfo", "signLogs"],
+		props: ["taskId", "member"],
 		data() {
 			return {
-
+				signLogs: [],
 			};
 		},
 		mounted(){
-			console.log("signLogs", this.signLogs)
+			if(this.taskId){
+				this.fetchSignLogs();
+			}
+		},
+		methods: {
+			fetchSignLogs(){
+				let sendData = {
+					taskId: this.taskId
+				}
+				if(this.member){
+					sendData.member = this.member;
+				}
+				signApi.listSign(sendData).then(res => {
+					this.signLogs = res.data;
+				})
+			},
 		}
 	}
 </script>
@@ -114,5 +136,9 @@
 			}
 		}
 	}
+	.empty-box {
+		
+	}
+	
 }
 </style>

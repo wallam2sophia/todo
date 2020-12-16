@@ -12,6 +12,17 @@ export default {
 			})
 		})
 	},
+	// 修改任务
+	editTask(data){
+		return new Promise((resolve, reject) => {
+			let url = "api/edit/task"
+			postJSON(url, data).then(res=>{
+				resolve(res)
+			}).catch(error => {
+				reject(error)
+			})
+		})
+	},
 	// 查询任务列表
 	listTask(data){
 		return new Promise((resolve, reject) => {

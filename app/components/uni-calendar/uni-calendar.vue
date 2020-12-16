@@ -143,9 +143,11 @@
 			},
 			startDate(val){
 				this.cale.resetSatrtDate(val)
+				this.weeks = this.cale.weeks
 			},
 			endDate(val){
 				this.cale.resetEndDate(val)
+				this.weeks = this.cale.weeks
 			},
 			selected(newVal) {
 				this.cale.setSelectInfo(this.nowDate.fullDate, newVal)
@@ -451,6 +453,7 @@
 		display: flex;
 		/* #endif */
 		flex-direction: row;
+		margin-bottom: 20rpx;
 	}
 
 	.uni-calendar__weeks-item {

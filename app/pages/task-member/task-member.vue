@@ -1,7 +1,7 @@
 <template>
 	<view class="task-member">
 		<van-search :value="searchName" placeholder="请输入你要搜索的名字" @change="e=>searchName=e.detail"/>
-		<view class="oper-bar">
+		<view class="oper-bar" v-if="creator === userInfo.nickName">
 			<van-button custom-class="bar-btn" open-type="share" @click="inviteMember">
 				<view class="btn-slot">
 					<van-icon name="manager" custom-class="icon"></van-icon>
@@ -44,6 +44,7 @@
 				searchName: "",
 				active: "",
 				curIndex: "B",
+				creator:'',
 				members: [],
 			}
 		},
@@ -63,6 +64,7 @@
 		},
 		onLoad(options){
 			this.members = pySegSort(JSON.parse(options.members));
+			this.creator = options.creator;
 			console.log("members", this.members)
 		}
 	}

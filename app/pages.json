@@ -29,7 +29,25 @@
             "path" : "pages/task-member/task-member",
             "style" :                                                                                    
             {
-                "navigationBarTitleText": "成员管理",
+                "navigationBarTitleText": "成员列表",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/my-logs/my-logs",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "我的签到记录",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/task-rank/task-rank",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "排行榜",
                 "enablePullDownRefresh": false
             }
             
@@ -61,7 +79,8 @@
 			"van-tabbar": "./wxcomponents/vant-weapp/tabbar/index",
 			"van-tabbar-item": "./wxcomponents/vant-weapp/tabbar-item/index",
 			"van-index-bar": "./wxcomponents/vant-weapp/index-bar/index",
-			 "van-index-anchor": "./wxcomponents/vant-weapp/index-anchor/index"
+			"van-index-anchor": "./wxcomponents/vant-weapp/index-anchor/index",
+			"van-calendar": "./wxcomponents/vant-weapp/calendar/index"
 		}
 	},
 	"tabBar": {

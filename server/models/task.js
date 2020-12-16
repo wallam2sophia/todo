@@ -17,7 +17,7 @@ const task = function(sequelize) {
     title: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true
+      unique: 'column'
     },
     desc: DataTypes.STRING,
     bgImg: {

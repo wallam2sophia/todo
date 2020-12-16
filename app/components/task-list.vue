@@ -26,10 +26,10 @@
 					<text>{{item.beginTime}} 至 {{item.endTime}}</text>
 				</view>
 				<view v-if="item.status==='doing'">
-					<view class="my-btn primary-btn" v-if="!item.isSigned" @click.stop="signIn(item.id)">
+					<view class="my-btn primary-btn btn-pos" v-if="!item.isSigned" @click.stop="signIn(item.id)">
 						打卡
 					</view>
-					<view class="my-btn disabled-btn" v-else @click.stop="">
+					<view class="my-btn info-btn disabled-btn btn-pos" v-else @click.stop="">
 						已打卡
 					</view>
 				</view>
@@ -82,28 +82,6 @@
 
 <style lang="scss">
 	.task-lists {
-		
-		.my-btn {
-			font-size: 26rpx;
-			color: #fff;
-			border-radius: 50rpx;
-			padding: 0rpx 28rpx;
-			line-height: 2;
-			position: absolute;
-			right: -10rpx;
-			bottom: 60rpx;
-			cursor: pointer;
-		}
-		
-		.primary-btn {
-			background: linear-gradient(to right, #114fad, #0073d1);
-		}
-		
-		.disabled-btn {
-			color: #fff !important;
-			background: linear-gradient(to right, #ededed, #bdbdbd);
-			cursor: not-allowed;
-		}
 		.task-card {
 			position: relative;
 			padding: 10px 15px;
@@ -190,6 +168,12 @@
 					vertical-align: top;
 				}
 			}
+		}
+		.btn-pos {
+			position: absolute;
+			right: -10rpx;
+			bottom: 60rpx;
+			padding: 10rpx 28rpx;
 		}
 	}
 </style>

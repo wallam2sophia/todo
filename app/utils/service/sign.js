@@ -23,4 +23,27 @@ export default {
 			})
 		})
 	},
+	
+	// 统计打卡
+	statisticSign(data){
+		return new Promise((resolve, reject) => {
+			let url = "api/statistic/sign"
+			postJSON(url, data).then(res=>{
+				resolve(res)
+			}).catch(error => {
+				reject(error)
+			})
+		})
+	},
+	// 统计打卡
+	statisticTask(data){
+		return new Promise((resolve, reject) => {
+			let url = "api/statistic/task"
+			postJSON(url, data).then(res=>{
+				resolve(res)
+			}).catch(error => {
+				reject(error)
+			})
+		})
+	},
 }
