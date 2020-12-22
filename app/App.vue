@@ -22,8 +22,9 @@
 	body,
 	page {
 		background-color: #fff;
-		font-size: 30rpx;
+		font-size: 26rpx;
 		color: #333;
+		
 	}
 
 	.ds-beetw {

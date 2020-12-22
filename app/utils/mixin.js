@@ -1,7 +1,7 @@
 export default {
 	data(){
 		return {
-			SERVER_URL: "http://127.0.0.1:8090/",
+			SERVER_URL: "http://guoxiuqiong.top:8090/",
 			userInfo: {},
 		}
 	},

@@ -1,4 +1,4 @@
-const BASE_URL = "http://127.0.0.1:8090/"
+const BASE_URL = "http://guoxiuqiong.top:8090/"
 
 const request = (url, method="GET", data={}, )=>{
 	return new Promise((resolve, reject)=>{

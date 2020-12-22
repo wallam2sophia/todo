@@ -64,7 +64,7 @@
 			</van-button>
 		</view>
 		<view class="oper-bar" v-if="taskInfo.members">
-			<view  class="my-btn primary-btn" v-if="taskInfo.members.includes(userInfo.nickName) && !taskInfo.isSigned">点击打卡</view>
+			<view  class="my-btn primary-btn" v-if="taskInfo.members.includes(userInfo.nickName) && !taskInfo.isSigned" @click="signIn">点击打卡</view>
 			<view class="my-btn disabled-btn" v-else-if="taskInfo.members.includes(userInfo.nickName) && taskInfo.isSigned">今日打卡已完成</view>
 			<view class="my-btn warning-btn" @click="joinPopShow=true" v-else>参与打卡</view>
 		</view>
@@ -132,6 +132,11 @@
 			goRank(){
 				uni.navigateTo({
 					url: `../task-rank/task-rank?taskId=${this.taskInfo.id}`
+				})
+			},
+			signIn(){
+				uni.navigateTo({
+					url: `../add-sign/add-sign?taskId=${this.taskInfo.id}`
 				})
 			},
 			onJoinSubmit(){
