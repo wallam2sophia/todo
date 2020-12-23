@@ -8,13 +8,10 @@ router.post("/add/task", async (req, res) => {
   try {
     const result = await taskApi.addTask(req.body);
     res.status(200);
-    res.send({
-      code: 100,
-      data: result
-    });
+    res.send(result);
   } catch (error) {
     res.status(500);
-    res.send(error);
+    res.send({msg: error});
   }
 })
 // 修改任务
@@ -22,13 +19,10 @@ router.post("/edit/task", async (req, res) => {
   try {
     const result = await taskApi.editTask(req.body);
     res.status(200);
-    res.send({
-      code: 100,
-      data: result
-    });
+    res.send(result);
   } catch (error) {
     res.status(500);
-    res.send(error);
+    res.send({msg: error});
   }
 
 })
@@ -38,13 +32,10 @@ router.post("/list/task", async (req, res) => {
   try {
     const result = await taskApi.listTask(req.body);
     res.status(200);
-    res.send({
-      code: 100,
-      data: result
-    });
+    res.send(result);
   } catch (error) {
     res.status(500);
-    res.send({error});
+    res.send({msg: error});
   }
 
 })
@@ -55,14 +46,11 @@ router.get("/detail/task/:taskId", async (req, res) => {
     const { taskId } = req.params;
     const result = await taskApi.detailTask(taskId);
     res.status(200);
-    res.send({
-      code: 100,
-      data: result
-    });
+    res.send(result);
   } catch (error) {
     console.log(error);
     res.status(500);
-    res.send({error});
+    res.send({msg: error});
   }
 
 })
@@ -73,10 +61,7 @@ router.post("/add/sign", async (req, res) => {
     const data = req.body;
     const result = await signApi.addSign(data);
     res.status(200);
-    res.send({
-      code: 100,
-      msg: result
-    });
+    res.send(result);
   } catch (error) {
     res.status(500);
     res.send({msg: error});
@@ -88,10 +73,7 @@ router.post("/list/sign", async (req, res) => {
   try {
     const result = await signApi.listSign(req.body);
     res.status(200);
-    res.send({
-      code: 100,
-      data: result
-    });
+    res.send(result);
   } catch (error) {
     res.status(500);
     res.send({msg: error});
@@ -103,10 +85,7 @@ router.post("/statistic/sign", async (req, res) => {
   try {
     const result = await signApi.statisticSign(req.body);
     res.status(200);
-    res.send({
-      code: 100,
-      data: result
-    });
+    res.send(result);
   } catch (error) {
     res.status(500);
     res.send({msg: error});
@@ -118,10 +97,7 @@ router.post("/statistic/task", async (req, res) => {
   try {
     const result = await signApi.taskSignRank(req.body.taskId);
     res.status(200);
-    res.send({
-      code: 100,
-      data: result
-    });
+    res.send(result);
   } catch (error) {
     res.status(500);
     res.send({msg: error});
@@ -133,13 +109,10 @@ router.get("/task/bgimg", (req, res) => {
   try {
     const result = taskApi.taskBg();
     res.status(200);
-    res.send({
-      code: 100,
-      data: result
-    });
+    res.send(result);
   } catch (error) {
     res.status(500);
-    res.send(error);
+    res.send({msg: error});
   }
 })
 
@@ -150,7 +123,7 @@ router.post("/change/taskbg", (req, res) => {
     taskApi.changeTaskBg(req, res);
   } catch (error) {
     res.status(500);
-    res.send(error);
+    res.send({msg: error});
   }
 })
 

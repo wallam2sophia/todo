@@ -15,10 +15,16 @@ const signApi = {
       }
       signData.signTime = dayjs(signData.signTime).format("YYYY-MM-DD HH:mm:ss");
       await sequelize.models.Sign.create(signData);
-      return '打卡成功';
+      return {
+        code: 100,
+        data: "打卡成功"
+      };
     }catch(error){
       console.log(error)
-      return error;
+      return {
+        code: 101,
+        data: "打卡失败"
+      };
     }
     
   },
@@ -56,10 +62,16 @@ const signApi = {
         ]
       });
       const signs = JSON.parse(JSON.stringify(res, null, 2));
-      return signs;
+      return {
+        code: 100,
+        data: signs
+      };
     }catch(error){
       console.log(error)
-      return error;
+      return {
+        code: 101,
+        data: "查询失败"
+      };
     }
   },
 
@@ -69,10 +81,17 @@ const signApi = {
       const data = await this.taskSignRank(params.taskId)
       console.log(data)
       const statistic = await this.memberSignRank(params.taskId, params.member)
-      return {...statistic, rankNumber: data.findIndex(item=>item.signer===params.member) + 1};
+      let result = {...statistic, rankNumber: data.findIndex(item=>item.signer===params.member) + 1};
+      return {
+        code: 100,
+        data: result
+      };
     }catch(error){
       console.log(error)
-      return error;
+      return {
+        code: 101,
+        data: "查询失败"
+      };
     }
   },
 
@@ -97,7 +116,7 @@ const signApi = {
         continuousCounts: lastC,
         maxContinuous: maxC
       }
-      return signData;
+      return signData
     }catch(error){
       console.log(error)
       return error;
@@ -121,10 +140,16 @@ const signApi = {
       });
       const signs = JSON.parse(JSON.stringify(res, null, 2));
       console.log(signs)
-      return signs;
+      return {
+        code: 100,
+        data: signs
+      };
     }catch(error){
       console.log(error)
-      return error;
+      return {
+        code: 101,
+        data: "查询失败"
+      };
     }
   }
 }

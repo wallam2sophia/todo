@@ -76,7 +76,7 @@
 				<view class="name">{{userInfo.nickName}}</view>
 				<view class="tag" v-if="taskInfo.creator === userInfo.nickName">发起人</view>
 			</view>
-			<view class="sign-calander" @click="addMember">
+			<view class="sign-calander" @click="goRecord">
 				<view>打卡日志</view>
 				<van-icon name="arrow" custom-class="icon"/>
 			</view>
@@ -193,7 +193,7 @@
 			}
 			.front-line {
 				height: 5px;
-				background-color: #0081FF;
+				background-color: $main-icon-color;
 				position: absolute;
 				top: 0;
 				left: 0;
@@ -213,14 +213,14 @@
 		.tag {
 			font-size: 8px;
 			padding: 3px 5px;
-			background-color: $main-bg-color;
+			background-color: $minor-icon-color;
 			color: #fff;
-			border: 1px solid $main-bg-color;
+			border: 1px solid $minor-icon-color;
 			border-radius: 4px;
 		}
 	}
 	.member-manage {
-		color: #0081FF;
+		color: $main-icon-color;
 		cursor: pointer;
 		display: flex;
 		align-items: center;
@@ -262,7 +262,7 @@
 				justify-content: center;
 				.icon {
 					font-size: 20px;
-					color: #0081FF;
+					color: $main-icon-color;
 				}
 				.title {
 					margin-top: 2px;
@@ -301,14 +301,14 @@
 		.tag {
 			font-size: 8px;
 			padding: 3px 5px;
-			background-color: $main-bg-color;
+			background-color: $minor-icon-color;
 			color: #fff;
-			border: 1px solid $main-bg-color;
+			border: 1px solid $minor-icon-color;
 			border-radius: 4px;
 		}
 	}
 	.sign-calander {
-		color: #0081FF;
+		color: $main-icon-color;
 		cursor: pointer;
 		display: flex;
 		align-items: center;
@@ -325,8 +325,8 @@
 		}
 		.tag {
 			font-size: 22rpx;
-			color: #0081FF;
-			border: 1px solid #0081FF;
+			color: $main-icon-color;
+			border: 1px solid $main-icon-color;
 			padding: 1px 5px;
 			border-radius: 15px;
 			margin-right: 5px;

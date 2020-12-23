@@ -156,7 +156,7 @@
 				}
 
 				.icon {
-					color: $main-bg-color;
+					color: $minor-icon-color;
 					font-size: 16px;
 					margin-right: 5px;
 				}

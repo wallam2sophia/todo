@@ -90,7 +90,7 @@
 			justify-content: center;
 			.icon {
 				font-size: 20px;
-				color: #0081FF;
+				color: $main-icon-color;
 			}
 			.title {
 				margin-top: 2px;
@@ -106,7 +106,7 @@
 			font-size: 26rpx;
 		}
 		.member-name {
-			color: #0081FF;
+			color: $main-icon-color;
 		}
 	}
 	

@@ -9,7 +9,7 @@
 			<van-notice-bar left-icon="music-o" text="笨笨刚刚签到了一起跳绳吧lalalallalalalalalalalalalalaallala" scrollable custom-class="news-item" />
 		</view>
 		<view class="my-tasks">
-			<van-tabs :active="status" :border="false" @change="changeStatus" line-height="2" animated swipeable lazy-render sticky>
+			<van-tabs :active="status" :border="false" @change="changeStatus" line-height="2" animated swipeable lazy-render sticky color="#ff5722">
 				<van-tab :title="item.title" :name="item.name" v-for="(item, index) in taskStatus" :key="index">
 					<taskList :list="taskLists" @task-click="goDetail" @refresh="fetchTaskList" v-if="taskLists.length > 0"></taskList>
 					<van-empty description="暂无数据" v-else/>

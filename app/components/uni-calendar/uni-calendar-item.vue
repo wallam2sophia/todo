@@ -105,8 +105,8 @@
 		width: 50rpx;
 		height: 50rpx;
 		background-color: #fff;
-		color: #0081FF;
-		border: 1px solid #0081FF;
+		color: $main-icon-color;
+		border: 1px solid $main-icon-color;
 		border-radius: 50%;
 		cursor: pointer;
 	}
@@ -115,7 +115,7 @@
 		height: 0;
 		border-left: 5px solid transparent;
 		border-right: 5px solid transparent;
-		border-bottom: 6px solid #0081FF;
+		border-bottom: 6px solid $main-icon-color;
 		margin-top: 3px;
 		position: absolute;
 		top: 25px;
@@ -150,8 +150,8 @@
 		// opacity: 0.8;
 		// color: #fff;
 		// background-color: #fff;
-		// color: #0081FF;
-		// border: 1px solid #0081FF;
+		// color: $main-icon-color;
+		// border: 1px solid $main-icon-color;
 	}
 
 	.uni-calendar-item--extra {
@@ -160,9 +160,9 @@
 	}
 
 	.uni-calendar-item--checked {
-		background-color: #0081FF;
+		background-color: $main-icon-color;
 		color: #fff;
-		border-color: #0081FF;
+		border-color: $main-icon-color;
 	}
 
 	.uni-calendar-item--multiple {

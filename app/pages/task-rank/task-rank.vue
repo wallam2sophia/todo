@@ -72,8 +72,8 @@
 			color: $uni-text-color-grey;
 		}
 		.active-tab {
-			border-color: #0081FF;
-			background-color: #0081FF;
+			border-color: $main-icon-color;
+			background-color: $main-icon-color;
 			color: #fff;
 		}
 	}

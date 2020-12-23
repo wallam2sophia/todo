@@ -94,7 +94,7 @@
 			.icon {
 				font-size: 48rpx;
 				margin-bottom: 10rpx;
-				color: #0081FF;
+				color: $main-icon-color;
 			}
 			.text {
 				font-size: 24rpx;

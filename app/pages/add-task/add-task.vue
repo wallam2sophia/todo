@@ -14,7 +14,7 @@
 		<van-popup :show="endShow" position="bottom" round @cloce="endShow=false">
 			<van-datetime-picker type="date" :value="currentEnd" :min-date="minEnd" @input="onInput"  @cancel="endShow=false" @confirm="setEndCurrent"/>
 		</van-popup>
-		<van-button type="primary" block :loading="loading" @click="submitForm" custom-class="submit-btn">创建</van-button>
+		<view  class="my-btn primary-btn submit-btn" @click="submitForm">点击打卡</view>
 	</view>
 </template>
 
@@ -74,20 +74,17 @@
 				let sendData = Object.assign({}, this.formData, {creator: this.userInfo.nickName, members: [this.userInfo.nickName]})
 				console.log(sendData)
 				taskApi.addTask(sendData).then(res => {
-					console.log(res);
-					if(res.code === 100){
-						uni.showToast({
-							icon: 'success',
-						    title: '创建成功',
-						    duration: 2000
-						});
-						uni.navigateBack()
-					}else {
-						uni.showToast({
-						    title: res.msg,
-						    duration: 2000
-						});
-					}
+					uni.showToast({
+						icon: 'success',
+					    title: res.data,
+					    duration: 2000
+					});
+					uni.navigateBack()
+				}).catch(error=>{
+					uni.showToast({
+					    title: error.data,
+					    duration: 2000
+					});
 				})
 			},
 			changeBgImg(){
@@ -179,9 +176,8 @@
 			height: 100px;
 		}
 		.submit-btn {
-			margin-top: 40rpx;
-			background-color: $main-bg-color;
-			border-color: $main-bg-color;
+			width: 70%;
+			margin: 40rpx auto;
 		}
 		.change-bg-btn {
 			position: absolute;

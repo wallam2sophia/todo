@@ -9,16 +9,14 @@ const request = (url, method="GET", data={}, )=>{
 			method,
 			success:(res)=>{
 				if(res.data.code !== 100){
-					uni.showToast({
-						title:"接口请求失败!"
-					})
 					reject(res.data)
 				}
 				resolve(res.data);
 			},
 			fail:(error)=>{
 				uni.showToast({
-					title:"接口请求失败!"
+					title:"接口请求失败!",
+					duration: 3000
 				})
 				reject(error);
 			}

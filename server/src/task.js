@@ -17,10 +17,16 @@ const taskApi = {
       let files = fs.readdirSync(imgpath).filter(item=>/\.jpg$|\.png$|\.jpeg$/.test(item))
       let randomIndex = Math.floor((Math.random()*files.length))
       let randomBg = files[randomIndex]
-      return `imgs/default_task_bg/${randomBg}`
+      return {
+        code: 100,
+        data: `imgs/default_task_bg/${randomBg}`
+      };
     }catch(error){
       console.log(error)
-      return error;
+      return {
+        code: 101,
+        data: '查询失败'
+      };
     }
   },
   changeTaskBg: function(req, res){
@@ -49,10 +55,16 @@ const taskApi = {
       today.isSameOrAfter(beginDate) && today.isBefore(endDate) && (taskData.status = 'doing');
       today.isAfter(endDate) && (taskData.status = 'done');
       await sequelize.models.Task.create(taskData);
-      return '添加成功';
+      return {
+        code: 100,
+        data: "创建打卡成功"
+      };
     }catch(error){
       console.log(error)
-      return error;
+      return {
+        code: 101,
+        data: "创建打卡失败"
+      };
     }
   },
 
@@ -60,10 +72,16 @@ const taskApi = {
   editTask: async function (taskData) {
     try {
       await sequelize.models.Task.update(taskData,{where: {id: taskData.id}});
-      return '添加成功';
+      return {
+        code: 100,
+        data: '修改成功'
+      };
     }catch(error){
       console.log(error)
-      return error;
+      return {
+        code: 101,
+        data: '修改失败'
+      };
     }
     
   },
@@ -93,10 +111,16 @@ const taskApi = {
         }
       })
       const data = await Promise.all(result)
-      return data;
+      return {
+        code: 100,
+        data: data
+      };
     }catch(error){
       console.log(error)
-      return error;
+      return {
+        code: 101,
+        data: "查询失败"
+      };
     }
   },
   detailTask: async function(taskId){
@@ -108,10 +132,18 @@ const taskApi = {
       let today = dayjs(dayjs(new Date()).format("YYYY-MM-DD"));
       let totalDays = endDate.diff(beginDate, 'day');
       let finishDays = today.diff(beginDate, 'day');
-      return {...taskData, totalDays: totalDays, finishDays: finishDays};
+      let result =  {...taskData, totalDays: totalDays, finishDays: finishDays};
+      return {
+        code: 100,
+        data: result
+      };
     }catch(error){
       console.log(error)
-      return error;
+      return {
+        code: 101,
+        data: "查询失败"
+      };
+      
     }
   }
 }

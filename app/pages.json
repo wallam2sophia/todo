@@ -77,8 +77,8 @@
 	"globalStyle": {
 		"navigationBarTextStyle": "white",
 		"navigationBarTitleText": "打卡吧",
-		"navigationBarBackgroundColor": "#e54d42",
-		"backgroundColor": "#e54d42",
+		"navigationBarBackgroundColor": "#303f9f",
+		"backgroundColor": "#303f9f",
 		"usingComponents": {
 			"van-icon": "./wxcomponents/vant-weapp/icon/index",
 			"van-button":  "./wxcomponents/vant-weapp/button/index",
@@ -107,23 +107,22 @@
 	},
 	"tabBar": {
 		"color": "#ccc",
-		"selectedColor":"#e54d42",
+		"selectedColor":"#303f9f",
 		"borderStyle": "white",
 		"backgroundColor":"#f0f0f0",
 		"list": [
 			{
 				"pagePath":"pages/index/index",
 				"text":"首页",
-				"iconPath":"static/icon/home.png",
-				"selectedIconPath":"static/icon/home-active.png"
+				"iconPath":"static/icon/home1.png",
+				"selectedIconPath":"static/icon/home-active3.png"
 			},
 			{
 				"pagePath":"pages/statistic/statistic",
 				"text":"统计",
-				"iconPath":"static/icon/news.png",
-				"selectedIconPath":"static/icon/news-active.png"
+				"iconPath":"static/icon/news1.png",
+				"selectedIconPath":"static/icon/news-active1.png"
 			}
-			
 		]
 	},
 	"condition": { //模式配置，仅开发期间生效
