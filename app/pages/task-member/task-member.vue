@@ -45,6 +45,7 @@
 				active: "",
 				curIndex: "B",
 				creator:'',
+				taskTitle: '',
 				members: [],
 			}
 		},
@@ -53,6 +54,7 @@
 				console.log('inviteMember')
 				uni.showShareMenu({ 
 					withShareTicket:false,
+					// title: `${this.creator}邀请您一起${this.taskTitle}`,
 					success(res){
 						console.log(res)
 					},
@@ -65,7 +67,7 @@
 		onLoad(options){
 			this.members = pySegSort(JSON.parse(options.members));
 			this.creator = options.creator;
-			console.log("members", this.members)
+			this.taskTitle = options.taskTitle;
 		}
 	}
 </script>

@@ -38,7 +38,7 @@
 			onSubmit(){
 				let sendData = {
 					id: this.taskInfo.id,
-					members: [...this.taskInfo.members, "喜洋洋"]
+					members: [...this.taskInfo.members, this.userInfo.nickName]
 				}
 				taskApi.editTask(sendData).then(res=>{
 					console.log(res)

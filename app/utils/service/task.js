@@ -1,6 +1,18 @@
 import { getJSON, postJSON } from "../request.js"
 
 export default {
+	// 随机获取一张任务背景图
+	getTaskBg(){
+		return new Promise((resolve, reject) => {
+			let url = "api/task/bgimg"
+			getJSON(url).then(res=>{
+				resolve(res)
+			}).catch(error => {
+				reject(error)
+			})
+		})
+	},
+	
 	// 新建任务
 	addTask(data){
 		return new Promise((resolve, reject) => {

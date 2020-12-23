@@ -121,7 +121,7 @@
 			
 			addMember(){
 				uni.navigateTo({
-					url: "../task-member/task-member?members=" + JSON.stringify(this.taskInfo.members) + "&creator=" + this.taskInfo.creator
+					url: "../task-member/task-member?members=" + JSON.stringify(this.taskInfo.members) + "&creator=" + this.taskInfo.creator + "&taskTitle=" + this.taskInfo.title
 				})
 			},
 			goRecord(){

@@ -1,6 +1,10 @@
 const dayjs = require("dayjs")
+const path = require("path")
+const fs = require('fs')
 
-const  { timeContinusData } = require("./util")
-let time = dayjs(new Date().getTime())
-let cArr = [0,2,3,5,6,7,8,10,11,13,14,15]
-console.log(timeContinusData(cArr))
+let imgpath = path.resolve(__dirname, '../static/imgs/default_task_bg');
+console.log(imgpath)
+let files = fs.readdirSync(imgpath).filter(item=>/\.jpg$|\.png$|\.jpeg$/.test(item))
+console.log(files)
+let randomIndex = Math.floor((Math.random()*files.length))
+console.log(randomIndex)

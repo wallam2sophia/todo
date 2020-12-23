@@ -4,10 +4,42 @@ const {
 const { Op } = require("sequelize");
 const { signApi } = require("./sign");
 const dayjs = require("dayjs")
+const path = require("path")
+const fs = require('fs')
+const formdata = require('formidable');
 const isSameOrAfter = require('dayjs/plugin/isSameOrAfter');
 dayjs.extend(isSameOrAfter)
-// 新增任务
+
 const taskApi = {
+  taskBg: function(){
+    try {
+      let imgpath = path.resolve(__dirname, '../static/imgs/default_task_bg');
+      let files = fs.readdirSync(imgpath).filter(item=>/\.jpg$|\.png$|\.jpeg$/.test(item))
+      let randomIndex = Math.floor((Math.random()*files.length))
+      let randomBg = files[randomIndex]
+      return `imgs/default_task_bg/${randomBg}`
+    }catch(error){
+      console.log(error)
+      return error;
+    }
+  },
+  changeTaskBg: function(req, res){
+    const form = new formdata.IncomingForm();
+    form.uploadDir = path.resolve(__dirname, "../static/imgs/upload_img");//指定保存文件的路径，formidable会自动保存文件
+    form.keepExtensions = true;//保存扩展名
+    form.parse(req, (err, fields, files) => {
+      if (err) {
+          throw err;
+      }
+      console.log(files.file.path.split("static\\")[1])
+      res.status(200);
+      res.send({
+        code: 100,
+        data: files.file.path.split("static\\")[1].replace(/\\/g, '/')
+      });
+    })
+  },
+  // 新增任务
   addTask: async function (taskData) {
     try {
       let today = dayjs(dayjs(new Date()).format("YYYY-MM-DD"));

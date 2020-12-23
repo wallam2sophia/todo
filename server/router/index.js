@@ -127,4 +127,31 @@ router.post("/statistic/task", async (req, res) => {
     res.send({msg: error});
   }
 })
+
+// 随机获取一张背景图
+router.get("/task/bgimg", (req, res) => {
+  try {
+    const result = taskApi.taskBg();
+    res.status(200);
+    res.send({
+      code: 100,
+      data: result
+    });
+  } catch (error) {
+    res.status(500);
+    res.send(error);
+  }
+})
+
+// 修改背景图
+router.post("/change/taskbg", (req, res) => {
+  try {
+    console.log(req.body)
+    taskApi.changeTaskBg(req, res);
+  } catch (error) {
+    res.status(500);
+    res.send(error);
+  }
+})
+
 module.exports = router;

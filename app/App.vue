@@ -2,8 +2,32 @@
 	export default {
 		onLaunch: function() {
 			console.log('App Launch')
-			uni.getUserInfo().then(res => {
-				uni.setStorageSync('userInfo', res[1].userInfo);
+			// uni.getProvider({
+			// 	service: "oauth",
+			// 	success: function(res){
+			// 		let provider = res.provider[0]
+			// 		console.log(provider)
+			// 		uni.login({
+			// 			provider: provider,
+			// 			success: function(res){
+			// 				console.log(res)
+			// 			}
+			// 		})
+		
+			// 	}
+			// })
+			uni.getUserInfo(
+			{
+				success: function(res) {
+					console.log('获取用户信息成功', res.userInfo);
+					uni.setStorageSync('userInfo', res.userInfo);
+				},
+				fail: function(e) {
+				    console.log("获取用户信息失败: ", e);
+					// uni.navigateTo({
+					// 	url: "/pages/home/home"
+					// })
+				}
 			})
 		},
 		onShow: function() {

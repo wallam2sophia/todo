@@ -1,6 +1,9 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
+			"path": "pages/home/home"
+		},
+		{
 			"path": "pages/index/index"
 		},
 	    {
@@ -61,6 +64,15 @@
             }
             
         }
+        ,{
+            "path" : "pages/task-bg/task-bg",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "white",
@@ -89,7 +101,8 @@
 			"van-tabbar-item": "./wxcomponents/vant-weapp/tabbar-item/index",
 			"van-index-bar": "./wxcomponents/vant-weapp/index-bar/index",
 			"van-index-anchor": "./wxcomponents/vant-weapp/index-anchor/index",
-			"van-calendar": "./wxcomponents/vant-weapp/calendar/index"
+			"van-calendar": "./wxcomponents/vant-weapp/calendar/index",
+			"van-uploader": "./wxcomponents/vant-weapp/uploader/index"
 		}
 	},
 	"tabBar": {

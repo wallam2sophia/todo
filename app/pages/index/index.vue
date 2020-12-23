@@ -30,9 +30,8 @@
 		},
 		data() {
 			return {
-				userInfo: {},
 				taskLists: [],
-				status: "doing",
+				status: "",
 				taskStatus: [
 					{
 						name: 'all',
@@ -53,9 +52,8 @@
 				]
 			}
 		},
-		onLoad() {
-			this.userInfo = uni.getStorageSync('userInfo');
-			console.log(this.userInfo);
+		onShow(){
+			this.status = "doing"
 			this.fetchTaskList();
 		},
 		onShareAppMessage(res) {
