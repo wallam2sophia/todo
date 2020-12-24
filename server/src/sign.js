@@ -55,6 +55,11 @@ const signApi = {
       if(!!params.member){
         queryObj.signer = params.member
       }
+      if(!!params.signDate){
+        queryObj.signTime = {
+          [Op.startsWith]: params.signDate, 
+        }
+      }
       const res = await sequelize.models.Sign.findAll({
         where: queryObj,
         order: [
@@ -78,10 +83,15 @@ const signApi = {
   // 统计个人打卡信息
   statisticSign: async function (params){
     try {
-      const data = await this.taskSignRank(params.taskId)
-      console.log(data)
+      const taskRank = await this.taskSignRank(params.taskId)
+      if(taskRank.code !== 100){
+        return {
+          code: 101,
+          data: "查询失败"
+        };
+      }
       const statistic = await this.memberSignRank(params.taskId, params.member)
-      let result = {...statistic, rankNumber: data.findIndex(item=>item.signer===params.member) + 1};
+      let result = {...statistic, rankNumber: taskRank.data.findIndex(item=>item.signer===params.member) + 1};
       return {
         code: 100,
         data: result

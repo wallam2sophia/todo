@@ -38,7 +38,7 @@
 			</view>
 		</view>
 		<view class="block-box tab-bars">
-			<van-button custom-class="bar-btn" open-type="share" @click="inviteMember">
+			<van-button custom-class="bar-btn" open-type="share">
 				<view class="btn-slot">
 					<van-icon name="share-o" custom-class="icon"></van-icon>
 					<text class='title'>分享</text>
@@ -83,15 +83,19 @@
 		</view>
 		<view class="block-box task-log">
 			<text class="title">签到动态</text>
-			<text class="tag">全部</text>
-			<text class="tag">今天</text>
-			<text class="tag">选择日期</text>
+			<text class="tag" @click="changeSignData('all')" :class="{'active-tag': signTab==='all'}">全部</text>
+			<text class="tag" @click="changeSignData('today')" :class="{'active-tag': signTab==='today'}">今天</text>
+			<text class="tag" @click="dateShow=true" :class="{'active-tag': signTab==='custom'}" v-show="signTab !== 'custom' || (signTab === 'custom' && !signDate)">选择日期</text>
+			<text class="tag" @click="dateShow=true" :class="{'active-tag': signTab==='custom'}" v-show="signTab === 'custom' && !!signDate">{{signDate}}</text>
 		</view>
 		<view class="asign-logs">
-			<signLog :taskId="taskId"></signLog>
+			<signLog :taskId="taskId" :signDate="signDate"></signLog>
 		</view>
 		<van-popup :show="joinPopShow" @close="joinPopShow=false" custom-class="join-task-popup">
 			<joinTaskPop :taskInfo="taskInfo" @close="joinPopShow=false" @submit="onJoinSubmit"></joinTaskPop>
+		</van-popup>
+		<van-popup :show="dateShow" position="bottom" round @cloce="dateShow=false">
+			<van-datetime-picker type="date" :value="currentDate" :min-date="minDate" :max-date="maxDate" @input="onInput"  @cancel="dateShow=false" @confirm="changeSignData(currentDate)"/>
 		</van-popup>
 	</view>
 </template>
@@ -101,24 +105,49 @@
 	import taskApi from "../../utils/service/task.js"
 	import signApi from "../../utils/service/sign.js"
 	import joinTaskPop from "../../components/joinTaskPop.vue"
+	import dayjs from 'dayjs'
 	
 	export default {
 		components:{ signLog, joinTaskPop },
 		data() {
 			return {
+				currentDate: "",
+				minDate: "",
+				maxDate: "",
 				taskId: "",
+				signDate: "",
+				signTab: "all",
 				taskInfo: {},
 				signLogs:[],
-				joinPopShow: false
+				joinPopShow: false,
+				dateShow: false
 			}
 		},
 		methods: {
 			fetchTaskInfo(){
 				taskApi.detailTask(this.taskId).then(res => {
 					this.taskInfo = res.data;
+					this.minDate = dayjs(this.taskInfo.beginTime).toDate().getTime()
+					this.maxDate = dayjs(this.taskInfo.endTime).toDate().getTime()
 				})
 			},
-			
+			changeSignData(day){
+				console.log(day)
+				if(day === 'today'){
+					this.signTab = 'today'
+					this.signDate = dayjs(new Date()).format("YYYY-MM-DD");
+				}else if(day === 'all'){
+					this.signTab = 'all'
+					this.signDate = ''
+				}else {
+					this.signTab = 'custom'
+					this.signDate = dayjs(day).format("YYYY-MM-DD");
+					this.dateShow = false;
+				}
+			},
+			onInput(e){
+				this.currentDate = e.detail;
+			},
 			addMember(){
 				uni.navigateTo({
 					url: "../task-member/task-member?members=" + JSON.stringify(this.taskInfo.members) + "&creator=" + this.taskInfo.creator + "&taskTitle=" + this.taskInfo.title
@@ -325,12 +354,16 @@
 		}
 		.tag {
 			font-size: 22rpx;
-			color: $main-icon-color;
-			border: 1px solid $main-icon-color;
+			color: $main-grey-text;
+			border: 1px solid $main-grey-border;
 			padding: 1px 5px;
 			border-radius: 15px;
 			margin-right: 5px;
 			cursor: pointer;
+		}
+		.active-tag {
+			color: $main-icon-color;
+			border-color: $main-icon-color;
 		}
 	}
 	.block-box {

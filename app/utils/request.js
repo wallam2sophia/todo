@@ -1,10 +1,9 @@
-const BASE_URL = "https://guoxiuqiong.top/"
-// const BASE_URL = "http://127.0.0.1:8090/"
+import { SERVER_URL } from "./const.js"
 
 const request = (url, method="GET", data={}, )=>{
 	return new Promise((resolve, reject)=>{
 		uni.request({
-			url:BASE_URL + url,
+			url:SERVER_URL + url,
 			data,
 			method,
 			success:(res)=>{

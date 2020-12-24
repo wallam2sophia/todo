@@ -1,8 +1,9 @@
+import { SERVER_URL } from "./const.js"
+
 export default {
 	data(){
 		return {
-			SERVER_URL: "https://guoxiuqiong.top/",
-			// SERVER_URL: "http://127.0.0.1:8090/",
+			SERVER_URL: SERVER_URL,
 			userInfo: {},
 		}
 	},

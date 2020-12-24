@@ -47,11 +47,33 @@
 	import signApi from "../utils/service/sign.js"
 	
 	export default {
-		props: ["taskId", "member"],
+		props: ["taskId", "member", "signDate"],
 		data() {
 			return {
 				signLogs: [],
 			};
+		},
+		computed:{
+			sendData(){
+				let obj = {
+					taskId: this.taskId
+				}
+				if(this.member){
+					obj.member = this.member;
+				}
+				if(this.signDate){
+					obj.signDate = this.signDate;
+				}
+				return obj
+			}
+		},
+		watch:{
+			sendData: {
+				deep: true,
+				handler(){
+					this.fetchSignLogs();
+				}
+			}
 		},
 		mounted(){
 			if(this.taskId){
@@ -60,13 +82,7 @@
 		},
 		methods: {
 			fetchSignLogs(){
-				let sendData = {
-					taskId: this.taskId
-				}
-				if(this.member){
-					sendData.member = this.member;
-				}
-				signApi.listSign(sendData).then(res => {
+				signApi.listSign(this.sendData).then(res => {
 					this.signLogs = res.data;
 				})
 			},

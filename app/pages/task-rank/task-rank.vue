@@ -66,10 +66,10 @@
 		
 		.tab-item {
 			padding: 5px 15px;
-			border: 1px solid $uni-border-color;
+			border: 1px solid $main-grey-border;
 			border-radius: 15px;
 			font-size: 24rpx;
-			color: $uni-text-color-grey;
+			color: $main-grey-text;
 		}
 		.active-tab {
 			border-color: $main-icon-color;
@@ -81,7 +81,7 @@
 		
 		.rank-item {
 			padding: 20rpx 20rpx;
-			border-bottom: 0.5px solid $uni-border-color;
+			border-bottom: 0.5px solid $main-grey-border;
 			box-sizing: border-box;
 			
 			.rank-number {

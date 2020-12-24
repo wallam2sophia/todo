@@ -10,7 +10,7 @@
 			<view class="info-bars flex-row">
 				<view class="bar-item  flex-column">
 					<view class="number">
-						{{signInfo.rankNumber}}
+						{{signInfo.rankNumber || 0}}
 					</view>
 					<view class="text">
 						当前排名
@@ -18,7 +18,7 @@
 				</view>
 				<view class="bar-item  flex-column">
 					<view class="number">
-						{{signInfo.signCounts}}
+						{{signInfo.signCounts || 0}}
 					</view>
 					<view class="text">
 						累计签到
@@ -26,7 +26,7 @@
 				</view>
 				<view class="bar-item  flex-column">
 					<view class="number">
-						{{signInfo.continuousCounts}}
+						{{signInfo.continuousCounts || 0}}
 					</view>
 					<view class="text">
 						连续签到
@@ -34,7 +34,7 @@
 				</view>
 				<view class="bar-item  flex-column">
 					<view class="number">
-						{{signInfo.maxContinuous}}
+						{{signInfo.maxContinuous || 0}}
 					</view>
 					<view class="text">
 						最大连续
