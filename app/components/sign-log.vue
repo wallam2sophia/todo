@@ -2,7 +2,7 @@
 	<view class="log-lists">
 		<view v-if="signLogs.length > 0">
 			<view class="log-item" v-for="item in signLogs" :key="item.id"  >
-				<view class="log-row">
+				<view class="log-row base">
 					<view class="avatar">
 						<image :src="item.avatarUrl" mode="aspectFit"></image>
 					</view>
@@ -16,7 +16,16 @@
 					</view>
 				</view>
 				<view class="log-row desc">
-					<text>{{item.signText}}</text>
+					<text>{{item.text}}</text>
+				</view>
+				<view class="log-row media-box flex-row">
+					<view class="media-item" v-for="(item1,index) in item.media" :key="index">
+						<image :src="item1" mode="aspectFit"></image>
+					</view>
+				</view>
+				<view class="log-row location">
+					<van-icon name="location" custom-class="icon"/>
+					<text class="text">{{item.location.name}}</text>
 				</view>
 				<view class="log-row action">
 					<view class="comment action-item">
@@ -99,6 +108,10 @@
 			display: flex;
 			align-items: center;
 			margin-bottom: 10px;
+			padding-left: 40px;
+		}
+		.base {
+			padding-left: 0;
 		}
 		.avatar {
 			width: 40px;
@@ -126,6 +139,44 @@
 		}
 		.desc {
 			padding-left: 40px;
+		}
+		.location {
+			padding: 5px;
+			margin-left: 40px;
+			background-color: $main-grey-border;
+			color: $main-grey-text;
+			border-radius: 4px;
+			display: inline-flex;
+			.icon {
+				margin-right: 4px;
+				font-size: 16px;
+			}
+			.text {
+				font-size: 10px;
+			}
+			
+		}
+		.media-box {
+			flex-wrap: wrap;
+			.media-item {
+				width: 150rpx;
+				height: 150rpx;
+				margin-right: 20rpx;
+				margin-bottom: 20rpx;
+				position: relative;
+				image {
+					width: 100%;
+					height: 100%;
+				}
+				
+				.icon-delete {
+					font-size: 18px;
+					position: absolute;
+					color: #f00;
+					top: 0;
+					right: -5px;
+				}
+			}
 		}
 		.action {
 			padding-left: 40px;

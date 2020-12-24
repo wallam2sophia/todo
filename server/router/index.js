@@ -41,10 +41,10 @@ router.post("/list/task", async (req, res) => {
 })
 
 // 获取指定任务详情
-router.get("/detail/task/:taskId", async (req, res) => {
+router.get("/detail/task/:user/:taskId", async (req, res) => {
   try {
-    const { taskId } = req.params;
-    const result = await taskApi.detailTask(taskId);
+    const { user, taskId } = req.params;
+    const result = await taskApi.detailTask(taskId, user);
     res.status(200);
     res.send(result);
   } catch (error) {

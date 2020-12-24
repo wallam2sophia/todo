@@ -65,7 +65,7 @@
 		</view>
 		<view class="oper-bar" v-if="taskInfo.members">
 			<view  class="my-btn primary-btn" v-if="taskInfo.members.includes(userInfo.nickName) && !taskInfo.isSigned" @click="signIn">点击打卡</view>
-			<view class="my-btn disabled-btn" v-else-if="taskInfo.members.includes(userInfo.nickName) && taskInfo.isSigned">今日打卡已完成</view>
+			<view class="my-btn success-btn disabled-btn" v-else-if="taskInfo.members.includes(userInfo.nickName) && taskInfo.isSigned">今日打卡已完成</view>
 			<view class="my-btn warning-btn" @click="joinPopShow=true" v-else>参与打卡</view>
 		</view>
 		<view class="ds-beetw card-box">
@@ -125,7 +125,7 @@
 		},
 		methods: {
 			fetchTaskInfo(){
-				taskApi.detailTask(this.taskId).then(res => {
+				taskApi.detailTask(this.userInfo.nickName, this.taskId).then(res => {
 					this.taskInfo = res.data;
 					this.minDate = dayjs(this.taskInfo.beginTime).toDate().getTime()
 					this.maxDate = dayjs(this.taskInfo.endTime).toDate().getTime()
@@ -155,7 +155,7 @@
 			},
 			goRecord(){
 				uni.navigateTo({
-					url: `../my-logs/my-logs?taskId=${this.taskInfo.id}&beginTime=${this.taskInfo.beginTime}&endTime=${this.taskInfo.endTime}`
+					url: `../my-logs/my-logs?taskId=${this.taskInfo.id}&beginTime=${this.taskInfo.beginTime}&endTime=${this.taskInfo.endTime}&isSigned=${this.taskInfo.isSigned}`
 				})
 			},
 			goRank(){

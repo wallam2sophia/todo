@@ -52,7 +52,57 @@ const dateCompare = function(startDate, endDate) {
 	}
 }
 
+const chooseFileUpload = function(count=9) {
+	return new Promise((resolve, reject) => {
+		uni.chooseImage({
+			count: count, //默认9
+			sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
+			sourceType: ['album', 'camera '], //从相册选择
+			success: function({
+				tempFilePaths,
+				tempFiles
+			}) {
+				console.log(tempFilePaths, tempFiles);
+				const p = tempFilePaths.map(item=>uploadFile(item))
+				Promise.all(p).then(res=>{
+					resolve(res)
+				}).catch(err=>{
+					reject([])
+				})
+			}
+		});
+	})
+}
+
+const uploadFile = function(file) {
+	return new Promise((resolve, reject) => {
+		uniCloud.uploadFile({
+			filePath: file,
+			cloudPath: file,
+			success(e) {
+				if (e.success == true) {
+					resolve(e.fileID);
+				} else {
+					uni.showToast({
+						title: "上传文件失败",
+						icon: 'none'
+					})
+					reject(e)
+				}
+			},
+			fail(e) {
+				uni.showToast({
+					title: "上传文件失败",
+					icon: 'none'
+				})
+				reject(e)
+			}
+		})
+	})
+
+}
 export {
 	pySegSort,
-	dateCompare
+	dateCompare,
+	chooseFileUpload
 }

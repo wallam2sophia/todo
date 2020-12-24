@@ -123,16 +123,17 @@ const taskApi = {
       };
     }
   },
-  detailTask: async function(taskId){
+  detailTask: async function(taskId, user){
     try {
       const res = await sequelize.models.Task.findByPk(taskId);
       let taskData = JSON.parse(JSON.stringify(res, null, 2));
       let beginDate = dayjs(taskData.beginTime)
       let endDate = dayjs(taskData.endTime)
-      let today = dayjs(dayjs(new Date()).format("YYYY-MM-DD"));
-      let totalDays = endDate.diff(beginDate, 'day');
-      let finishDays = today.diff(beginDate, 'day');
-      let result =  {...taskData, totalDays: totalDays, finishDays: finishDays};
+      let today = dayjs(new Date()).format("YYYY-MM-DD");
+      let totalDays = endDate.diff(beginDate, 'day') + 1;
+      let finishDays = dayjs(today).diff(beginDate, 'day') + 1;
+      const isSigned = await signApi.checkIsSigned(taskId, user, today);
+      let result =  {...taskData, totalDays, finishDays, isSigned};
       return {
         code: 100,
         data: result

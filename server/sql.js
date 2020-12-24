@@ -14,7 +14,7 @@ const connect = async function(){
     //创建数据表
     task(sequelize);
     sign(sequelize);
-    await sequelize.sync();
+    await sequelize.sync(true);
     console.log("数据库模型同步成功.");
   } catch (error) {
     console.error('数据库连接失败:', error);

@@ -110,7 +110,6 @@
 				})
 			},
 			changeCalendar(e){
-				console.log(e)
 				let curDate = dayjs(e.fulldate)
 				if(Object.keys(e.extraInfo).length > 0){
 					// 已打卡
@@ -134,10 +133,16 @@
 			},
 		},
 		onLoad(options){
+			console.log(options)
 			this.taskId = options.taskId;
 			this.today = dayjs(dayjs(new Date()).format("YYYY-MM-DD"));
 			this.beginTime = options.beginTime;
 			this.endTime = options.endTime;
+			let isSigned = options.isSigned;
+			if(isSigned === 'true'){
+				this.btnText = "已打卡"
+				this.btnClass = ["success-btn", "disabled-btn"]
+			}
 			this.fetchSelected();
 			this.fetchSignStatistic();
 		}

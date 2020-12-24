@@ -23,8 +23,14 @@ const sign = function(sequelize) {
     signTime: {
       type: DataTypes.STRING,
     },
-    signContent: {
+    text: {
       type: DataTypes.STRING,
+    },
+    media: {
+      type: DataTypes.JSON,
+    },
+    location: {
+      type: DataTypes.JSON,
     },
   }, {
     // 这是其他模型参数

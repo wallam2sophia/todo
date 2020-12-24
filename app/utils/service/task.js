@@ -47,10 +47,10 @@ export default {
 		})
 	},
 	// 查询任务详情
-	detailTask(taskId){
+	detailTask(user, taskId){
 		return new Promise((resolve, reject) => {
 			let url = "api/detail/task"
-			getJSON(url + "/" + taskId).then(res=>{
+			getJSON(url + "/" + user + "/" + taskId).then(res=>{
 				resolve(res)
 			}).catch(error => {
 				reject(error)
