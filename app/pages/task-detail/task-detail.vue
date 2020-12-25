@@ -89,7 +89,7 @@
 			<text class="tag" @click="dateShow=true" :class="{'active-tag': signTab==='custom'}" v-show="signTab === 'custom' && !!signDate">{{signDate}}</text>
 		</view>
 		<view class="asign-logs">
-			<signLog :taskId="taskId" :signDate="signDate"></signLog>
+			<signLog :list="signLogs"></signLog>
 		</view>
 		<van-popup :show="joinPopShow" @close="joinPopShow=false" custom-class="join-task-popup">
 			<joinTaskPop :taskInfo="taskInfo" @close="joinPopShow=false" @submit="onJoinSubmit"></joinTaskPop>
@@ -131,6 +131,15 @@
 					this.maxDate = dayjs(this.taskInfo.endTime).toDate().getTime()
 				})
 			},
+			fetchSignLogs(){
+				let sendData = {
+					taskId: this.taskId,
+					signDate: this.signDate
+				}
+				signApi.listSign(sendData).then(res => {
+					this.signLogs = res.data;
+				})
+			},
 			changeSignData(day){
 				console.log(day)
 				if(day === 'today'){
@@ -144,6 +153,7 @@
 					this.signDate = dayjs(day).format("YYYY-MM-DD");
 					this.dateShow = false;
 				}
+				this.fetchSignLogs();
 			},
 			onInput(e){
 				this.currentDate = e.detail;
@@ -175,7 +185,10 @@
 		},
 		onLoad(options){
 			this.taskId = options.taskId;
+		},
+		onShow(){
 			this.fetchTaskInfo();
+			this.fetchSignLogs();
 		}
 	}
 </script>

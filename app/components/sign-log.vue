@@ -1,7 +1,7 @@
 <template>
 	<view class="log-lists">
-		<view v-if="signLogs.length > 0">
-			<view class="log-item" v-for="item in signLogs" :key="item.id"  >
+		<view v-if="list.length > 0">
+			<view class="log-item" v-for="item in list" :key="item.id"  >
 				<view class="log-row base">
 					<view class="avatar">
 						<image :src="item.avatarUrl" mode="aspectFit"></image>
@@ -23,7 +23,7 @@
 						<image :src="item1" mode="aspectFit"></image>
 					</view>
 				</view>
-				<view class="log-row location">
+				<view class="log-row location" v-if="item.location.name">
 					<van-icon name="location" custom-class="icon"/>
 					<text class="text">{{item.location.name}}</text>
 				</view>
@@ -56,45 +56,18 @@
 	import signApi from "../utils/service/sign.js"
 	
 	export default {
-		props: ["taskId", "member", "signDate"],
+		props: ["list"],
 		data() {
 			return {
-				signLogs: [],
 			};
 		},
 		computed:{
-			sendData(){
-				let obj = {
-					taskId: this.taskId
-				}
-				if(this.member){
-					obj.member = this.member;
-				}
-				if(this.signDate){
-					obj.signDate = this.signDate;
-				}
-				return obj
-			}
 		},
 		watch:{
-			sendData: {
-				deep: true,
-				handler(){
-					this.fetchSignLogs();
-				}
-			}
 		},
 		mounted(){
-			if(this.taskId){
-				this.fetchSignLogs();
-			}
 		},
 		methods: {
-			fetchSignLogs(){
-				signApi.listSign(this.sendData).then(res => {
-					this.signLogs = res.data;
-				})
-			},
 		}
 	}
 </script>

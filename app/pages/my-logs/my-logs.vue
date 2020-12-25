@@ -51,13 +51,13 @@
 				:selected="selected"
 				@change="changeCalendar"
 			     ></uni-calendar>
-			 <view  class="my-btn short-btn" :class="btnClass">{{btnText}}</view>
+			 <view  class="my-btn short-btn" :class="btnClass" @click="signIn">{{btnText}}</view>
 		</view>
 		<view class="sign-logs">
 			<view class="block-box">
 				<text class="title">打卡记录</text>
 			</view>
-			<signLog :taskId="taskId" :member="userInfo.nickName"></signLog>
+			<signLog :list="signLogs"></signLog>
 		</view>
 	</view>
 </template>
@@ -73,11 +73,13 @@
 		data() {
 			return {
 				today: "",
+				selectDay: "",
 				taskId: "",
 				btnText: "点击打卡",
 				btnClass: "primary-btn",
 				beginTime: "",
 				endTime: "",
+				signLogs: [],
 				selected: [],
 				signInfo: {
 					rankNumber: 0,
@@ -104,13 +106,31 @@
 					member: this.userInfo.nickName
 				}
 				signApi.listSign(sendData).then(res => {
+					this.signLogs = res.data;
 					this.selected = res.data.map(item=>{
 						return {date: item.signTime.split(" ")[0]}
 					})
+					if(this.selected.filter(item=>item.date === this.selectDay).length > 0){
+						this.btnText = "已打卡"
+						this.btnClass = ["success-btn", "disabled-btn"]
+					}
+				})
+			},
+			signIn(){
+				if(this.btnText === "打卡未开始" || this.btnText === "已打卡"){
+					return false;
+				}
+				let signTime = dayjs(new Date()).format("YYYY-MM-DD HH:mm:ss")
+				if(this.btnText === "点击补卡"){
+					signTime = this.selectDay + " 23:59:59"
+				}
+				uni.navigateTo({
+					url: `../add-sign/add-sign?taskId=${this.taskId}&signDate=${signTime}`
 				})
 			},
 			changeCalendar(e){
 				let curDate = dayjs(e.fulldate)
+				this.selectDay = curDate.format("YYYY-MM-DD");
 				if(Object.keys(e.extraInfo).length > 0){
 					// 已打卡
 					this.btnText = "已打卡"
@@ -133,7 +153,6 @@
 			},
 		},
 		onLoad(options){
-			console.log(options)
 			this.taskId = options.taskId;
 			this.today = dayjs(dayjs(new Date()).format("YYYY-MM-DD"));
 			this.beginTime = options.beginTime;
@@ -143,6 +162,8 @@
 				this.btnText = "已打卡"
 				this.btnClass = ["success-btn", "disabled-btn"]
 			}
+		},
+		onShow(){
 			this.fetchSelected();
 			this.fetchSignStatistic();
 		}

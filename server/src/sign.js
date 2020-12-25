@@ -8,7 +8,7 @@ const  { timeContinusData } = require("../utils/util")
 const signApi = {
   addSign: async function (signData) {
     try {
-      let signDate = dayjs(new Date()).format("YYYY-MM-DD");
+      let signDate = dayjs(signData.signTime).format("YYYY-MM-DD");
       const isSigned = await this.checkIsSigned(signData.taskId, signData.signer, signDate);
       if(isSigned){
         return '你今天已完成打卡!'
@@ -63,7 +63,7 @@ const signApi = {
       const res = await sequelize.models.Sign.findAll({
         where: queryObj,
         order: [
-          ['createTime', 'DESC'],
+          ['signTime', 'DESC'],
         ]
       });
       const signs = JSON.parse(JSON.stringify(res, null, 2));

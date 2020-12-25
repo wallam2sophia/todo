@@ -48,12 +48,7 @@ const taskApi = {
   // 新增任务
   addTask: async function (taskData) {
     try {
-      let today = dayjs(dayjs(new Date()).format("YYYY-MM-DD"));
-      let beginDate = dayjs(taskData.beginTime);
-      let endDate = dayjs(taskData.endTime);
-      today.isBefore(beginDate) && (taskData.status = 'todo');
-      today.isSameOrAfter(beginDate) && today.isBefore(endDate) && (taskData.status = 'doing');
-      today.isAfter(endDate) && (taskData.status = 'done');
+      taskData.status = checkTaskStatus(taskData.beginTime, taskData.endTime)
       await sequelize.models.Task.create(taskData);
       return {
         code: 100,
@@ -146,9 +141,23 @@ const taskApi = {
       };
       
     }
-  }
+  },
 }
-
+// 内部使用方法
+const checkTaskStatus = function(beginTime, endTime){
+  let today = dayjs(dayjs(new Date()).format("YYYY-MM-DD"));
+  let beginDate = dayjs(beginTime);
+  let endDate = dayjs(endTime);
+  if(today.isBefore(beginDate)){
+    return 'todo'
+  }else if(today.isSameOrAfter(beginDate) && today.isBefore(endDate)){
+    return 'doing'
+  }else if(today.isAfter(endDate)){
+    return 'done'
+  }
+  return 'todo'
+}
 module.exports = {
-  taskApi
+  taskApi,
+  checkTaskStatus
 }

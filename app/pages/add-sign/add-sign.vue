@@ -56,6 +56,7 @@
 		data() {
 			return {
 				taskId: "",
+				signDate: "",
 				form: {
 					text: "",
 					media: [],
@@ -96,7 +97,7 @@
 					taskId: this.taskId,
 					signer: this.userInfo.nickName,
 					avatarUrl: this.userInfo.avatarUrl,
-					signTime: new Date().getTime(),
+					signTime: this.signDate,
 					...this.form
 				}
 				console.log(sendData)
@@ -131,6 +132,7 @@
 		},
 		onLoad(options){
 			this.taskId = options.taskId;
+			this.signDate = options.signDate || new Date().getTime()
 		},
 	}
 </script>

@@ -52,10 +52,6 @@
 				]
 			}
 		},
-		onShow(){
-			this.status = "doing"
-			this.fetchTaskList();
-		},
 		onShareAppMessage(res) {
 		    if (res.from === 'button') {// 来自页面内分享按钮
 		      console.log(res.target)
@@ -87,7 +83,11 @@
 					url: "../task-detail/task-detail?taskId=" + id
 				})
 			}
-		}
+		},
+		onShow(){
+			this.status = "doing"
+			this.fetchTaskList();
+		},
 	}
 </script>
 
