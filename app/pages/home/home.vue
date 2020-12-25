@@ -1,5 +1,11 @@
 <template>
 	<view class="app" v-if='!isAuthed'>
+		<view class="title">
+			打卡了吧 欢迎您 :)
+		</view>
+		<view class="info">
+			满足各种打卡场景
+		</view>
 		<van-button type="primary" block @getuserinfo="handleAuth" custom-class="submit-btn" open-type="getUserInfo">点击授权</van-button>
 	</view>
 </template>
@@ -16,6 +22,8 @@
 				this.isAuthed  =true;
 				console.log('go index,,,,')
 				this.goIndex()
+			}else {
+				this. isAuthed = false
 			}
 		},
 		methods: {

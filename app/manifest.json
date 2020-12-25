@@ -62,7 +62,12 @@
             "urlCheck" : false,
             "minified" : true
         },
-        "usingComponents" : true
+        "usingComponents" : true,
+        "permission" : {
+            "scope.userLocation" : {
+                "desc" : "需要获取用户的地理位置以支持打卡时描述地理位置"
+            }
+        }
     },
     "mp-alipay" : {
         "usingComponents" : true

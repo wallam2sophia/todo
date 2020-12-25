@@ -85,6 +85,9 @@
 								latitude: res.latitude,
 								longitude: res.longitude
 							}
+					},
+					fail(error){
+						console.log(error)
 					}
 				})
 			},

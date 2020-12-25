@@ -14,7 +14,7 @@
 		<van-popup :show="endShow" position="bottom" round @cloce="endShow=false">
 			<van-datetime-picker type="date" :value="currentEnd" :min-date="minEnd" @input="onInput"  @cancel="endShow=false" @confirm="setEndCurrent"/>
 		</van-popup>
-		<view  class="my-btn primary-btn submit-btn" @click="submitForm">点击打卡</view>
+		<view  class="my-btn primary-btn submit-btn" @click="submitForm">创建打卡</view>
 	</view>
 </template>
 

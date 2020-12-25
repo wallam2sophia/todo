@@ -76,7 +76,7 @@
 .log-lists {
 	font-size: 26rpx;
 	.log-item {
-		padding: 15px 10px 0 10px;
+		padding: 15px 10px;
 		.log-row {
 			display: flex;
 			align-items: center;
