@@ -29,6 +29,16 @@
 		methods: {
 			handleAuth(res){
 				console.log(res);
+				if(res.detail.errMsg !== 'getUserInfo:ok'){
+					uni.showToast({
+						title: '授权失败'
+					})
+					this. isAuthed = false
+					return false;
+				}
+				uni.showToast({
+					title: '授权成功'
+				})
 				this.isAuthed = true;
 				uni.setStorageSync('userInfo', res.detail.userInfo);
 				console.log('go index,,,,')

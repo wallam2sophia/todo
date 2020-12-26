@@ -36,6 +36,7 @@
 				this.$emit("close")
 			},
 			onSubmit(){
+				console.log(this.userInfo.nickName)
 				let sendData = {
 					id: this.taskInfo.id,
 					members: [...this.taskInfo.members, this.userInfo.nickName]
