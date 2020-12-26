@@ -48,7 +48,7 @@ const taskApi = {
   // 新增任务
   addTask: async function (taskData) {
     try {
-      LOG(JSON.stringify(taskData))
+      LOG.info(JSON.stringify(taskData))
       taskData.status = checkTaskStatus(taskData.beginTime, taskData.endTime)
       await sequelize.models.Task.create(taskData);
       return {
@@ -67,7 +67,7 @@ const taskApi = {
   // 修改任务
   editTask: async function (taskData) {
     try {
-      LOG(JSON.stringify(taskData))
+      LOG.info(JSON.stringify(taskData))
       await sequelize.models.Task.update(taskData, { where: { id: taskData.id } });
       return {
         code: 100,
