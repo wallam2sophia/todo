@@ -36,9 +36,6 @@
 					this. isAuthed = false
 					return false;
 				}
-				uni.showToast({
-					title: '授权成功'
-				})
 				this.isAuthed = true;
 				uni.setStorageSync('userInfo', res.detail.userInfo);
 				console.log('go index,,,,')

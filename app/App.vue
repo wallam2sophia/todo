@@ -91,4 +91,21 @@
 		display: flex;
 		align-items: center;
 	}
+	.van-swipe-cell__right {
+		background-color: #ee0a24;
+		color: #fff;
+		display: inline-block;
+		width: 65px;
+		font-size: 14px;
+		text-align: center;
+
+	}
+	.van-swipe-cell__left {
+		background-color: #0081ff;
+		color: #fff;
+		display: inline-block;
+		width: 65px;
+		font-size: 14px;
+		text-align: center;
+	}
 </style>

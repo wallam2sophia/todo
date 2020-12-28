@@ -1,49 +1,69 @@
 <template>
 	<view class="task-lists">
-		<view class="task-card card-item" v-for="item in list" :key="item.id" @click="goDetail(item.id)">
-			<!-- <view class="task-status" :class="item.status ? 'finish-status' : 'unfinish-status'">
-				{{item.status ? '已打卡' : '未打卡'}}
-			</view> -->
-			<view class="task-img">
-				<image :src="SERVER_URL + item.bgImg" mode="aspectFit"></image>
-				<view class="member-mask">
-					{{item.members.length || 0}}人参与
-				</view>
-			</view>
-			<view class="task-info">
-				<view class="task-row title">
-					<text>{{item.title}}</text>
-				</view>
-				<view class="task-row van-ellipsis desc">
-					<text>{{item.desc}}</text>
-				</view>
-				<view class="task-row">
-					<van-icon name="manager-o" custom-class="icon" />
-					<text>{{item.creator}}</text>
-				</view>
-				<view class="task-row">
-					<van-icon name="clock-o" custom-class="icon" />
-					<text>{{item.beginTime}} 至 {{item.endTime}}</text>
-				</view>
-				<view v-if="item.status==='doing'">
-					<view class="my-btn primary-btn btn-pos" v-if="!item.isSigned" @click.stop="signIn(item.id)">
-						打卡
-					</view>
-					<view class="my-btn info-btn disabled-btn btn-pos" v-else @click.stop="">
-						已打卡
-					</view>
-				</view>
+		
+		<view v-for="item in list" :key="item.id">
+			<van-swipe-cell :right-width="65" :left-width="65" async-close :name="item.id" @close="onClose">
+			 <view slot="left">
+				 <view class="swipe-icon">
+				 	修改
+				 </view>
+			 </view>
+			  <view class="task-card card-item" @click="goDetail(item.id)">
+			  	<!-- <view class="task-status" :class="item.status ? 'finish-status' : 'unfinish-status'">
+			  		{{item.status ? '已打卡' : '未打卡'}}
+			  	</view> -->
+			  	<view class="task-img">
+			  		<image :src="SERVER_URL + item.bgImg" mode="aspectFit"></image>
+			  		<view class="member-mask">
+			  			{{item.members.length || 0}}人参与
+			  		</view>
+			  	</view>
+			  	<view class="task-info">
+			  		<view class="task-row title">
+			  			<text>{{item.title}}</text>
+			  		</view>
+			  		<view class="task-row van-ellipsis desc">
+			  			<text>{{item.desc}}</text>
+			  		</view>
+			  		<view class="task-row">
+			  			<van-icon name="manager-o" custom-class="icon" />
+			  			<text>{{item.creator}}</text>
+			  		</view>
+			  		<view class="task-row">
+			  			<van-icon name="clock-o" custom-class="icon" />
+			  			<text>{{item.beginTime}} 至 {{item.endTime}}</text>
+			  		</view>
+			  		<view v-if="item.status==='doing'">
+			  			<view class="my-btn primary-btn btn-pos" v-if="!item.isSigned" @click.stop="signIn(item.id)">
+			  				打卡
+			  			</view>
+			  			<view class="my-btn info-btn disabled-btn btn-pos" v-else @click.stop="">
+			  				已打卡
+			  			</view>
+			  		</view>
+			  		
+			  	</view>
 				
-			</view>
+			  </view>
+			 <view slot="right">
+				 <view class="swipe-icon">
+				 	删除
+				 </view>
+			 </view>
+			</van-swipe-cell>
+			
 		</view>
 		<!-- 在页面内添加对应的节点 -->
-		<van-notify id="van-notify" />
+		<van-notify id="detail-notify"/>
+		<van-dialog id="del-dialog" />
 	</view>
 </template>
 
 <script>
 	import signApi from "../utils/service/sign.js"
-	
+	import taskApi from "../utils/service/task.js"
+	import Dialog from '../wxcomponents/vant-weapp/dialog/dialog';
+
 	export default {
 		props: {
 			list:{
@@ -60,6 +80,63 @@
 			this.userInfo = uni.getStorageSync('userInfo');
 		},
 		methods: {
+			onClose(event){
+				const { position, instance, name } = event.detail;
+				console.log(position, instance, name)
+				    switch (position) {
+				      case 'left':
+					    this.handleEdit(name)
+				      case 'cell':
+				        instance.close();
+				        break;
+				      case 'right':
+				        Dialog.confirm({
+						  context: this,
+						  selector: '#del-dialog',
+				          message: '确定删除该任务吗？',
+				        }).then(() => {
+						  this.handleDelete(name).then(res=>{
+							  instance.close();
+							  this.$emit("refresh")
+						  }).catch(err=>{
+							  instance.close();
+						  })
+				        })
+				        break;
+				    }
+			},
+			async handleDelete(id){
+				try {
+					const res = await taskApi.deleteTask(id)
+					if(res.code !== 100){
+						this.notify({
+							context: this,
+							text: "删除失败!",
+							type: "danger",
+							selector: "#detail-notify"
+						})
+						return false
+					}
+					this.notify({
+						context: this,
+						text: "删除成功!",
+						selector: "#detail-notify"
+					})
+					return true
+				}catch(error){
+					this.notify({
+						context: this,
+						text: "删除失败!",
+						type: "danger",
+						selector: "#detail-notify"
+					})
+					return false
+				}
+				
+			},
+			handleEdit(data){
+				console.log(data)
+			},
 			goDetail(id){
 				this.$emit('task-click', id)
 			},
@@ -174,6 +251,12 @@
 			right: -10rpx;
 			bottom: 60rpx;
 			padding: 10rpx 28rpx;
+		}
+		.swipe-icon {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
 		}
 	}
 </style>

@@ -181,7 +181,7 @@
 			onJoinSubmit(){
 				this.fetchTaskInfo();
 				this.joinPopShow = false;
-			},
+			}
 		},
 		onLoad(options){
 			this.taskId = options.taskId;
@@ -189,7 +189,11 @@
 		onShow(){
 			this.fetchTaskInfo();
 			this.fetchSignLogs();
-		}
+		},
+		onShareAppMessage(options){
+			console.log(options)
+			
+		},
 	}
 </script>
 

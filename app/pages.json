@@ -102,7 +102,9 @@
 			"van-index-bar": "./wxcomponents/vant-weapp/index-bar/index",
 			"van-index-anchor": "./wxcomponents/vant-weapp/index-anchor/index",
 			"van-calendar": "./wxcomponents/vant-weapp/calendar/index",
-			"van-uploader": "./wxcomponents/vant-weapp/uploader/index"
+			"van-uploader": "./wxcomponents/vant-weapp/uploader/index",
+			"van-swipe-cell": "./wxcomponents/vant-weapp/swipe-cell/index",
+			"van-dialog": "./wxcomponents/vant-weapp/dialog/index"
 		}
 	},
 	"tabBar": {

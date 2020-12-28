@@ -82,6 +82,23 @@ const taskApi = {
     }
 
   },
+  // 删除任务
+  deleteTask: async function (taskId) {
+    try {
+      await sequelize.models.Task.destroy({ where: { id: taskId } });
+      return {
+        code: 100,
+        data: '删除成功'
+      };
+    } catch (error) {
+      console.log(error)
+      return {
+        code: 101,
+        data: '删除失败'
+      };
+    }
+
+  },
   listTask: async function (params) {
     try {
       let queryObj = {

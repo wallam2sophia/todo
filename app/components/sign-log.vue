@@ -15,10 +15,10 @@
 						</view>
 					</view>
 				</view>
-				<view class="log-row desc">
+				<view class="log-row desc" v-if="item.text">
 					<text>{{item.text}}</text>
 				</view>
-				<view class="log-row media-box flex-row">
+				<view class="log-row media-box flex-row"  v-if="item.media.length > 0">>
 					<view class="media-item" v-for="(item1,index) in item.media" :key="index">
 						<image :src="item1" mode="aspectFit"></image>
 					</view>

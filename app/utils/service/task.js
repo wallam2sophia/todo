@@ -35,6 +35,17 @@ export default {
 			})
 		})
 	},
+	// 删除任务
+	deleteTask(id){
+		return new Promise((resolve, reject) => {
+			let url = "api/delete/task/"+ id
+			getJSON(url).then(res=>{
+				resolve(res)
+			}).catch(error => {
+				reject(error)
+			})
+		})
+	},
 	// 查询任务列表
 	listTask(data){
 		return new Promise((resolve, reject) => {
