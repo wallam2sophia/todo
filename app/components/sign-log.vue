@@ -1,7 +1,7 @@
 <template>
 	<view class="log-lists">
-		<view v-if="list.length > 0">
-			<view class="log-item" v-for="item in list" :key="item.id"  >
+		<view v-if="signList.length > 0">
+			<view class="log-item" v-for="(item, index) in signList" :key="item.id"  >
 				<view class="log-row base">
 					<view class="avatar">
 						<image :src="item.avatarUrl" mode="aspectFit"></image>
@@ -18,7 +18,7 @@
 				<view class="log-row desc" v-if="item.text">
 					<text>{{item.text}}</text>
 				</view>
-				<view class="log-row media-box flex-row"  v-if="item.media.length > 0">>
+				<view class="log-row media-box flex-row"  v-if="item.media.length > 0">
 					<view class="media-item" v-for="(item1,index) in item.media" :key="index">
 						<image :src="item1" mode="aspectFit"></image>
 					</view>
@@ -27,8 +27,8 @@
 					<van-icon name="location" custom-class="icon"/>
 					<text class="text">{{item.location.name}}</text>
 				</view>
-				<view class="log-row action">
-					<view class="comment action-item">
+				<view class="log-row action" v-if="taskStatus !== 'done'">
+					<view class="comment action-item" @click="openComment(item)" :class="{'disabled-icon': item.inputShow}">
 						<van-icon name="comment-o" custom-class="icon" />
 						<text>评论</text>
 					</view>
@@ -36,14 +36,15 @@
 						<van-icon name="share-o" custom-class="icon" />
 						<text>分享</text>
 					</view>
-					<view class="detail action-item">
+					<!-- <view class="detail action-item">
 						<van-icon name="description" custom-class="icon"/>
 						<text>详情</text>
-					</view>
-					<view class="like action-item">
-						<van-icon name="good-job-o" custom-class="icon" />
+					</view> -->
+					<view class="like action-item" @click="addLike(item, index)" :class="{'is-liked': item.isLiked}">
+						<van-icon name="like" custom-class="icon" />
 					</view>
 				</view>
+				<signComment :taskId="taskId" :signInfo="item" class="sign-comment" @closeInput="closeInput(item)" @ilike="handleLike" ref="signComment"></signComment>
 			</view>
 		</view>
 		<view class="empty-box" v-else>
@@ -54,20 +55,66 @@
 
 <script>
 	import signApi from "../utils/service/sign.js"
-	
+	import commentApi from "../utils/service/comment.js"
+	import likeApi from "../utils/service/like.js"
+	import signComment from "./sign-comment.vue"
 	export default {
-		props: ["list"],
+		props: ["taskId", "taskStatus", "list"],
+		components:{ signComment },
 		data() {
 			return {
+				signList: [],
+				commentList:[]
 			};
 		},
 		computed:{
 		},
 		watch:{
+			list: {
+				deep: true,
+				handler(val, oldVal){
+					this.signList = this.list.map(item=>{
+						return Object.assign({}, item, {inputShow: false})
+					})
+					console.log(this.signList)
+				}
+			}
 		},
 		mounted(){
 		},
 		methods: {
+			openComment(data){
+				if(data.inputShow) return;
+				data.inputShow = true;
+			},
+			closeInput(data){
+				data.inputShow = false;
+			},
+			handleLike(signId, value, likeId){
+				this.signList.forEach(item=>{
+					if(item.id == signId){
+						this.$set(item, 'isLiked', value)
+						this.$set(item, 'likeId', likeId)
+					}
+				})
+			},
+			addLike(data, index){
+				if(data.isLiked){
+					likeApi.deleteLike(data.likeId).then(res=>{
+						this.$refs.signComment[index].fetchLikes();
+					})
+				}else {
+					let sendData = {
+						signId: data.id,
+						taskId: this.taskId,
+						author: this.userInfo.nickName,
+					}
+					likeApi.addLike(sendData).then(res=>{
+						this.$refs.signComment[index].fetchLikes();
+					})
+				}
+				
+			}
 		}
 	}
 </script>
@@ -76,7 +123,7 @@
 .log-lists {
 	font-size: 26rpx;
 	.log-item {
-		padding: 15px 10px;
+		padding: 15px 10px 0;
 		.log-row {
 			display: flex;
 			align-items: center;
@@ -159,6 +206,7 @@
 				display: flex;
 				align-items: center;
 				margin-right: 5px;
+				cursor: pointer;
 				
 				:first-child {
 					margin-right: 2px;
@@ -178,6 +226,12 @@
 	}
 	.empty-box {
 		
+	}
+	.sign-comment {
+		width: 100%;
+	}
+	.is-liked {
+		color: $minor-icon-color;
 	}
 	
 }

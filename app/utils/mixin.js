@@ -11,6 +11,9 @@ export default {
 	onLoad(options){
 		this.userInfo = uni.getStorageSync('userInfo');
 	},
+	mounted(){
+		this.userInfo = uni.getStorageSync('userInfo');
+	},
 	methods:{
 		notify({context, text, type="success", selector="#van-notify", duration=2000}=options){
 			Notify({

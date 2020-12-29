@@ -45,6 +45,8 @@
 		</view>
 
 		<view  class="my-btn primary-btn sign-btn" @click="signIn()">确定发布打卡</view>
+		<!-- 在页面内添加对应的节点 -->
+		<van-notify id="sign-notify"/>
 	</view>
 </template>
 
@@ -106,16 +108,20 @@
 				console.log(sendData)
 				signApi.addSign(sendData).then(res => {
 					// 成功通知
-					uni.showToast({
-						icon: 'success',
-					    title: res.data,
-					    duration: 2000
+					this.notify({ 
+						context: this,
+						text: "打卡成功!",
+						type: "sucess",
+						selector: "#sign-notify"
 					});
 					uni.navigateBack()
 				}).catch(error=>{
-					uni.showToast({
-					    title: error.data,
-					    duration: 2000
+					// 失败通知
+					this.notify({ 
+						context: this,
+						text: error.data,
+						type: "danger",
+						selector: "#sign-notify"
 					});
 				})
 			},

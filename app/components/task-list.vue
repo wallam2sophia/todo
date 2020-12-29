@@ -8,7 +8,7 @@
 				 	修改
 				 </view>
 			 </view>
-			  <view class="task-card card-item" @click="goDetail(item.id)">
+			  <view class="task-card card-item" @click="goDetail(item.id, item.status)">
 			  	<!-- <view class="task-status" :class="item.status ? 'finish-status' : 'unfinish-status'">
 			  		{{item.status ? '已打卡' : '未打卡'}}
 			  	</view> -->
@@ -137,8 +137,8 @@
 			handleEdit(data){
 				console.log(data)
 			},
-			goDetail(id){
-				this.$emit('task-click', id)
+			goDetail(id, status){
+				this.$emit('task-click', id, status)
 			},
 			signIn(taskId){
 				let sendData = {
@@ -149,8 +149,21 @@
 				}
 				signApi.addSign(sendData).then(res => {
 					// 成功通知
-					this.Notify({ type: 'success', message: res.msg });
+					this.notify({ 
+						context: this,
+						text: "打卡成功!",
+						type: "sucess",
+						selector: "#detail-notify"
+					});
 					this.$emit("refresh")
+				}).catch(error=>{
+					// 失败通知
+					this.notify({ 
+						context: this,
+						text: error.data,
+						type: "danger",
+						selector: "#detail-notify"
+					});
 				})
 			},
 		}

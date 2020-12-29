@@ -8,11 +8,32 @@ const { timeContinusData } = require("../utils/util")
 const signApi = {
   addSign: async function (signData) {
     try {
-      LOG.info(JSON.stringify(signData))
+      // LOG.info(JSON.stringify(signData))
       let signDate = dayjs(signData.signTime).format("YYYY-MM-DD");
       const isSigned = await this.checkIsSigned(signData.taskId, signData.signer, signDate);
       if (isSigned) {
-        return '你今天已完成打卡!'
+        return {
+          code: 101,
+          data: '你今天已完成打卡!'
+        };
+      }
+      
+      const res = await sequelize.models.Task.findByPk(signData.taskId);
+      const taskData = JSON.parse(JSON.stringify(res, null, 2));
+      console.log('taskData', taskData)
+      let beginDate = dayjs(taskData.beginTime)
+      let endDate = dayjs(taskData.endTime)
+      if(dayjs(signDate).isBefore(beginDate)){
+        return {
+          code: 101,
+          data: '打卡任务还未开始!'
+        };
+      }
+      if(dayjs(signDate).isAfter(endDate)){
+        return {
+          code: 101,
+          data: '打卡任务已结束!'
+        };
       }
       signData.signTime = dayjs(signData.signTime).format("YYYY-MM-DD HH:mm:ss");
       await sequelize.models.Sign.create(signData);
@@ -22,7 +43,7 @@ const signApi = {
       };
     } catch (error) {
       console.log(error)
-      LOG.error(JSON.stringify(error))
+      // LOG.error(JSON.stringify(error))
       return {
         code: 101,
         data: "打卡失败"
@@ -69,7 +90,7 @@ const signApi = {
         ]
       });
       const signs = JSON.parse(JSON.stringify(res, null, 2));
-      LOG.info(JSON.stringify(signs))
+      // LOG.info(JSON.stringify(signs))
       return {
         code: 100,
         data: signs

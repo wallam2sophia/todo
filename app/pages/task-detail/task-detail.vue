@@ -63,10 +63,16 @@
 				</view>
 			</van-button>
 		</view>
-		<view class="oper-bar" v-if="taskInfo.members">
-			<view  class="my-btn primary-btn" v-if="taskInfo.members.includes(userInfo.nickName) && !taskInfo.isSigned" @click="signIn">点击打卡</view>
-			<view class="my-btn success-btn disabled-btn" v-else-if="taskInfo.members.includes(userInfo.nickName) && taskInfo.isSigned">今日打卡已完成</view>
-			<view class="my-btn warning-btn" @click="joinPopShow=true" v-else>参与打卡</view>
+		<view class="oper-bar">
+			<view v-if="taskInfo.members">
+				<view v-if="taskInfo.members.includes(userInfo.nickName)">
+					<view  class="my-btn warning-btn disabled-btn" v-if="taskInfo.status === 'done'">打卡已结束</view>
+					<view  class="my-btn info-btn disabled-btn" v-else-if="taskInfo.status === 'todo'">打卡未开始</view>
+					<view  class="my-btn primary-btn" v-else-if="taskInfo.status === 'doing' && !taskInfo.isSigned" @click="signIn">点击打卡</view>
+					<view class="my-btn success-btn disabled-btn" v-else>今日打卡已完成</view>
+				</view>
+				<view class="my-btn warning-btn" @click="joinPopShow=true" v-else>参与打卡</view>
+			</view>
 		</view>
 		<view class="ds-beetw card-box">
 			<view class="user">
@@ -89,7 +95,7 @@
 			<text class="tag" @click="dateShow=true" :class="{'active-tag': signTab==='custom'}" v-show="signTab === 'custom' && !!signDate">{{signDate}}</text>
 		</view>
 		<view class="asign-logs">
-			<signLog :list="signLogs"></signLog>
+			<signLog :list="signLogs" :taskId="taskId" :taskStatus="taskStatus"></signLog>
 		</view>
 		<van-popup :show="joinPopShow" @close="joinPopShow=false" custom-class="join-task-popup">
 			<joinTaskPop :taskInfo="taskInfo" @close="joinPopShow=false" @submit="onJoinSubmit"></joinTaskPop>
@@ -115,6 +121,7 @@
 				minDate: "",
 				maxDate: "",
 				taskId: "",
+				taskStatus: "",
 				signDate: "",
 				signTab: "all",
 				taskInfo: {},
@@ -160,12 +167,12 @@
 			},
 			addMember(){
 				uni.navigateTo({
-					url: "../task-member/task-member?members=" + JSON.stringify(this.taskInfo.members) + "&creator=" + this.taskInfo.creator + "&taskTitle=" + this.taskInfo.title
+					url: `../task-member/task-member?taskId=${this.taskInfo.id}&members=${JSON.stringify(this.taskInfo.members)}&creator=${this.taskInfo.creator}&taskTitle=${this.taskInfo.title}`
 				})
 			},
 			goRecord(){
 				uni.navigateTo({
-					url: `../my-logs/my-logs?taskId=${this.taskInfo.id}&beginTime=${this.taskInfo.beginTime}&endTime=${this.taskInfo.endTime}&isSigned=${this.taskInfo.isSigned}`
+					url: `../my-logs/my-logs?taskId=${this.taskInfo.id}&beginTime=${this.taskInfo.beginTime}&endTime=${this.taskInfo.endTime}&isSigned=${this.taskInfo.isSigned}&taskStatus=${this.taskInfo.status}`
 				})
 			},
 			goRank(){
@@ -185,6 +192,7 @@
 		},
 		onLoad(options){
 			this.taskId = options.taskId;
+			this.taskStatus = options.taskStatus;
 		},
 		onShow(){
 			this.fetchTaskInfo();
@@ -192,7 +200,16 @@
 		},
 		onShareAppMessage(options){
 			console.log(options)
-			
+			return {
+				title: `${this.userInfo.nickName}邀请您一起参与【${this.taskInfo.title}】打卡任务!`,
+				path: `/pages/task-detail/task-detail?taskId=${this.taskInfo.id}`,
+				success: function(){
+					console.log('share success')
+				},
+				fail: function(error){
+					console.log('share fail:', error)
+				},
+			}
 		},
 	}
 </script>

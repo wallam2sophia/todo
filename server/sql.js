@@ -1,6 +1,8 @@
 const { Sequelize } = require('sequelize');
 const { task } = require("./models/task");
 const { sign } = require("./models/sign");
+const { comment } = require("./models/comment");
+const { like } = require("./models/like");
 // 连接数据库
 const sequelize = new Sequelize('todo', 'root', '123456', {
   host: '116.62.165.189',
@@ -14,6 +16,8 @@ const connect = async function () {
     //创建数据表
     task(sequelize);
     sign(sequelize);
+    comment(sequelize);
+    like(sequelize);
     // await sequelize.sync({ alter: true });
     console.log("数据库模型同步成功.");
   } catch (error) {

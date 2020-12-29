@@ -108,4 +108,8 @@
 		font-size: 14px;
 		text-align: center;
 	}
+	.disabled-icon {
+		cursor: not-allowed;
+		opacity: 0.5;
+	}
 </style>

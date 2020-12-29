@@ -5,14 +5,14 @@
 			<text class="nickname">{{userInfo.nickName}}</text>
 		</view>
 		<view class="my-news">
-			<!-- <van-divider contentPosition="center" customStyle="color: #e54d42;font-size: 14px;">我的消息</van-divider> -->
 			<van-notice-bar left-icon="music-o" text="笨笨刚刚签到了一起跳绳吧lalalallalalalalalalalalalalaallala" scrollable custom-class="news-item" />
 		</view>
 		<view class="my-tasks">
+			<!-- <van-loading type="spinner" color="#1989fa" v-show="loading"/> -->
 			<van-tabs :active="status" :border="false" @change="changeStatus" line-height="2" animated swipeable lazy-render sticky color="#ff5722">
 				<van-tab :title="item.title" :name="item.name" v-for="(item, index) in taskStatus" :key="index">
-					<taskList :list="taskLists" @task-click="goDetail" @refresh="fetchTaskList" v-if="taskLists.length > 0"></taskList>
-					<van-empty description="暂无数据" v-else/>
+					<taskList :list="taskLists" @task-click="goDetail" @refresh="fetchTaskList" v-if="!loading && taskLists.length > 0"></taskList>
+					<van-empty description="暂无数据" v-else-if="!loading && taskLists.length === 0"/>
 				</van-tab>
 			</van-tabs>
 		</view>
@@ -30,13 +30,10 @@
 		},
 		data() {
 			return {
+				loading: false,
 				taskLists: [],
-				status: "",
+				status: "doing",
 				taskStatus: [
-					{
-						name: 'all',
-						title: '全部'
-					},
 					{
 						name: 'doing',
 						title: '进行中'
@@ -49,18 +46,12 @@
 						name: 'done',
 						title: '已结束'
 					},
+					{
+						name: 'all',
+						title: '全部'
+					},
 				]
 			}
-		},
-		onShareAppMessage(res) {
-		    if (res.from === 'button') {// 来自页面内分享按钮
-		      console.log(res.target)
-		    }
-		    return {
-		      title: '打卡吧',
-		      path: '/pages/test/test?id=123',
-			  imageUrl: '../../static/logo.png'
-		    }
 		},
 		methods: {
 			fetchTaskList(){
@@ -77,15 +68,14 @@
 					url: "../add-task/add-task"
 				})
 			},
-			goDetail(id){
+			goDetail(id, taskStatus){
 				console.log("goDetail...")
 				uni.navigateTo({
-					url: "../task-detail/task-detail?taskId=" + id
+					url: `../task-detail/task-detail?taskId=${id}&taskStatus=${taskStatus}`
 				})
 			}
 		},
 		onShow(){
-			this.status = "doing"
 			this.fetchTaskList();
 		},
 	}

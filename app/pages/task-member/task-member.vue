@@ -2,7 +2,7 @@
 	<view class="task-member">
 		<van-search :value="searchName" placeholder="请输入你要搜索的名字" @change="e=>searchName=e.detail"/>
 		<view class="oper-bar" v-if="creator === userInfo.nickName">
-			<van-button custom-class="bar-btn" open-type="share" @click="inviteMember">
+			<van-button custom-class="bar-btn" open-type="share">
 				<view class="btn-slot">
 					<van-icon name="manager" custom-class="icon"></van-icon>
 					<text class='title'>邀请新人</text>
@@ -45,6 +45,7 @@
 				active: "",
 				curIndex: "B",
 				creator:'',
+				taskId: '',
 				taskTitle: '',
 				members: [],
 			}
@@ -52,23 +53,41 @@
 		methods: {
 			inviteMember(){
 				console.log('inviteMember')
-				uni.showShareMenu({ 
-					withShareTicket:false,
-					// title: `${this.creator}邀请您一起${this.taskTitle}`,
-					success(res){
-						console.log(res)
+				uni.share({
+					provider: 'weixin',
+					type: 0,
+					title: `${this.userInfo.nickName}邀请您一起参与【${this.taskTitle}】打卡任务!`,
+					scene: 'WXSceneSession',
+					href: `/pages/task-detail/task-detail?taskId=${this.taskId}`,
+					imageUrl: 'https://guoxiuqiong.top/imgs/default_task_bg/6.jpeg',
+					success: function(){
+						console.log('share success')
 					},
-					fail(error){
-						console.log(error)
-					}
-					});
+					fail: function(error){
+						console.log('share fail:', error)
+					},
+				})
 			}
 		},
 		onLoad(options){
 			this.members = pySegSort(JSON.parse(options.members));
+			this.taskId = options.taskId;
 			this.creator = options.creator;
 			this.taskTitle = options.taskTitle;
-		}
+		},
+		onShareAppMessage(options){
+			return {
+				title: `${this.userInfo.nickName}邀请您一起参与【${this.taskTitle}】打卡任务!`,
+				path: `/pages/task-detail/task-detail?taskId=${this.taskId}`,
+				imageUrl: 'https://guoxiuqiong.top/imgs/default_task_bg/6.jpeg',
+				success: function(){
+					console.log('share success')
+				},
+				fail: function(error){
+					console.log('share fail:', error)
+				},
+			}
+		},
 	}
 </script>
 

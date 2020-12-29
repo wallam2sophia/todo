@@ -51,13 +51,15 @@
 				:selected="selected"
 				@change="changeCalendar"
 			     ></uni-calendar>
-			 <view  class="my-btn short-btn" :class="btnClass" @click="signIn">{{btnText}}</view>
+			 <view  class="my-btn short-btn  info-btn disabled-btn" v-if="taskStatus==='todo'">打卡任务未开始</view>
+			 <view  class="my-btn short-btn  warning-btn disabled-btn" v-else-if="taskStatus==='done'">打卡任务已结束</view>
+			 <view  class="my-btn short-btn " :class="btnClass" @click="signIn" v-else>{{btnText}}</view>
 		</view>
 		<view class="sign-logs">
 			<view class="block-box">
 				<text class="title">打卡记录</text>
 			</view>
-			<signLog :list="signLogs"></signLog>
+			<signLog :list="signLogs"  :taskStatus="taskStatus" :taskId="taskId"></signLog>
 		</view>
 	</view>
 </template>
@@ -75,6 +77,7 @@
 				today: "",
 				selectDay: "",
 				taskId: "",
+				taskStatus: "",
 				btnText: "点击打卡",
 				btnClass: "primary-btn",
 				beginTime: "",
@@ -154,6 +157,7 @@
 		},
 		onLoad(options){
 			this.taskId = options.taskId;
+			this.taskStatus = options.taskStatus;
 			this.today = dayjs(dayjs(new Date()).format("YYYY-MM-DD"));
 			this.beginTime = options.beginTime;
 			this.endTime = options.endTime;

@@ -48,7 +48,7 @@ const taskApi = {
   // 新增任务
   addTask: async function (taskData) {
     try {
-      LOG.info(JSON.stringify(taskData))
+      // LOG.info(JSON.stringify(taskData))
       taskData.status = checkTaskStatus(taskData.beginTime, taskData.endTime)
       await sequelize.models.Task.create(taskData);
       return {
@@ -67,7 +67,7 @@ const taskApi = {
   // 修改任务
   editTask: async function (taskData) {
     try {
-      LOG.info(JSON.stringify(taskData))
+      // LOG.info(JSON.stringify(taskData))
       await sequelize.models.Task.update(taskData, { where: { id: taskData.id } });
       return {
         code: 100,
@@ -131,7 +131,7 @@ const taskApi = {
       };
     } catch (error) {
       console.log(error)
-      LOG.error(JSON.stringify(error))
+      // LOG.error(JSON.stringify(error))
       return {
         code: 101,
         data: "查询失败"
@@ -146,10 +146,17 @@ const taskApi = {
       let endDate = dayjs(taskData.endTime)
       let today = dayjs(new Date()).format("YYYY-MM-DD");
       let totalDays = endDate.diff(beginDate, 'day') + 1;
-      let finishDays = dayjs(today).diff(beginDate, 'day') + 1;
+      let finishDays;
+      if(taskData.status === 'todo'){
+        finishDays = 0
+      }else if(taskData.status === 'doing'){
+        finishDays = dayjs(today).diff(beginDate, 'day') + 1;
+      }else {
+        finishDays = totalDays
+      }
       const isSigned = await signApi.checkIsSigned(taskId, user, today);
       let result = { ...taskData, totalDays, finishDays, isSigned };
-      LOG.info(JSON.stringify(result))
+      // LOG.info(JSON.stringify(result))
       return {
         code: 100,
         data: result

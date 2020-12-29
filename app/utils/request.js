@@ -23,7 +23,7 @@ const request = (url, method="GET", data={}, )=>{
 	})
 }
 
-export const getJSON = (url, data={}) => {
+export const getJSON = (url, data = {}) => {
 	return request(url, "GET", data)
 }
 
