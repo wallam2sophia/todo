@@ -1,6 +1,6 @@
 <template>
 	<view class="add-task">
-		<image :src="SERVER_URL + formData.bgImg"/>
+		<image :src="bgUrl"/>
 		<view class="my-btn warning-btn change-bg-btn" @click="changeBgImg">更换背景图</view>
 		<van-field :value="formData.title" placeholder="请填写打卡标题" @input="(e)=>formData.title=e.detail"/>
 		<van-field :value="formData.desc" placeholder="请填写备注" @input="(e)=>formData.desc=e.detail"/>
@@ -15,12 +15,15 @@
 			<van-datetime-picker type="date" :value="currentEnd" :min-date="minEnd" @input="onInput"  @cancel="endShow=false" @confirm="setEndCurrent"/>
 		</van-popup>
 		<view  class="my-btn primary-btn submit-btn" @click="submitForm">创建打卡</view>
+		<!-- 在页面内添加对应的节点 -->
+		<van-notify id="task-notify"/>
 	</view>
 </template>
 
 <script>
 	import uniCombox from "../../components/uni-combox/uni-combox"
 	import taskApi from "../../utils/service/task.js"
+	import { chooseFileUpload } from "../../utils/util.js"
 	import dayjs from 'dayjs';
 	import isSameOrAfter from'dayjs/plugin/isSameOrAfter';
 	dayjs.extend(isSameOrAfter)
@@ -68,59 +71,70 @@
 			})
 			// this.currentDate = dayjs(new Date()).format("YYYY-MM-DD")
 		},
+		computed:{
+			bgUrl(){
+				return this.formData.bgImg.startsWith('https://') ? this.formData.bgImg : this.SERVER_URL + this.formData.bgImg
+			}
+		},
 		methods: {
 			submitForm() {
-				console.log(this.userInfo)
 				let sendData = Object.assign({}, this.formData, {creator: this.userInfo.nickName, members: [this.userInfo.nickName]})
-				console.log(sendData)
 				taskApi.addTask(sendData).then(res => {
-					uni.showToast({
-						icon: 'success',
-					    title: res.data,
-					    duration: 2000
+					// 成功通知
+					this.notify({ 
+						context: this,
+						text: "创建成功!",
+						type: "success",
+						selector: "#task-notify",
 					});
 					uni.navigateBack()
 				}).catch(error=>{
-					uni.showToast({
-					    title: error.data,
-					    duration: 2000
+					// 失败通知
+					this.notify({ 
+						context: this,
+						text: error.data,
+						type: "danger",
+						selector: "#task-notify"
 					});
 				})
 			},
 			changeBgImg(){
 				let that = this;
-				uni.chooseImage({
-				    success: (chooseImageRes) => {
-				        const tempFilePaths = chooseImageRes.tempFilePaths;
-				        uni.uploadFile({
-							url: this.SERVER_URL + 'api/change/taskbg', // 仅为示例，非真实的接口地址
-							filePath: tempFilePaths[0],
-							name: 'file',
-							formData: {
-								taskId: this.taskId
-							},
-							success(res) {
-								console.log(res)
-								if(res.statusCode !== 200){
-									uni.showToast({
-									    title: "上传失败!",
-									    duration: 2000
-									});
-									return false
-								}
-								let data = JSON.parse(res.data)
-								if(data.code !== 100){
-									uni.showToast({
-									    title: "上传失败!",
-									    duration: 2000
-									});
-									return false
-								}
-								that.formData.bgImg = data.data;
-							},
-				        });
-				    }
-				});
+				chooseFileUpload().then(res=>{
+					that.formData.bgImg = res[0];
+				})
+				// uni.chooseImage({
+				//     success: (chooseImageRes) => {
+				//         const tempFilePaths = chooseImageRes.tempFilePaths;
+				//         uni.uploadFile({
+				// 			url: this.SERVER_URL + 'api/change/taskbg', // 仅为示例，非真实的接口地址
+				// 			filePath: tempFilePaths[0],
+				// 			name: 'file',
+				// 			formData: {
+				// 				taskId: this.taskId
+				// 			},
+				// 			success(res) {
+				// 				console.log(res)
+				// 				if(res.statusCode !== 200){
+				// 					uni.showToast({
+				// 					    title: "上传失败!",
+				// 					    duration: 2000
+				// 					});
+				// 					return false
+				// 				}
+				// 				let data = JSON.parse(res.data)
+				// 				if(data.code !== 100){
+				// 					uni.showToast({
+				// 					    title: "上传失败!",
+				// 					    duration: 2000
+				// 					});
+				// 					return false
+				// 				}
+				// 				that.formData.bgImg = data.data;
+				// 			},
+				//         });
+				//     }
+				// });
 				// uni.navigateTo({
 				// 	url:'../task-bg/task-bg'
 				// })

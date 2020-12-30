@@ -30,6 +30,7 @@
 		  @close="actionShow = false"
 		  @select="onSelect"
 		  cancel-text="取消"
+		  @cancel="actionShow = false"
 		/>
 	</view>
 </template>

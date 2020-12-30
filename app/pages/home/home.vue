@@ -35,9 +35,8 @@
 			}
 		},
 		onLoad() {
-			if(this.userInfo){
+			if(Object.keys(this.userInfo).length > 0){
 				this.isAuthed  =true;
-				console.log('go index,,,,')
 				this.goIndex()
 			}else {
 				this. isAuthed = false
@@ -55,7 +54,6 @@
 				}
 				this.isAuthed = true;
 				uni.setStorageSync('userInfo', res.detail.userInfo);
-				console.log('go index,,,,')
 				this.goIndex()
 			},
 			goIndex() {
@@ -77,7 +75,7 @@
 	z-index:-10;
 	zoom: 1;
 	background-color: #fff;
-	background: url(http://127.0.0.1:8090/imgs/home_bg4.png);
+	background: url(https://guoxiuqiong.top/imgs/home_bg4.png);
 	background-repeat: no-repeat;
 	background-size: cover;
 	background-position: center 0;

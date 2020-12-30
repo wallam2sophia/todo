@@ -111,7 +111,7 @@
 					this.notify({ 
 						context: this,
 						text: "打卡成功!",
-						type: "sucess",
+						type: "success",
 						selector: "#sign-notify"
 					});
 					uni.navigateBack()

@@ -13,7 +13,7 @@
 			  		{{statusMap[item.status]}}
 			  	</view> -->
 			  	<view class="task-img">
-			  		<image :src="SERVER_URL + item.bgImg" mode="aspectFit"></image>
+			  		<image :src="item.bgImg.startsWith('https://') ? item.bgImg : SERVER_URL + item.bgImg" mode="aspectFit"></image>
 			  		<view class="member-mask">
 			  			{{item.members.length || 0}}人参与
 			  		</view>

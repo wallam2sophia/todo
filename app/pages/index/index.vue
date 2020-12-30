@@ -40,7 +40,11 @@
 				</van-tab>
 			</van-tabs>
 		</view>
-		<image mode="aspectFit" :src="SERVER_URL+'imgs/add1.gif'" class="add-task" @click="addTask"></image>
+		<movable-area class="move-area">
+			<movable-view x="750rpx" y="1000rpx" direction="all" @change="onChange" class="move-view">
+				<image mode="aspectFit" :src="SERVER_URL+'imgs/add1.gif'" class="add-task" @click="addTask" :draggable="true" ></image>
+			</movable-view>
+		</movable-area>
 	</view>
 </template>
 
@@ -60,7 +64,6 @@
 				page: 1,
 				size: 5,
 				searchTask: "",
-				loading: false,
 				dataFinishShow: false,
 				taskLists: [],
 				status: "doing",
@@ -86,12 +89,16 @@
 			}
 		},
 		methods: {
+			onChange(){
+				// console.log("moving")
+			},
 			fetchMyGeneral(){
 				statisticApi.myGeneral({ user: this.userInfo.nickName }).then(res=>{
 					this.myGeneral = res.data;
 				})
 			},
 			fetchTaskList(){
+				this.startLoading();
 				let sendData = {
 					user: this.userInfo.nickName, 
 					status: this.status,
@@ -107,6 +114,9 @@
 						this.dataFinishShow = true;
 					}
 					this.taskLists = [...this.taskLists, ...list];
+					this.stopLoading();
+				}).catch(error=>{
+					this.stopLoading();
 				})
 			},
 			refreshTaskList(){
@@ -226,14 +236,13 @@
 		.add-task {
 			width: 150rpx;
 			height: 150rpx;
-			position: fixed;
-			bottom: 20rpx;
-			right: 20rpx;
-			z-index: 999;
+			// position: fixed;
+			// bottom: 20rpx;
+			// right: 20rpx;
 		}
 		
 		.uni-navbar {
-			background: url(http://127.0.0.1:8090/imgs/home_bg4.png);
+			background: url(https://guoxiuqiong.top/imgs/home_bg4.png);
 			background-repeat: no-repeat;
 			background-size: cover;
 			background-position: center 0;
@@ -243,5 +252,21 @@
 			background-color: rgba(0,0,0,0) !important;
 			color: #fff !important;
 		}
+	}
+	.move-area {
+		width: 100vw;
+		height: 100vh;
+		position: absolute;
+		top: 0;
+		left: 0;
+		pointer-events: none;//设置area元素不可点击，则事件便会下移至页面下层元素
+	}
+	.move-view {
+		pointer-events: auto;//可以点击
+		width: 150rpx;
+		height: 150rpx;
+		bottom: 20rpx;
+		right: 20rpx;
+		z-index: 999;
 	}
 </style>

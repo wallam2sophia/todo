@@ -62,9 +62,11 @@ const chooseFileUpload = function(count=9) {
 				tempFilePaths,
 				tempFiles
 			}) {
-				console.log(tempFilePaths, tempFiles);
+				console.log("tempFilePaths", tempFilePaths);
+				console.log("tempFiles", tempFiles);
 				const p = tempFilePaths.map(item=>uploadFile(item))
 				Promise.all(p).then(res=>{
+					console.log(res)
 					resolve(res)
 				}).catch(err=>{
 					reject([])
@@ -83,17 +85,17 @@ const uploadFile = function(file) {
 				if (e.success == true) {
 					resolve(e.fileID);
 				} else {
-					uni.showToast({
-						title: "上传文件失败",
-						icon: 'none'
+					uni.showModal({
+						title: "上传图片失败",
+						content: JSON.stringify(e) + file
 					})
 					reject(e)
 				}
 			},
 			fail(e) {
-				uni.showToast({
-					title: "上传文件失败",
-					icon: 'none'
+				uni.showModal({
+					title: "上传图片失败",
+					content: JSON.stringify(e) + file
 				})
 				reject(e)
 			}
@@ -104,5 +106,6 @@ const uploadFile = function(file) {
 export {
 	pySegSort,
 	dateCompare,
-	chooseFileUpload
+	chooseFileUpload,
+	uploadFile
 }

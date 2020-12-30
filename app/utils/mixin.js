@@ -6,6 +6,7 @@ export default {
 		return {
 			SERVER_URL: SERVER_URL,
 			userInfo: {},
+			loading: false,
 		}
 	},
 	onLoad(options){
@@ -23,6 +24,17 @@ export default {
 			  duration: duration,
 			  selector: selector,
 			});
+		},
+		startLoading(title = "加载中"){
+			this.loading = true;
+			uni.showLoading({
+			    title: title,
+				mask: true
+			});
+		},
+		stopLoading(){
+			this.loading = false;
+			uni.hideLoading();
 		}
 	}
 }

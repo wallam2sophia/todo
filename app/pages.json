@@ -79,7 +79,7 @@
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "white",
-		"navigationBarTitleText": "打卡吧",
+		"navigationBarTitleText": "打卡了吧",
 		"navigationBarBackgroundColor": "#303f9f",
 		"backgroundColor": "#303f9f",
 		"navigationStyle": "default",
