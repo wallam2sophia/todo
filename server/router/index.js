@@ -4,6 +4,7 @@ const { taskApi } = require("../src/task");
 const { signApi } = require("../src/sign");
 const { commentApi } = require("../src/comment");
 const { likeApi } = require("../src/like");
+const { statisticApi } = require("../src/statistic");
 // 新增任务
 router.post("/add/task", async (req, res) => {
   try {
@@ -213,4 +214,18 @@ router.post("/list/like", async(req, res) => {
     res.send({msg: error});
   }
 })
+
+// 我的任务和打卡信息
+router.post("/my/general", async(req, res) => {
+  try {
+    const { user } = req.body;
+    const result = await statisticApi.myGeneral(user);
+    res.status(200);
+    res.send(result);
+  } catch (error) {
+    res.status(500);
+    res.send({ msg: error });
+  }
+})
+
 module.exports = router;

@@ -4,30 +4,45 @@ const {
 const { Op } = require("sequelize");
 const dayjs = require("dayjs")
 
-const commentApi = {
-  // 新增评论
-  addComment: async function (commentData) {
+const statisticApi = {
+  // 我的任务和打卡信息
+  myGeneral: async function (user) {
     try {
-      // LOG.info(JSON.stringify(commentData))
-      await sequelize.models.Comment.create(commentData);
+      // LOG.info(JSON.stringify(likeData))
+      const tasks = await sequelize.models.Task.count({
+        where: {
+          members: {
+            [Op.substring]: user,
+          }
+        }
+      });
+      const signs = await sequelize.models.Sign.count({
+        where: {
+          signer: user
+        }
+      });
       return {
         code: 100,
-        data: "评论成功"
+        data: {
+          tasks,
+          signs
+        }
       };
     } catch (error) {
       console.log(error)
       // LOG.error(JSON.stringify(error))
       return {
         code: 101,
-        data: "评论失败"
+        data: "查询失败"
       };
     }
 
   },
-// 删除评论
-deleteComment: async function (commentId) {
+
+// 删除点赞
+deleteLike: async function (likeId) {
   try {
-    await sequelize.models.Comment.destroy({ where: { id: commentId } });
+    await sequelize.models.Like.destroy({ where: { id: likeId } });
     return {
       code: 100,
       data: '删除成功'
@@ -42,7 +57,7 @@ deleteComment: async function (commentId) {
 },
 
   // 获取某个任务的评论
-  listComment: async function (params) {
+  listLike: async function (params) {
     try {
       let queryObj = {
         taskId: params.taskId
@@ -50,17 +65,17 @@ deleteComment: async function (commentId) {
       if (!!params.signId) {
         queryObj.signId = params.signId
       }
-      const res = await sequelize.models.Comment.findAll({
+      const res = await sequelize.models.Like.findAll({
         where: queryObj,
         order: [
           ['createTime', 'DESC'],
         ]
       });
-      const comments = JSON.parse(JSON.stringify(res, null, 2));
-      // LOG.info(JSON.stringify(comments))
+      const likes = JSON.parse(JSON.stringify(res, null, 2));
+      // LOG.info(JSON.stringify(likes))
       return {
         code: 100,
-        data: comments
+        data: likes
       };
     } catch (error) {
       console.log(error)
@@ -74,5 +89,5 @@ deleteComment: async function (commentId) {
 
 
 module.exports = {
-  commentApi
+  statisticApi
 }

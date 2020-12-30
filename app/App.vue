@@ -112,4 +112,12 @@
 		cursor: not-allowed;
 		opacity: 0.5;
 	}
+	.no-data {
+		width: 100%;
+		margin: 20px auto;
+		text-align: center;
+		font-size: 24rpx;
+		line-height: 26rpx;
+		color: #999;
+	}
 </style>

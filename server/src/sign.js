@@ -83,17 +83,22 @@ const signApi = {
           [Op.startsWith]: params.signDate,
         }
       }
-      const res = await sequelize.models.Sign.findAll({
+      const { count, rows} = await sequelize.models.Sign.findAndCountAll({
         where: queryObj,
         order: [
           ['signTime', 'DESC'],
-        ]
+        ],
+        offset: Number(params.size) * (Number(params.page) - 1), 
+        limit: Number(params.size),
+        raw: true
       });
-      const signs = JSON.parse(JSON.stringify(res, null, 2));
       // LOG.info(JSON.stringify(signs))
       return {
         code: 100,
-        data: signs
+        data:  {
+          count: count, 
+          list: rows
+        }
       };
     } catch (error) {
       console.log(error)
@@ -136,19 +141,20 @@ const signApi = {
         taskId: taskId,
         signer: signer
       }
-      const res = await sequelize.models.Sign.findAll({
+      const signs = await sequelize.models.Sign.findAll({
         where: queryObj,
         order: [
           ['createTime', 'ASC'],
-        ]
+        ],
+        raw: true,
       });
-      const signs = JSON.parse(JSON.stringify(res, null, 2));
       const signTimeArr = signs.map(item => item.signTime.split(" ")[0])
       const [contArr, lastC, maxC] = timeContinusData(signTimeArr)
       let signData = {
         signCounts: signs.length,
         continuousCounts: lastC,
-        maxContinuous: maxC
+        maxContinuous: maxC,
+        signs: signs
       }
       return signData
     } catch (error) {

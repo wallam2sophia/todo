@@ -107,16 +107,23 @@ const taskApi = {
         }
       }
       params.status !== 'all' && (queryObj = { ...queryObj, status: params.status })
-      const res = await sequelize.models.Task.findAll({
+      if(params.title){
+        queryObj.title = {
+          [Op.substring]: params.title,
+        }
+      }
+      const { count, rows} = await sequelize.models.Task.findAndCountAll({
         where: queryObj,
         order: [
           // 按照updateTime字段进行降序排列
-          ['updateTime', 'DESC']]
+          ['updateTime', 'DESC']],
+        offset: Number(params.size) * (Number(params.page) - 1), 
+        limit: Number(params.size),
+        raw: true
       });
-      const tasks = JSON.parse(JSON.stringify(res, null, 2));
       let signDate = dayjs(new Date()).format("YYYY-MM-DD")
       // 计算是否今天卡卡
-      const result = tasks.map(async (item) => {
+      const result = rows.map(async (item) => {
         const isSigned = await signApi.checkIsSigned(item.id, params.user, signDate);
         if (isSigned > 0) {
           return { ...item, isSigned: true }
@@ -127,7 +134,10 @@ const taskApi = {
       const data = await Promise.all(result)
       return {
         code: 100,
-        data: data
+        data: {
+          count: count, 
+          list: data
+        }
       };
     } catch (error) {
       console.log(error)

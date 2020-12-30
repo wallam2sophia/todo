@@ -82,6 +82,7 @@
 		"navigationBarTitleText": "打卡吧",
 		"navigationBarBackgroundColor": "#303f9f",
 		"backgroundColor": "#303f9f",
+		"navigationStyle": "default",
 		"usingComponents": {
 			"van-icon": "./wxcomponents/vant-weapp/icon/index",
 			"van-button":  "./wxcomponents/vant-weapp/button/index",

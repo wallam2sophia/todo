@@ -9,8 +9,8 @@
 				 </view>
 			 </view>
 			  <view class="task-card card-item" @click="goDetail(item.id, item.status)">
-			  	<!-- <view class="task-status" :class="item.status ? 'finish-status' : 'unfinish-status'">
-			  		{{item.status ? '已打卡' : '未打卡'}}
+			  	<!-- <view class="task-status" :class="item.status + '-status'">
+			  		{{statusMap[item.status]}}
 			  	</view> -->
 			  	<view class="task-img">
 			  		<image :src="SERVER_URL + item.bgImg" mode="aspectFit"></image>
@@ -74,6 +74,11 @@
 		data() {
 			return {
 				userInfo: {},
+				statusMap: {
+					'todo': '待办',
+					'doing': '进行中',
+					'done': '已结束',
+				}
 			};
 		},
 		mounted() {
@@ -97,7 +102,6 @@
 				        }).then(() => {
 						  this.handleDelete(name).then(res=>{
 							  instance.close();
-							  this.$emit("refresh")
 						  }).catch(err=>{
 							  instance.close();
 						  })
@@ -122,6 +126,7 @@
 						text: "删除成功!",
 						selector: "#detail-notify"
 					})
+					this.$emit("refresh")
 					return true
 				}catch(error){
 					this.notify({
@@ -187,9 +192,19 @@
 			.task-status {
 				position: absolute;
 				top: 0;
-				left: 0;
-				transform: rotate(-45deg);
-				font-size: 10px;
+				right: 0;
+				font-size: 12px;
+				padding: 20rpx;
+				color: #fff;
+			}
+			.todo-status {
+				background: #f7b56b;
+			}
+			.doing-status {
+				background: #0081ff;
+			}
+			.done-status {
+				background: #dd524d;
 			}
 
 			.finish-status {}

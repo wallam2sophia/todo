@@ -8,7 +8,7 @@ const likeApi = {
   // 新增点赞
   addLike: async function (likeData) {
     try {
-      LOG.info(JSON.stringify(likeData))
+      // LOG.info(JSON.stringify(likeData))
       await sequelize.models.Like.create(likeData);
       return {
         code: 100,
@@ -16,7 +16,7 @@ const likeApi = {
       };
     } catch (error) {
       console.log(error)
-      LOG.error(JSON.stringify(error))
+      // LOG.error(JSON.stringify(error))
       return {
         code: 101,
         data: "点赞失败"
@@ -58,7 +58,7 @@ deleteLike: async function (likeId) {
         ]
       });
       const likes = JSON.parse(JSON.stringify(res, null, 2));
-      LOG.info(JSON.stringify(likes))
+      // LOG.info(JSON.stringify(likes))
       return {
         code: 100,
         data: likes

@@ -96,6 +96,9 @@
 		</view>
 		<view class="asign-logs">
 			<signLog :list="signLogs" :taskId="taskId" :taskStatus="taskStatus"></signLog>
+			<view class="no-data" v-if="dataFinishShow">
+				-------我是有底线的--------
+			</view>
 		</view>
 		<van-popup :show="joinPopShow" @close="joinPopShow=false" custom-class="join-task-popup">
 			<joinTaskPop :taskInfo="taskInfo" @close="joinPopShow=false" @submit="onJoinSubmit"></joinTaskPop>
@@ -117,6 +120,8 @@
 		components:{ signLog, joinTaskPop },
 		data() {
 			return {
+				page: 1,
+				size: 5,
 				currentDate: "",
 				minDate: "",
 				maxDate: "",
@@ -127,7 +132,8 @@
 				taskInfo: {},
 				signLogs:[],
 				joinPopShow: false,
-				dateShow: false
+				dateShow: false,
+				dataFinishShow: false
 			}
 		},
 		methods: {
@@ -141,11 +147,23 @@
 			fetchSignLogs(){
 				let sendData = {
 					taskId: this.taskId,
-					signDate: this.signDate
+					signDate: this.signDate,
+					page: this.page,
+					size: this.size
 				}
 				signApi.listSign(sendData).then(res => {
-					this.signLogs = res.data;
+					let { count, list } = res.data;
+					if(this.page >1 && this.page * this.size >= count){
+						this.dataFinishShow = true;
+					}
+					this.signLogs = [...this.signLogs, ...list];
 				})
+			},
+			refreshSignLogs(){
+				this.page = 1;
+				this.signLogs = []
+				this.dataFinishShow = false
+				this.fetchSignLogs();
 			},
 			changeSignData(day){
 				console.log(day)
@@ -196,7 +214,13 @@
 		},
 		onShow(){
 			this.fetchTaskInfo();
-			this.fetchSignLogs();
+			this.refreshSignLogs();
+		},
+		onReachBottom(){
+			if(!this.dataFinishShow && this.signLogs.length > 0){
+				this.page ++;
+				this.fetchSignLogs();
+			}
 		},
 		onShareAppMessage(options){
 			console.log(options)

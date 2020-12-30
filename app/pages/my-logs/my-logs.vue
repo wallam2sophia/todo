@@ -74,6 +74,8 @@
 		components:{ signLog, uniCalendar },
 		data() {
 			return {
+				page: 1,
+				size: 5,
 				today: "",
 				selectDay: "",
 				taskId: "",
@@ -84,6 +86,7 @@
 				endTime: "",
 				signLogs: [],
 				selected: [],
+				dataFinishShow: false,
 				signInfo: {
 					rankNumber: 0,
 					signCounts: 0,
@@ -101,16 +104,7 @@
 				signApi.statisticSign(sendData).then(res => {
 					console.log(res.data)
 					this.signInfo = res.data;
-				})
-			},
-			fetchSelected(){
-				let sendData = {
-					taskId: this.taskId,
-					member: this.userInfo.nickName
-				}
-				signApi.listSign(sendData).then(res => {
-					this.signLogs = res.data;
-					this.selected = res.data.map(item=>{
+					this.selected = res.data.signs.map(item=>{
 						return {date: item.signTime.split(" ")[0]}
 					})
 					if(this.selected.filter(item=>item.date === this.selectDay).length > 0){
@@ -118,6 +112,27 @@
 						this.btnClass = ["success-btn", "disabled-btn"]
 					}
 				})
+			},
+			fetchSignLogs(){
+				let sendData = {
+					taskId: this.taskId,
+					member: this.userInfo.nickName,
+					page: this.page,
+					size: this.size
+				}
+				signApi.listSign(sendData).then(res => {
+					let { count, list } = res.data;
+					if(this.page >1 && this.page * this.size >= count){
+						this.dataFinishShow = true;
+					}
+					this.signLogs = [...this.signLogs, ...list];
+				})
+			},
+			refreshSignLogs(){
+				this.page = 1;
+				this.signLogs = []
+				this.dataFinishShow = false
+				this.fetchSignLogs();
 			},
 			signIn(){
 				if(this.btnText === "打卡未开始" || this.btnText === "已打卡"){
@@ -168,7 +183,7 @@
 			}
 		},
 		onShow(){
-			this.fetchSelected();
+			this.refreshSignLogs();
 			this.fetchSignStatistic();
 		}
 	}
