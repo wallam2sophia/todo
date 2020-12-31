@@ -100,44 +100,9 @@
 			},
 			changeBgImg(){
 				let that = this;
-				chooseFileUpload().then(res=>{
+				chooseFileUpload(1).then(res=>{
 					that.formData.bgImg = res[0];
 				})
-				// uni.chooseImage({
-				//     success: (chooseImageRes) => {
-				//         const tempFilePaths = chooseImageRes.tempFilePaths;
-				//         uni.uploadFile({
-				// 			url: this.SERVER_URL + 'api/change/taskbg', // 仅为示例，非真实的接口地址
-				// 			filePath: tempFilePaths[0],
-				// 			name: 'file',
-				// 			formData: {
-				// 				taskId: this.taskId
-				// 			},
-				// 			success(res) {
-				// 				console.log(res)
-				// 				if(res.statusCode !== 200){
-				// 					uni.showToast({
-				// 					    title: "上传失败!",
-				// 					    duration: 2000
-				// 					});
-				// 					return false
-				// 				}
-				// 				let data = JSON.parse(res.data)
-				// 				if(data.code !== 100){
-				// 					uni.showToast({
-				// 					    title: "上传失败!",
-				// 					    duration: 2000
-				// 					});
-				// 					return false
-				// 				}
-				// 				that.formData.bgImg = data.data;
-				// 			},
-				//         });
-				//     }
-				// });
-				// uni.navigateTo({
-				// 	url:'../task-bg/task-bg'
-				// })
 			},
 			onInput(e){
 				this.currentDate = e.detail;

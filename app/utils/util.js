@@ -84,16 +84,13 @@ const chooseFileUpload = function(count=9) {
 
 const uploadFile = function(file) {
 	return new Promise((resolve, reject) => {
+		console.log("file", file)
 		uniCloud.uploadFile({
 			filePath: file,
-			cloudPath: file,
+			cloudPath: 'a.jpg',
 			success(e) {
 				if (e.success == true) {
 					resolve(e.fileID);
-					uni.showModal({
-						title: "上传图片成功",
-						content: JSON.stringify(e) + file
-					})
 				} else {
 					uni.showModal({
 						title: "上传图片失败",

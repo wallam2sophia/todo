@@ -76,6 +76,7 @@
 			return {
 				page: 1,
 				size: 5,
+				total: 0,
 				today: "",
 				selectDay: "",
 				taskId: "",
@@ -122,9 +123,7 @@
 				}
 				signApi.listSign(sendData).then(res => {
 					let { count, list } = res.data;
-					if(this.page >1 && this.page * this.size >= count){
-						this.dataFinishShow = true;
-					}
+					this.total = count;
 					this.signLogs = [...this.signLogs, ...list];
 				})
 			},
@@ -185,7 +184,16 @@
 		onShow(){
 			this.refreshSignLogs();
 			this.fetchSignStatistic();
-		}
+		},
+		onReachBottom(){
+			if(this.signLogs.length > 0 && this.signLogs.length === this.total){
+				this.dataFinishShow = true;
+			}
+			if(!this.dataFinishShow){
+				this.page ++;
+				this.fetchSignLogs();
+			}
+		},
 	}
 </script>
 

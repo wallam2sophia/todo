@@ -31,8 +31,8 @@
 			<!-- <van-loading type="spinner" color="#1989fa" v-show="loading"/> -->
 			<van-tabs :active="status" :border="false" @change="changeStatus" line-height="2" animated swipeable lazy-render sticky color="#ff5722">
 				<van-tab :title="item.title" :name="item.name" v-for="(item, index) in taskStatus" :key="index">
-					<van-search :value="searchTask" placeholder="请输入你要搜索的任务" @change="e=>searchTask=e.detail" @search="fetchTaskList"/>
-					<taskList :list="taskLists" @task-click="goDetail" @refresh="refreshTaskList" v-if="!loading && taskLists.length > 0"></taskList>
+					<van-search :value="searchTask" placeholder="请输入你要搜索的任务" @change="e=>searchTask=e.detail" @search="refreshTaskList"/>
+					<taskList :list="taskLists" :tabStatus="status" @task-click="goDetail" @refresh="refreshTaskList" v-if="!loading && taskLists.length > 0"></taskList>
 					<van-empty description="暂无数据" v-else-if="!loading && taskLists.length === 0"/>
 					<view class="no-data" v-if="dataFinishShow">
 						-------我是有底线的--------
@@ -63,6 +63,7 @@
 			return {
 				page: 1,
 				size: 5,
+				total: 0,
 				searchTask: "",
 				dataFinishShow: false,
 				taskLists: [],
@@ -110,9 +111,7 @@
 				}
 				taskApi.listTask(sendData).then(res => {
 					let { count, list } = res.data;
-					if(this.page >1 && this.page * this.size >= count){
-						this.dataFinishShow = true;
-					}
+					this.total = count;
 					this.taskLists = [...this.taskLists, ...list];
 					this.stopLoading();
 				}).catch(error=>{
@@ -126,12 +125,9 @@
 				this.fetchTaskList();
 			},
 			changeStatus(status){
-				this.page = 1;
-				this.dataFinishShow = false
-				this.taskLists = []
 				this.searchTask = ""
 				this.status = status.detail.name;
-				this.fetchTaskList();
+				this.refreshTaskList();
 			},
 			addTask() {
 				uni.navigateTo({
@@ -150,6 +146,9 @@
 			this.refreshTaskList();
 		},
 		onReachBottom(){
+			if(this.taskLists.length > 0 && this.taskLists.length === this.total){
+				this.dataFinishShow = true;
+			}
 			if(!this.dataFinishShow){
 				this.page ++;
 				this.fetchTaskList();

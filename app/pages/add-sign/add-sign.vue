@@ -31,7 +31,7 @@
 				</view>
 			</view>
 			<view class="media-box flex-row">
-				<view class="media-item" v-for="(item,index) in form.media" :key="index">
+				<view class="media-item" v-for="(item, index) in form.media" :key="index">
 					<image :src="item" mode="aspectFit"></image>
 					<van-icon name="clear" custom-class="icon-delete" @click="deleteMedia(index)"/>
 				</view>
@@ -72,9 +72,8 @@
 		methods: {
 			chooseImage(){
 				let that = this
-				chooseFileUpload(1).then(res=>{
-					console.log(res)
-					that.form.media = res;
+				chooseFileUpload().then(res=>{
+					that.form.media = [...that.form.media, ...res];
 				})
 			},
 			chooseLocation(){
@@ -94,8 +93,7 @@
 				})
 			},
 			deleteMedia(index){
-				this.form.media = [...this.form.media.slice(0, index), ...this.form.media.slice(index)]
-				console.log(this.form.media)
+				this.form.media.splice(index, 1)
 			},
 			signIn(){
 				let sendData = {

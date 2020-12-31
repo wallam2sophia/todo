@@ -1,6 +1,6 @@
 <template>
 	<view class="task-detail">
-		<view class="task-base" :style="{'background-image': 'url('+ SERVER_URL + taskInfo.bgImg+')'}">
+		<view class="task-base" :style="{'background-image': 'url('+ bgUrl + ')'}">
 			<view class="title">
 				<text>{{taskInfo.title}}</text>
 			</view>
@@ -122,6 +122,7 @@
 			return {
 				page: 1,
 				size: 5,
+				total: 0,
 				currentDate: "",
 				minDate: "",
 				maxDate: "",
@@ -134,6 +135,12 @@
 				joinPopShow: false,
 				dateShow: false,
 				dataFinishShow: false
+			}
+		},
+		computed:{
+			bgUrl(){
+				if(!this.taskInfo.bgImg) return ""
+				return this.taskInfo.bgImg.startsWith('https://') ? this.taskInfo.bgImg : this.SERVER_URL + this.taskInfo.bgImg
 			}
 		},
 		methods: {
@@ -153,9 +160,7 @@
 				}
 				signApi.listSign(sendData).then(res => {
 					let { count, list } = res.data;
-					if(this.page >1 && this.page * this.size >= count){
-						this.dataFinishShow = true;
-					}
+					this.total = count;
 					this.signLogs = [...this.signLogs, ...list];
 				})
 			},
@@ -178,7 +183,7 @@
 					this.signDate = dayjs(day).format("YYYY-MM-DD");
 					this.dateShow = false;
 				}
-				this.fetchSignLogs();
+				this.refreshSignLogs();
 			},
 			onInput(e){
 				this.currentDate = e.detail;
@@ -217,7 +222,10 @@
 			this.refreshSignLogs();
 		},
 		onReachBottom(){
-			if(!this.dataFinishShow && this.signLogs.length > 0){
+			if(this.signLogs.length > 0 && this.signLogs.length === this.total){
+				this.dataFinishShow = true;
+			}
+			if(!this.dataFinishShow){
 				this.page ++;
 				this.fetchSignLogs();
 			}

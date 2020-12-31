@@ -9,9 +9,9 @@
 				 </view>
 			 </view>
 			  <view class="task-card card-item" @click="goDetail(item.id, item.status)">
-			  	<!-- <view class="task-status" :class="item.status + '-status'">
+			  	<view class="task-status" :class="item.status + '-status'" v-if="tabStatus === 'all'">
 			  		{{statusMap[item.status]}}
-			  	</view> -->
+			  	</view>
 			  	<view class="task-img">
 			  		<image :src="item.bgImg.startsWith('https://') ? item.bgImg : SERVER_URL + item.bgImg" mode="aspectFit"></image>
 			  		<view class="member-mask">
@@ -69,15 +69,19 @@
 			list:{
 				required:true,
 				type:Array
+			},
+			tabStatus: {
+				required:true,
+				type:String
 			}
 		},
 		data() {
 			return {
 				userInfo: {},
 				statusMap: {
-					'todo': '待办',
-					'doing': '进行中',
-					'done': '已结束',
+					'todo': '待',
+					'doing': '进',
+					'done': '结',
 				}
 			};
 		},
@@ -191,25 +195,29 @@
 
 			.task-status {
 				position: absolute;
-				top: 0;
-				right: 0;
-				font-size: 12px;
-				padding: 20rpx;
+				top: 1px;
+				left: 1px;
+				font-size: 10px;
 				color: #fff;
+				width: 20px;
+				height: 20px;
+				line-height: 20px;
+				text-align: center;
+				// padding-left: 2px;
+				// border-bottom-left-radius: 50%;
+				// border-top-right-radius: 50%;
+				// border-bottom-right-radius: 50%;
+				border-radius: 50%;
 			}
 			.todo-status {
-				background: #f7b56b;
+				background: linear-gradient(to right, #ada310, #d1b200);
 			}
 			.doing-status {
-				background: #0081ff;
+				background: linear-gradient(to right, #3681e3, #3810b0);
 			}
 			.done-status {
-				background: #dd524d;
+				background: linear-gradient(to right, #ad1313, #d10000);
 			}
-
-			.finish-status {}
-
-			.unfinish-status {}
 
 			.task-img {
 				position: relative;
