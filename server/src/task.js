@@ -8,7 +8,9 @@ const path = require("path")
 const fs = require('fs')
 const formdata = require('formidable');
 const isSameOrAfter = require('dayjs/plugin/isSameOrAfter');
+const isSameOrBefore = require('dayjs/plugin/isSameOrBefore');
 dayjs.extend(isSameOrAfter)
+dayjs.extend(isSameOrBefore)
 
 const taskApi = {
   taskBg: function () {
@@ -188,7 +190,7 @@ const checkTaskStatus = function (beginTime, endTime) {
   let endDate = dayjs(endTime);
   if (today.isBefore(beginDate)) {
     return 'todo'
-  } else if (today.isSameOrAfter(beginDate) && today.isBefore(endDate)) {
+  } else if (today.isSameOrAfter(beginDate) && today.isSameOrBefore(endDate)) {
     return 'doing'
   } else if (today.isAfter(endDate)) {
     return 'done'

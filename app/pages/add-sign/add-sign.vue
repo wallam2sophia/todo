@@ -72,7 +72,7 @@
 		methods: {
 			chooseImage(){
 				let that = this
-				chooseFileUpload().then(res=>{
+				chooseFileUpload(1).then(res=>{
 					console.log(res)
 					that.form.media = res;
 				})

@@ -65,10 +65,16 @@ const chooseFileUpload = function(count=9) {
 				console.log("tempFilePaths", tempFilePaths);
 				console.log("tempFiles", tempFiles);
 				const p = tempFilePaths.map(item=>uploadFile(item))
+				uni.showLoading({
+				    title: "上传中...",
+					mask: true
+				});
 				Promise.all(p).then(res=>{
 					console.log(res)
+					uni.hideLoading()
 					resolve(res)
 				}).catch(err=>{
+					uni.hideLoading()
 					reject([])
 				})
 			}
@@ -84,6 +90,10 @@ const uploadFile = function(file) {
 			success(e) {
 				if (e.success == true) {
 					resolve(e.fileID);
+					uni.showModal({
+						title: "上传图片成功",
+						content: JSON.stringify(e) + file
+					})
 				} else {
 					uni.showModal({
 						title: "上传图片失败",
