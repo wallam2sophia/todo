@@ -83,7 +83,8 @@ const sendTemplateMessage = async function(openid, template_id){
     const postData = {
       access_token: access_token,
       touser: openid,
-      template_id: template_id
+      template_id: template_id,
+      miniprogram_state: 'developer'
     }
     const req = https.request(options, (res) => {
       let datas = [];  
@@ -95,6 +96,7 @@ const sendTemplateMessage = async function(openid, template_id){
       res.on("end", function () {  
           var buff = Buffer.concat(datas, size);  
           var result = iconv.decode(buff, "utf8");//转码//var result = buff.toString();//不需要转编码,直接tostring  
+          console.log('result', result);
          resolve(result)
       })
     });

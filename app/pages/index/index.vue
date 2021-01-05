@@ -21,14 +21,20 @@
 						总打卡数
 					</view>
 				</view>
-				<view class="my-btn login-box success-btn" @click="login">
-					登录
-				</view>
-				<view class="my-btn login-box success-btn" @click="sendMsg">
-					发送
-				</view>
+				
 			</view>
 			
+		</view>
+		<view class="my-news flex-row">
+			<view class="my-btn login-box success-btn" @click="login">
+				登录
+			</view>
+			<view class="my-btn login-box success-btn" @click="hasWarning">
+				提醒
+			</view>
+			<view class="my-btn login-box success-btn" @click="sendMsg">
+				发送
+			</view>
 		</view>
 		<!-- <view class="my-news">
 			<van-notice-bar left-icon="chat-o" text="笨笨刚刚签到了一起跳绳吧lalalallalalalalalalalalalalaallala" scrollable custom-class="news-item" />
@@ -278,10 +284,6 @@
 					font-size: 22rpx;
 				}
 			}
-			
-			.login-box {
-				padding: 15rpx 30rpx;
-			}
 		}
 		.my-news {
 			margin-top: 20rpx;
@@ -330,5 +332,9 @@
 		bottom: 20rpx;
 		right: 20rpx;
 		z-index: 999;
+	}
+	.login-box {
+		padding: 15rpx 30rpx;
+		margin-left: 20px;
 	}
 </style>
