@@ -74,7 +74,7 @@ const getAccessToken = async function(){
 const sendTemplateMessage = async function(openid, template_id){
   return new Promise(async (resolve, reject) =>{
     const { access_token } = await getAccessToken();
-    let url = `https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=${access_token}&touser=${openid}&template_id=${template_id}`
+    // let url = `https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=${access_token}&touser=${openid}&template_id=${template_id}`
     const options = {
       path: '/cgi-bin/message/subscribe/send?access_token=' + access_token,
       method: 'POST',
@@ -83,6 +83,9 @@ const sendTemplateMessage = async function(openid, template_id){
     const postData = {
       touser: openid,
       template_id: template_id,
+      page: "/pages/index/index",
+      miniprogram_state: "developer",
+      lang: "zh_CN",
       data: {
         "thing1": {
           "value": "跳绳吧"
