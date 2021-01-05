@@ -84,7 +84,21 @@ const sendTemplateMessage = async function(openid, template_id){
       access_token: access_token,
       touser: openid,
       template_id: template_id,
-      miniprogram_state: 'developer'
+      miniprogram_state: 'developer',
+      data: {
+        "thing1": {
+          "value": "跳绳吧"
+        },
+        "thing17": {
+          "value": "多喝水"
+        },
+        "date4": {
+          "value": "2021年1月5日"
+        },
+        "thing17": {
+          "phrase6": "未打卡"
+        }
+      }
     }
     const req = https.request(options, (res) => {
       let datas = [];  
