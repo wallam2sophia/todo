@@ -20,5 +20,5 @@ export const rankTabOptions = [{
 	},
 ]
 
-// export const SERVER_URL = "http://127.0.0.1:8090/"  // 本地开发环境
-export const SERVER_URL = "https://guoxiuqiong.top/"  // 生产环境
+export const SERVER_URL = "http://127.0.0.1:8090/"  // 本地开发环境
+// export const SERVER_URL = "https://guoxiuqiong.top/"  // 生产环境
