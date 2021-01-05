@@ -1,4 +1,8 @@
 const dayjs = require("dayjs")
+const https = require("https");  
+const iconv = require("iconv-lite");
+const  APPID = "wx1bdebb28c99f1a74"
+const SECRET = "a3b1eb4dc9a613c23b9dd8403a98d74b"
 
 function timeContinusData(timeArr){
   let resultArr = []
@@ -27,4 +31,81 @@ function timeContinusData(timeArr){
   return [resultArr, lastC, maxC]
 }
 
-module.exports = { timeContinusData }
+// 用户认证
+const authSession = function(code){
+  let url = `https://api.weixin.qq.com/sns/jscode2session?appid=${APPID}&secret=${SECRET}&js_code=${code}&grant_type=authorization_code`
+  return new Promise((resolve, reject) =>{
+    https.get(url, res=> {
+      let datas = [];  
+      let size = 0;  
+      res.on('data', function (data) {  
+          datas.push(data);  
+          size += data.length;  
+      });  
+      res.on("end", function () {  
+          var buff = Buffer.concat(datas, size);  
+          var result = iconv.decode(buff, "utf8");//转码//var result = buff.toString();//不需要转编码,直接tostring  
+         resolve(result)
+      })
+    })
+  })
+}
+
+// 获取AccessToken
+const getAccessToken = async function(){
+  return new Promise((resolve, reject) =>{
+    let url = `https://api.weixin.qq.com/cgi-bin/token?appid=${APPID}&secret=${SECRET}&grant_type=client_credential`
+    https.get(url, res=> {
+      let datas = [];  
+      let size = 0;  
+      res.on('data', function (data) {  
+          datas.push(data);  
+          size += data.length;  
+      });  
+      res.on("end", function () {  
+          var buff = Buffer.concat(datas, size);  
+          var result = iconv.decode(buff, "utf8");//转码//var result = buff.toString();//不需要转编码,直接tostring  
+         resolve(JSON.parse(result))
+      })
+    })
+  })
+}
+// 发送模板消息
+const sendTemplateMessage = async function(openid, template_id){
+  return new Promise(async (resolve, reject) =>{
+    const { access_token } = await getAccessToken();
+    let url = `https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=${access_token}&touser=${openid}&template_id=${template_id}`
+    const options = {
+      path: '/cgi-bin/message/subscribe/send',
+      method: 'POST',
+      hostname: 'api.weixin.qq.com',
+    };
+    const postData = {
+      access_token: access_token,
+      touser: openid,
+      template_id: template_id
+    }
+    const req = https.request(options, (res) => {
+      let datas = [];  
+      let size = 0;  
+      res.on('data', function (data) {  
+          datas.push(data);  
+          size += data.length;  
+      });  
+      res.on("end", function () {  
+          var buff = Buffer.concat(datas, size);  
+          var result = iconv.decode(buff, "utf8");//转码//var result = buff.toString();//不需要转编码,直接tostring  
+         resolve(result)
+      })
+    });
+    
+    req.on('error', (e) => {
+      reject(e)
+    });
+    
+    // 将数据写入请求主体。
+    req.write(JSON.stringify(postData));
+    req.end();
+  })
+}
+module.exports = { timeContinusData, getAccessToken, authSession, sendTemplateMessage }

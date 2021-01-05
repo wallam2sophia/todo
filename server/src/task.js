@@ -88,6 +88,12 @@ const taskApi = {
   deleteTask: async function (taskId) {
     try {
       await sequelize.models.Task.destroy({ where: { id: taskId } });
+      // 删除该任务的打卡记录
+      await sequelize.models.Sign.destroy({ where: { taskId: taskId } });
+      // 删除该任务的点赞记录
+      await sequelize.models.Like.destroy({ where: { taskId: taskId } });
+      // 删除该任务的评论记录
+      await sequelize.models.Comment.destroy({ where: { taskId: taskId } });
       return {
         code: 100,
         data: '删除成功'

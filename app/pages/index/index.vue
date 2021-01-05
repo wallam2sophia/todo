@@ -21,6 +21,12 @@
 						总打卡数
 					</view>
 				</view>
+				<view class="my-btn login-box success-btn" @click="login">
+					登录
+				</view>
+				<view class="my-btn login-box success-btn" @click="sendMsg">
+					发送
+				</view>
 			</view>
 			
 		</view>
@@ -52,8 +58,9 @@
 	import uniNavBar from "../../components/uni-nav-bar/uni-nav-bar.vue"
 	import taskList from "../../components/task-list.vue"
 	import taskApi from "../../utils/service/task.js"
+	import commonApi from "../../utils/service/common.js"
 	import statisticApi from "../../utils/service/statistic.js"
-	
+	const template_id = "I8PnqSS0b5pEWVAaV5I-OMRjK0WR5vPbYDjMhx-zihM"
 	export default {
 		components: {
 			taskList,
@@ -90,6 +97,57 @@
 			}
 		},
 		methods: {
+			sendMsg(){
+				let sendData = {
+					nickName: this.userInfo.nickName,
+					template_id: template_id
+				}
+				commonApi.sendMsg(sendData).then(res=>{
+					console.log(res)
+				})
+			},
+			hasWarning(){
+				uni.getSetting({
+				   success(res) {
+				      console.log(res.authSetting)
+				   }
+				})
+				wx.requestSubscribeMessage({
+					tmplIds: ["I8PnqSS0b5pEWVAaV5I-OMRjK0WR5vPbYDjMhx-zihM"],
+					success(res){
+						console.log(res)
+						if(res.errMsg === 'requestSubscribeMessage:ok'){
+							return true
+						}
+					},
+					fail(error){
+						console.log(error)
+					},
+				})
+			},
+			login(){
+				let that = this;
+				wx.login({
+					success(res){
+						if (res.code) {
+						      //发起网络请求
+							  let sendData = {
+								  nickName: that.userInfo.nickName,
+								  avatarUrl: that.userInfo.avatarUrl,
+								  code: res.code
+							  }
+							  commonApi.login(sendData).then(res=>{
+								  console.log(res)
+							  })
+						} else {
+						  console.log('登录失败！' + res.errMsg)
+						}
+					}
+				})
+			},
+			getPhoneNumber(e){
+				console.log(e)
+			},
 			onChange(){
 				// console.log("moving")
 			},
@@ -195,7 +253,7 @@
 			margin-left: 40px;
 			
 			.total-tasks {
-				margin-right: 40px;
+				margin-right: 20px;
 				.number {
 					margin-bottom: 5px;
 					font-size: 34rpx;
@@ -208,6 +266,7 @@
 				}
 			}
 			.total-signs {
+				margin-right: 20px;
 				.number {
 					margin-bottom: 5px;
 					font-size: 34rpx;
@@ -218,6 +277,10 @@
 				.text {
 					font-size: 22rpx;
 				}
+			}
+			
+			.login-box {
+				padding: 15rpx 30rpx;
 			}
 		}
 		.my-news {
