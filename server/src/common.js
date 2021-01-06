@@ -44,7 +44,13 @@ const commonApi = {
         raw: true
       })
       const res = await sendTemplateMessage(user.openId, data.template_id)
-      console.log('res', res)
+      if(res.errcode !== 0){
+        console.log(res.errmsg)
+        return {
+          code: 101,
+          data: "发送失败"
+        };
+      }
       return {
         code: 100,
         data: "发送成功"
