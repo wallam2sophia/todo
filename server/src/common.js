@@ -19,7 +19,7 @@ const commonApi = {
         sessionKey: session.session_key,
         status: 1
       }
-      const res = await sequelize.models.User.upsert(userData, {
+      await sequelize.models.User.upsert(userData, {
         where: { nickName: data.nickName },
       });
       return {

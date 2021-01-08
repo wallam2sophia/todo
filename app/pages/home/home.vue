@@ -20,6 +20,7 @@
 </template>
 
 <script>
+	import commonApi from "../../utils/service/common.js"
 	export default {
 		data() {
 			return {
@@ -44,17 +45,57 @@
 		},
 		methods: {
 			handleAuth(res){
+				let that = this;
 				console.log(res);
 				if(res.detail.errMsg !== 'getUserInfo:ok'){
 					uni.showToast({
-						title: '授权失败'
+						title: '登录失败'
 					})
-					this. isAuthed = false
+					this.isAuthed = false
 					return false;
 				}
-				this.isAuthed = true;
-				uni.setStorageSync('userInfo', res.detail.userInfo);
-				this.goIndex()
+				let userInfo = res.detail.userInfo
+				that.login(userInfo).then(res=>{
+					that.isAuthed = true;
+					uni.setStorageSync('userInfo', userInfo);
+					that.goIndex()
+				}).catch(error=>{
+					uni.showToast({
+						title: '登录失败'
+					})
+					that.isAuthed = false
+					return false;
+				})
+				
+			},
+			login(userInfo){
+				let that = this;
+				return new Promise((resolve, reject)=>{
+					wx.login({
+						success(res){
+							if (res.code) {
+							      //发起网络请求
+								  let sendData = {
+									  nickName: userInfo.nickName,
+									  avatarUrl: userInfo.avatarUrl,
+									  code: res.code
+								  }
+								  commonApi.login(sendData).then(res=>{
+									  console.log(res)
+									  resolve(true)
+								  })
+							} else {
+							  console.log('登录失败！' + res.errMsg)
+							  reject(false)
+							}
+						},
+						fail(error){
+							console.log('登录失败！' + error)
+							reject(false)
+						}
+					})
+				})
+				
 			},
 			goIndex() {
 				uni.switchTab({
