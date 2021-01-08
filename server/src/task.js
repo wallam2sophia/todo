@@ -79,6 +79,7 @@ const taskApi = {
   },
   // 创建一个定时提醒任务
   addTaskSchedule: async function(member, taskData, reminPattern){
+    console.log('添加定时任务')
     const user = await sequelize.models.User.findOne({
       where: {
         nickName: member
@@ -93,6 +94,7 @@ const taskApi = {
       user: taskData.creator, 
       remark: '未打卡'
     }
+    console.log('paramsData', paramsData)
     let job = schedule.scheduleJob({start: taskData.beginTime, end: taskData.endTime, rule: reminPattern}, function (params){
       return function(){
         return sendTemplateMessage(params)
