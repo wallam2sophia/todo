@@ -136,7 +136,7 @@
 				})
 			},
 			testSchedule(){
-				let rule = "0 51 16 * * *"
+				let rule = "0 54 16 * * *"
 				commonApi.testSchedule({ rule }).then(res=>{
 					console.log(res)
 				})

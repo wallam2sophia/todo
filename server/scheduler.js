@@ -39,5 +39,7 @@ function setSchedule(){
   let reminPattern = "0 12 12 * * *"
   let job = schedule.scheduleJob(reminPattern, sendMsg(paramsData))
 }
+
+
 // setSchedule()
 scheduleCronstyle();

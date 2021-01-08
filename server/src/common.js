@@ -104,6 +104,12 @@ const commonApi = {
 }
 
 
+function test(){
+  console.log('test schedule task')
+}
+schedule.scheduleJob('30 * * * * *', test); 
+
+
 module.exports = {
   commonApi
 }
