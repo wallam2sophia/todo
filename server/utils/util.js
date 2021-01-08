@@ -113,6 +113,7 @@ const sendTemplateMessage = async function ({
       .send(postData)
       .set('Accept', 'application/json')
     if(res.code !== 0){
+      console.log(res)
       return false
     }
     return true
