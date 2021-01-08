@@ -83,7 +83,12 @@ const commonApi = {
         user: "多喝水", 
         remark: '啦啦啦啦啦'
       }
-      let job = schedule.scheduleJob('30 * * * * *', test)
+      let job = schedule.scheduleJob('30 * * * * *', function (params){
+        return function(){
+          console.log('test schedule task 2222')
+          return sendTemplateMessage(params)
+        }
+      }(paramsData))
       return {
         code: 100,
         data: "设置成功"
@@ -101,7 +106,7 @@ const commonApi = {
 
 
 function test(){
-  console.log('test schedule task1111')
+  console.log('test schedule task')
 }
 
 
