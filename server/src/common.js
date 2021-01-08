@@ -83,7 +83,8 @@ const commonApi = {
         user: "多喝水", 
         remark: '啦啦啦啦啦'
       }
-      let job = schedule.scheduleJob('30 * * * * *', function (params){
+      console.log(rule)
+      let job = schedule.scheduleJob(rule, function (params){
         return function(){
           console.log('test schedule task 2222')
           return sendTemplateMessage(params)
