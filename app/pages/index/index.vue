@@ -25,7 +25,7 @@
 			</view>
 			
 		</view>
-		<view class="my-news flex-row">
+		<!-- <view class="my-news flex-row">
 			<view class="my-btn login-box success-btn" @click="login">
 				登录
 			</view>
@@ -35,7 +35,7 @@
 			<view class="my-btn login-box success-btn" @click="sendMsg">
 				发送
 			</view>
-		</view>
+		</view> -->
 		<!-- <view class="my-news">
 			<van-notice-bar left-icon="chat-o" text="笨笨刚刚签到了一起跳绳吧lalalallalalalalalalalalalalaallala" scrollable custom-class="news-item" />
 		</view> -->
@@ -110,25 +110,6 @@
 				}
 				commonApi.sendMsg(sendData).then(res=>{
 					console.log(res)
-				})
-			},
-			hasWarning(){
-				uni.getSetting({
-				   success(res) {
-				      console.log(res.authSetting)
-				   }
-				})
-				wx.requestSubscribeMessage({
-					tmplIds: ["I8PnqSS0b5pEWVAaV5I-OMRjK0WR5vPbYDjMhx-zihM"],
-					success(res){
-						console.log(res)
-						if(res.errMsg === 'requestSubscribeMessage:ok'){
-							return true
-						}
-					},
-					fail(error){
-						console.log(error)
-					},
 				})
 			},
 			login(){

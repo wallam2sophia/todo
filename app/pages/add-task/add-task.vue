@@ -2,17 +2,23 @@
 	<view class="add-task">
 		<image :src="bgUrl"/>
 		<view class="my-btn warning-btn change-bg-btn" @click="changeBgImg">更换背景图</view>
-		<van-field :value="formData.title" placeholder="请填写打卡标题" @input="(e)=>formData.title=e.detail"/>
+		<van-field :value="formData.title" placeholder="请填写标题" @input="(e)=>formData.title=e.detail"/>
 		<van-field :value="formData.desc" placeholder="请填写备注" @input="(e)=>formData.desc=e.detail"/>
+		<van-cell title="类型" :value="formData.type" is-link @click="typeShow=true"/>
 		<van-cell title="开始日期" :value="formData.beginTime" is-link @click="beginShow=true"/>
 		<van-cell title="结束日期" :value="formData.endTime" is-link @click="endShow=true"/>
 		<van-cell title="签到周期" :value="formData.signType" is-link @click="periodShow=true"/>
-		<van-action-sheet :show="periodShow" :actions="periods" round close-on-click-overlay @select="setPeriod"/>
+		<van-cell title="提醒时间" :value="formData.remindTime" is-link @click="remindShow=true"/>
+		<van-action-sheet :show="typeShow" :actions="types" round :close-on-click-overlay="true" @select="setType"/>
+		<van-action-sheet :show="periodShow" :actions="periods" round :close-on-click-overlay="true" @select="setPeriod"/>
 		<van-popup :show="beginShow" position="bottom" round >
 			<van-datetime-picker type="date" :value="currentBegin" :min-date="minBegin" @input="onInput"  @cancel="beginShow=false" @confirm="setBeginCurrent"/>
 		</van-popup>
 		<van-popup :show="endShow" position="bottom" round @cloce="endShow=false">
 			<van-datetime-picker type="date" :value="currentEnd" :min-date="minEnd" @input="onInput"  @cancel="endShow=false" @confirm="setEndCurrent"/>
+		</van-popup>
+		<van-popup :show="remindShow" position="bottom" round @cloce="remindShow=false">
+			<van-datetime-picker type="time" :value="currentRemind" @input="onInput"  @cancel="remindShow=false" @confirm="setRemindTime"/>
 		</van-popup>
 		<view  class="my-btn primary-btn submit-btn" @click="submitForm">创建打卡</view>
 		<!-- 在页面内添加对应的节点 -->
@@ -23,8 +29,9 @@
 <script>
 	import uniCombox from "../../components/uni-combox/uni-combox"
 	import taskApi from "../../utils/service/task.js"
-	import { chooseFileUpload } from "../../utils/util.js"
+	import { chooseFileUpload, hasWarning } from "../../utils/util.js"
 	import dayjs from 'dayjs';
+	import { periods, types} from "../../utils/const.js"
 	import isSameOrAfter from'dayjs/plugin/isSameOrAfter';
 	dayjs.extend(isSameOrAfter)
 	export default {
@@ -33,9 +40,14 @@
 		},
 		data() {
 			return {
+				periods: periods,
+				types: types,
 				beginShow: false,
 				endShow: false,
 				periodShow: false,
+				typeShow: false,
+				remindShow: false,
+				currentRemind: '12:00',
 				currentBegin: new Date().getTime(),
 				currentEnd: new Date().getTime(),
 				minBegin: new Date().getTime(),
@@ -45,23 +57,13 @@
 					bgImg: "",
 					title: "",
 					desc: "",
+					type: "",
 					beginTime: "",
 					endTime: "",
+					remindTime: "",
 					signType: ""
 				},
-				periods: [
-					 {
-						value: "daily",
-						name: '每天',
-					 },
-					 {
-						value: "weekday",
-						name: '法定工作日',
-					 },
-				],
-				formatter(type, value) {
-				      console.log(type, value)
-				},
+				
 			}
 		},
 		onLoad(){
@@ -78,6 +80,26 @@
 		},
 		methods: {
 			submitForm() {
+				let that = this
+				if(this.formData.remindTime){
+					hasWarning().then(res=>{
+						that.handleAddTask()
+					}).catch(error=>{
+						console.log(error)
+						// 失败通知
+						that.notify({ 
+							context: that,
+							text: error.data,
+							type: "danger",
+							selector: "#task-notify"
+						});
+					})
+				}else {
+					that.handleAddTask()
+				}
+				
+			},
+			handleAddTask(){
 				let sendData = Object.assign({}, this.formData, {creator: this.userInfo.nickName, members: [this.userInfo.nickName]})
 				taskApi.addTask(sendData).then(res => {
 					// 成功通知
@@ -111,6 +133,10 @@
 				this.formData.signType = e.detail.name;
 				this.periodShow = false;
 			},
+			setType(e){
+				this.formData.type = e.detail.name;
+				this.typeShow = false;
+			},
 			setBeginCurrent(val){
 				if(this.formData.endTime){
 					let endTime = dayjs(this.formData.endTime)
@@ -141,6 +167,10 @@
 				} 
 				this.formData.endTime =  dayjs(val.detail).format("YYYY-MM-DD")
 				this.endShow = false
+			},
+			setRemindTime(val){
+				this.formData.remindTime =  val.detail
+				this.remindShow = false
 			},
 			
 		},

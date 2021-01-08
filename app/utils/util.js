@@ -1,7 +1,9 @@
 import {
 	ConvertPinyin
 } from "./PY.js"
-
+import {
+	templateId
+} from "./const"
 const pySegSort = function(arr) {
 	let letters = "*ABCDEFGHJKLMNOPQRSTWXYZ".split('');
 	let segs = {};
@@ -52,7 +54,7 @@ const dateCompare = function(startDate, endDate) {
 	}
 }
 
-const chooseFileUpload = function(count=9) {
+const chooseFileUpload = function(count = 9) {
 	return new Promise((resolve, reject) => {
 		uni.chooseImage({
 			count: count, //默认9
@@ -64,16 +66,16 @@ const chooseFileUpload = function(count=9) {
 			}) {
 				console.log("tempFilePaths", tempFilePaths);
 				console.log("tempFiles", tempFiles);
-				const p = tempFilePaths.map(item=>uploadFile(item))
+				const p = tempFilePaths.map(item => uploadFile(item))
 				uni.showLoading({
-				    title: "上传中...",
+					title: "上传中...",
 					mask: true
 				});
-				Promise.all(p).then(res=>{
+				Promise.all(p).then(res => {
 					console.log(res)
 					uni.hideLoading()
 					resolve(res)
-				}).catch(err=>{
+				}).catch(err => {
 					uni.hideLoading()
 					reject([])
 				})
@@ -110,9 +112,31 @@ const uploadFile = function(file) {
 	})
 
 }
+
+const hasWarning = function() {
+	return new Promise((resolve, reject)=>{
+		wx.requestSubscribeMessage({
+			tmplIds: [templateId],
+			success(res) {
+				console.log(res)
+				if (res.errMsg === 'requestSubscribeMessage:ok') {
+					resolve(true)
+				}else {
+					reject(false)
+				}
+			},
+			fail(error) {
+				console.log(error)
+				reject(false)
+			},
+		})
+	})
+	
+}
 export {
 	pySegSort,
 	dateCompare,
 	chooseFileUpload,
-	uploadFile
+	uploadFile,
+	hasWarning
 }

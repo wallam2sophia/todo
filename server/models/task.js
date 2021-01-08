@@ -20,6 +20,7 @@ const task = function(sequelize) {
       unique: 'column'
     },
     desc: DataTypes.STRING,
+    type: DataTypes.STRING,
     bgImg: {
       type: DataTypes.STRING,
     },
@@ -33,6 +34,9 @@ const task = function(sequelize) {
       type: DataTypes.STRING
     },
     endTime: {
+      type: DataTypes.STRING
+    },
+    remindTime: {
       type: DataTypes.STRING
     },
     creator: {
