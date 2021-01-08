@@ -25,4 +25,17 @@ router.post("/send/msg", async(req, res) => {
     res.send({msg: error});
   }
 })
+
+// 测试定时任务
+router.post("/test/schedule", async(req, res) => {
+  try {
+    const { rule } = req.body;
+    const result = await commonApi.testSchedule(rule);
+    res.status(200);
+    res.send(result);
+  } catch (error) {
+    res.status(500);
+    res.send({msg: error});
+  }
+})
 module.exports = router;

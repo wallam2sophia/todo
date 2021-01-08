@@ -82,13 +82,11 @@ const sendTemplateMessage = async function ({
   user,
   remark = ""
 }) {
-  return new Promise(async (resolve, reject) => {
+  try {
     console.log(openId, templateId)
     console.log(`${title}发送定时任务`)
     let time = dayjs(new Date()).format("YYYY年M月D日")
-    const {
-      access_token
-    } = await getAccessToken();
+    const { access_token } = await getAccessToken();
     const postData = {
       touser: openId,
       template_id: templateId,
@@ -115,10 +113,13 @@ const sendTemplateMessage = async function ({
       .send(postData)
       .set('Accept', 'application/json')
     if(res.code !== 0){
-      reject(res.body.errmsg)
+      return false
     }
-    resolve(res.body)
-  })
+    return true
+  }catch(error){
+    console.log(error)
+    return false
+  }
 }
 module.exports = {
   timeContinusData,

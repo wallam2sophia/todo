@@ -25,8 +25,8 @@
 			</view>
 			
 		</view>
-		<!-- <view class="my-news flex-row">
-			<view class="my-btn login-box success-btn" @click="login">
+		<view class="my-news flex-row">
+			<!-- <view class="my-btn login-box success-btn" @click="login">
 				登录
 			</view>
 			<view class="my-btn login-box success-btn" @click="hasWarning">
@@ -34,8 +34,11 @@
 			</view>
 			<view class="my-btn login-box success-btn" @click="sendMsg">
 				发送
+			</view> -->
+			<view class="my-btn login-box success-btn" @click="testSchedule">
+				测试
 			</view>
-		</view> -->
+		</view>
 		<!-- <view class="my-news">
 			<van-notice-bar left-icon="chat-o" text="笨笨刚刚签到了一起跳绳吧lalalallalalalalalalalalalalaallala" scrollable custom-class="news-item" />
 		</view> -->
@@ -130,6 +133,12 @@
 						  console.log('登录失败！' + res.errMsg)
 						}
 					}
+				})
+			},
+			testSchedule(){
+				let rule = "0 51 16 * * *"
+				commonApi.testSchedule({ rule }).then(res=>{
+					console.log(res)
 				})
 			},
 			getPhoneNumber(e){

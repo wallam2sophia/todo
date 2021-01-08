@@ -31,10 +31,10 @@ function setSchedule(){
   let paramsData = {
     openid: "oTkOq5dqK4rWNgUz8k4up1d1FUuA", 
     template_id: "I8PnqSS0b5pEWVAaV5I-OMRjK0WR5vPbYDjMhx-zihM", 
-    title: "定时通知1", 
+    title: "测试定时任务", 
     user: "多喝水", 
     time: '2021年1月8日', 
-    remark: '未打卡'
+    remark: '啦啦啦啦啦'
   }
   let reminPattern = "0 12 12 * * *"
   let job = schedule.scheduleJob(reminPattern, sendMsg(paramsData))

@@ -23,4 +23,15 @@ export default {
 			})
 		})
 	},
+	// 测试定时任务
+	testSchedule(data){
+		return new Promise((resolve, reject) => {
+			let url = "api/test/schedule"
+			postJSON(url, data).then(res=>{
+				resolve(res)
+			}).catch(error => {
+				reject(error)
+			})
+		})
+	},
 }
