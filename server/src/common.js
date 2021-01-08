@@ -73,7 +73,7 @@ const commonApi = {
     }
     
   },
-  testSchedule: async function(rule){
+  testSchedule: async function(remindPattern){
     try {
       console.log(":shezhi ")
       let paramsData = {
@@ -83,8 +83,8 @@ const commonApi = {
         user: "多喝水", 
         remark: '啦啦啦啦啦'
       }
-      console.log(rule)
-      let job = schedule.scheduleJob(rule, function (params){
+      console.log(remindPattern)
+      let job = schedule.scheduleJob(remindPattern, function (params){
         return function(){
           console.log('test schedule task 2222')
           return sendTemplateMessage(params)
