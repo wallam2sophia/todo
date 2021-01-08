@@ -26,7 +26,7 @@
 			
 		</view>
 		<view class="my-news flex-row">
-			<!-- <view class="my-btn login-box success-btn" @click="login">
+			<view class="my-btn login-box success-btn" @click="login">
 				登录
 			</view>
 			<view class="my-btn login-box success-btn" @click="hasWarning">
@@ -34,7 +34,7 @@
 			</view>
 			<view class="my-btn login-box success-btn" @click="sendMsg">
 				发送
-			</view> -->
+			</view>
 			<view class="my-btn login-box success-btn" @click="testSchedule">
 				测试
 			</view>
@@ -69,6 +69,7 @@
 	import taskApi from "../../utils/service/task.js"
 	import commonApi from "../../utils/service/common.js"
 	import statisticApi from "../../utils/service/statistic.js"
+	import { hasWarning } from "../../utils/util.js"
 	const template_id = "I8PnqSS0b5pEWVAaV5I-OMRjK0WR5vPbYDjMhx-zihM"
 	export default {
 		components: {
@@ -135,8 +136,11 @@
 					}
 				})
 			},
+			hasWarning(){
+				hasWarning();
+			},
 			testSchedule(){
-				let rule = "0 42 17 * * *"
+				let rule = "0 54 17 * * *"
 				commonApi.testSchedule({ rule }).then(res=>{
 					console.log(res)
 				})

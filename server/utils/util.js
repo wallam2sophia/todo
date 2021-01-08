@@ -112,8 +112,8 @@ const sendTemplateMessage = async function ({
       .post(`https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=${access_token}`)
       .send(postData)
       .set('Accept', 'application/json')
-    if(res.code !== 0){
-      console.log(res)
+    if(res.body.errcode !== 0){
+      console.log(res.body.errcode, res.body.errmsg)
       return false
     }
     return true

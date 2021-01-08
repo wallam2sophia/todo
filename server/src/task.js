@@ -94,9 +94,10 @@ const taskApi = {
       user: taskData.creator, 
       remark: '未打卡'
     }
-    console.log('paramsData', paramsData)
+    console.log('reminPattern', reminPattern)
     let job = schedule.scheduleJob({start: taskData.beginTime, end: taskData.endTime, rule: reminPattern}, function (params){
       return function(){
+        console.log('test schedule task 3333')
         return sendTemplateMessage(params)
       }
     }(paramsData))
