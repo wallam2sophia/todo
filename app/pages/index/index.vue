@@ -312,7 +312,7 @@
 		height: 150rpx;
 		bottom: 20rpx;
 		right: 20rpx;
-		z-index: 999;
+		z-index: 99;
 	}
 	.login-box {
 		padding: 15rpx 30rpx;

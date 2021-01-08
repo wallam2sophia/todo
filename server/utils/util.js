@@ -93,7 +93,7 @@ const sendTemplateMessage = async function ({
       touser: openId,
       template_id: templateId,
       page: "/pages/index/index",
-      miniprogram_state: "developer",
+      // miniprogram_state: "trial",
       lang: "zh_CN",
       data: {
         "thing1": {
@@ -110,20 +110,14 @@ const sendTemplateMessage = async function ({
         }
       }
     }
-    try {
-      let res = await request
-        .post(`https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=${access_token}`)
-        .send(postData)
-        .set('Accept', 'application/json')
-      if(res.code !== 0){
-        reject(res.body.errmsg)
-      }
-      resolve(res.body)
-    }catch(error){
-      console.log(error)
-      reject(error)
+    let res = await request
+      .post(`https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=${access_token}`)
+      .send(postData)
+      .set('Accept', 'application/json')
+    if(res.code !== 0){
+      reject(res.body.errmsg)
     }
-    
+    resolve(res.body)
   })
 }
 module.exports = {

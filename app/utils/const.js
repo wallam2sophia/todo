@@ -39,5 +39,5 @@ export const types = [{
 ]
 
 export const templateId = "I8PnqSS0b5pEWVAaV5I-OMRjK0WR5vPbYDjMhx-zihM"
-export const SERVER_URL = "http://127.0.0.1:8090/" // 本地开发环境
-// export const SERVER_URL = "https://guoxiuqiong.top/"  // 生产环境
+// export const SERVER_URL = "http://127.0.0.1:8090/" // 本地开发环境
+export const SERVER_URL = "https://guoxiuqiong.top/"  // 生产环境

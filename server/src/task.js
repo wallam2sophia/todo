@@ -54,7 +54,6 @@ const taskApi = {
       // LOG.info(JSON.stringify(taskData))
       taskData.status = checkTaskStatus(taskData.beginTime, taskData.endTime)
       const taskInfo = await sequelize.models.Task.create(taskData, { raw: true });
-      console.log(taskInfo)
       let p = []
       if(taskData.remindTime){
         let minute = taskData.remindTime.split(":")[1]
