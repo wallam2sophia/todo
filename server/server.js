@@ -1,5 +1,6 @@
 require("./sql.js"); // 连接数据库
 require("./scheduler"); // 执行定时任务
+require("./ws.js"); // 启动ws服务器
 const path = require('path')
 const express = require('express')
 const bodyParser = require('body-parser');

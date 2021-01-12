@@ -13,6 +13,7 @@ const isSameOrBefore = require('dayjs/plugin/isSameOrBefore');
 dayjs.extend(isSameOrAfter)
 dayjs.extend(isSameOrBefore)
 const { templateId, sendTemplateMessage } = require("../utils/util")
+const scheduleTask = new Map();
 const taskApi = {
   taskBg: function () {
     try {
@@ -56,8 +57,8 @@ const taskApi = {
       const taskInfo = await sequelize.models.Task.create(taskData, { raw: true });
       let p = []
       if(taskData.remindTime){
-        let minute = taskData.remindTime.split(":")[1]
-        let hour = taskData.remindTime.split(":")[0]
+        let minute = taskData.remindTime.split(":")[1].replace(/^0/g,"")
+        let hour = taskData.remindTime.split(":")[0].replace(/^0/g,"")
         let reminPattern = `0 ${minute} ${hour} * * *`
         let members = taskData.members
         members.forEach(member => {
@@ -97,13 +98,11 @@ const taskApi = {
     console.log('reminPattern', reminPattern)
     let job = schedule.scheduleJob({start: taskData.beginTime, end: taskData.endTime, rule: reminPattern}, function (params){
       return function(){
-        console.log('test schedule task 3333')
         return sendTemplateMessage(params)
       }
     }(paramsData))
     let scheduleData = {
       taskId: taskData.id,
-      job: job,
       desc: `${taskData.title}-${member}-打卡提醒`,
       reminPattern: reminPattern,
       action: 'sendTemplateMessage',
@@ -112,7 +111,9 @@ const taskApi = {
       endTime: taskData.endTime,
       status: 1,
     }
-    await sequelize.models.Schedule.create(scheduleData);
+    const sch = await sequelize.models.Schedule.create(scheduleData, {raw: true});
+    let jobs = !!scheduleTask.get(sch.taskId) ? [...scheduleTask.get(sch.taskId), job] : [job]
+    scheduleTask.set(sch.taskId, jobs)
     return true;
   },
   // 修改任务
@@ -131,12 +132,50 @@ const taskApi = {
         data: '修改失败'
       };
     }
-
+  },
+  // 添加成员
+  addMember: async function (taskData) {
+    try {
+      // LOG.info(JSON.stringify(taskData))
+      const taskInfo = await sequelize.models.Task.update({ members: taskData.members }, { where: { id: taskData.id }, raw: true });
+      console.log(taskInfo)
+      // 向管理员发送ws消息
+      let wsMsg = {
+        taskId: taskInfo.id,
+        taskTitle: taskInfo.title,
+        title: '新成员加入',
+        sender: taskData.member, 
+        receiver: taskInfo.creator, 
+        message: `新成员【${taskData.member}】加入【${taskInfo.title}】打卡任务!`,
+        type: 'member',
+        avatarUrl: taskData.avatarUrl
+      }
+      await sendMsg(wsMsg)
+      // 向申请者发送ws消息
+      let wsMsg = {
+        title: '加入打卡任务',
+        sender: taskInfo.creator, 
+        receiver: taskData.member, 
+        message: `你已成功加入【${taskInfo.title}】打卡任务!`,
+        type: 'task',
+        avatarUrl: taskInfo.creatorAvatar
+      }
+      await sendMsg(wsMsg)
+      return {
+        code: 100,
+        data: '添加成员成功'
+      };
+    } catch (error) {
+      console.log(error)
+      return {
+        code: 101,
+        data: '添加成员失败'
+      };
+    }
   },
   // 删除任务
   deleteTask: async function (taskId) {
     try {
-      await sequelize.models.Task.destroy({ where: { id: taskId } });
       // 删除该任务的打卡记录
       await sequelize.models.Sign.destroy({ where: { taskId: taskId } });
       // 删除该任务的点赞记录
@@ -144,7 +183,14 @@ const taskApi = {
       // 删除该任务的评论记录
       await sequelize.models.Comment.destroy({ where: { taskId: taskId } });
       // 删除该任务的定时任务记录
+      // 停止定时任务
+      // console.log('scheduleTask', scheduleTask)
+      !!scheduleTask.get(taskId) && (scheduleTask.get(taskId).forEach(item=> item.cancel()))
       await sequelize.models.Schedule.destroy({ where: { taskId: taskId } });
+      // 删除该任务的消息记录
+      await sequelize.models.Message.destroy({ where: { taskId: taskId } });
+      // 删除任务
+      await sequelize.models.Task.destroy({ where: { id: taskId } });
       return {
         code: 100,
         data: '删除成功'

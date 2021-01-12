@@ -4,7 +4,7 @@ const signR =  require("./sign")
 const commentR =  require("./comment")
 const likeR =  require("./like")
 const statisticR =  require("./statistic")
-
-const router = [commonR, taskR, signR, commentR, likeR, statisticR]
+const messageR =  require("./message")
+const router = [commonR, taskR, signR, commentR, likeR, statisticR, messageR]
 
 module.exports = router

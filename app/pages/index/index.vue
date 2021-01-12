@@ -25,7 +25,7 @@
 			</view>
 			
 		</view>
-		<view class="my-news flex-row">
+		<!-- <view class="my-news flex-row">
 			<view class="my-btn login-box success-btn" @click="login">
 				登录
 			</view>
@@ -38,7 +38,7 @@
 			<view class="my-btn login-box success-btn" @click="testSchedule">
 				测试
 			</view>
-		</view>
+		</view> -->
 		<!-- <view class="my-news">
 			<van-notice-bar left-icon="chat-o" text="笨笨刚刚签到了一起跳绳吧lalalallalalalalalalalalalalaallala" scrollable custom-class="news-item" />
 		</view> -->
@@ -107,6 +107,24 @@
 			}
 		},
 		methods: {
+			connectWS(){
+				uni.connectSocket({
+				    url: this.WS_URL + "/" + encodeURI(this.userInfo.nickName),
+				    header: {
+				        'content-type': 'application/json'
+				    },
+				    protocols: ['protocol1'],
+				    method: 'GET',
+					 success(res){
+						 console.log(res)
+						 console.log("连接WS服务器成功!")
+					 },
+					 fail(error){
+						 console.log(error)
+						 console.log("连接WS服务器失败!")
+					 }
+				});
+			},
 			sendMsg(){
 				let sendData = {
 					nickName: this.userInfo.nickName,
@@ -140,7 +158,7 @@
 				hasWarning();
 			},
 			testSchedule(){
-				let rule = "0 54 17 * * *"
+				let rule = "0 02 10 * * *"
 				commonApi.testSchedule({ rule }).then(res=>{
 					console.log(res)
 				})
@@ -198,6 +216,9 @@
 					url: `../task-detail/task-detail?taskId=${id}&taskStatus=${taskStatus}`
 				})
 			}
+		},
+		onLoad(){
+			this.connectWS();
 		},
 		onShow(){
 			this.fetchMyGeneral();

@@ -21,7 +21,8 @@
     "querystring": "^0.2.0",
     "request": "^2.88.2",
     "sequelize": "^6.3.5",
-    "superagent": "^6.1.0"
+    "superagent": "^6.1.0",
+    "ws": "^7.4.2"
   },
   "devDependencies": {
     "sequelize-cli": "^6.2.0"

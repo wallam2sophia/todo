@@ -1,10 +1,11 @@
-import { SERVER_URL } from "./const.js"
+import { SERVER_URL, WS_URL } from "./const.js"
 import Notify from '../wxcomponents/vant-weapp/notify/notify.js';
 
 export default {
 	data(){
 		return {
 			SERVER_URL: SERVER_URL,
+			WS_URL: WS_URL,
 			userInfo: {},
 			loading: false,
 		}

@@ -18,10 +18,29 @@ const schedule = function(sequelize) {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    job: {
-      type: DataTypes.JSON,
-      allowNull: false,
-    },
+    // job: {
+    //   type: DataTypes.TEXT,
+    //   get: function() {
+    //     let value = this.getDataValue('job')
+    //     let newVal = JSON.parse(value, function(k,v){
+    //       if(v.indexOf && v.indexOf('function') > -1){
+    //          return eval("(function(){return "+v+" })()")
+    //       }
+    //       return v;
+    //     });
+    //     return newVal
+    //   },
+    //   set: function(value) {
+    //     console.log('set---')
+    //     let newVal = JSON.stringify(value, function(key, val) {
+    //       if (typeof val === 'function') {
+    //         return val + '';
+    //       }
+    //       return val;
+    //     });
+    //     this.setDataValue('job', newVal);
+    //   },
+    // },
     desc: DataTypes.STRING,
     reminPattern: DataTypes.STRING,
     action: DataTypes.STRING,

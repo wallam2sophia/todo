@@ -4,6 +4,7 @@ const {
 const { Op } = require("sequelize");
 const dayjs = require("dayjs")
 const { timeContinusData } = require("../utils/util")
+const { sendMsg } = require("../ws")
 // 新增打卡
 const signApi = {
   addSign: async function (signData) {
@@ -18,8 +19,7 @@ const signApi = {
         };
       }
       
-      const res = await sequelize.models.Task.findByPk(signData.taskId);
-      const taskData = JSON.parse(JSON.stringify(res, null, 2));
+      const taskData = await sequelize.models.Task.findByPk(signData.taskId, { raw: true });
       console.log('taskData', taskData)
       let beginDate = dayjs(taskData.beginTime)
       let endDate = dayjs(taskData.endTime)
@@ -37,6 +37,18 @@ const signApi = {
       }
       signData.signTime = dayjs(signData.signTime).format("YYYY-MM-DD HH:mm:ss");
       await sequelize.models.Sign.create(signData);
+      // 发送ws消息
+      let wsMsg = {
+        taskId: taskInfo.id,
+        taskTitle: taskInfo.title,
+        title: '打卡',
+        sender: signData.signer, 
+        receiver: signData.signer, 
+        message: `【${taskData.title}】今日打卡完成!`,
+        type: 'sign',
+        avatarUrl: signData.avatarUrl
+      }
+      await sendMsg(wsMsg)
       return {
         code: 100,
         data: "打卡成功"

@@ -76,6 +76,15 @@
             }
             
         }
+        ,{
+            "path" : "pages/news/news",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "消息中心",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "white",
@@ -123,6 +132,12 @@
 				"text":"首页",
 				"iconPath":"static/icon/home1.png",
 				"selectedIconPath":"static/icon/home-active3.png"
+			},
+			{
+				"pagePath":"pages/news/news",
+				"text":"消息",
+				"iconPath":"static/icon/news2.png",
+				"selectedIconPath":"static/icon/news-active2.png"
 			},
 			{
 				"pagePath":"pages/statistic/statistic",

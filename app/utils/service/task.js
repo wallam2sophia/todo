@@ -24,6 +24,17 @@ export default {
 			})
 		})
 	},
+	// 添加成员
+	addMember(data){
+		return new Promise((resolve, reject) => {
+			let url = "api/add/member"
+			postJSON(url, data).then(res=>{
+				resolve(res)
+			}).catch(error => {
+				reject(error)
+			})
+		})
+	},
 	// 修改任务
 	editTask(data){
 		return new Promise((resolve, reject) => {

@@ -39,9 +39,11 @@
 				console.log(this.userInfo.nickName)
 				let sendData = {
 					id: this.taskInfo.id,
+					member: this.userInfo.nickName,
+					avatarUrl: this.userInfo.avatarUrl,
 					members: [...this.taskInfo.members, this.userInfo.nickName]
 				}
-				taskApi.editTask(sendData).then(res=>{
+				taskApi.addMember(sendData).then(res=>{
 					console.log(res)
 					this.$emit("submit")
 				})

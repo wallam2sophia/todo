@@ -100,7 +100,7 @@
 				
 			},
 			handleAddTask(){
-				let sendData = Object.assign({}, this.formData, {creator: this.userInfo.nickName, members: [this.userInfo.nickName]})
+				let sendData = Object.assign({}, this.formData, {creator: this.userInfo.nickName, members: [this.userInfo.nickName], creatorAvatar: this.userInfo.avatarUrl })
 				taskApi.addTask(sendData).then(res => {
 					// 成功通知
 					this.notify({ 

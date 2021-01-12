@@ -25,6 +25,17 @@ router.post("/edit/task", async (req, res) => {
   }
 
 })
+// 新增成员
+router.post("/add/member", async (req, res) => {
+  try {
+    const result = await taskApi.addMember(req.body);
+    res.status(200);
+    res.send(result);
+  } catch (error) {
+    res.status(500);
+    res.send({msg: error});
+  }
+})
 // 删除任务
 router.get("/delete/task/:taskId", async (req, res) => {
   try {

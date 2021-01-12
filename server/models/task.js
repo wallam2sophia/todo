@@ -42,6 +42,9 @@ const task = function(sequelize) {
     creator: {
       type: DataTypes.STRING
     },
+    creatorAvatar: {
+      type: DataTypes.STRING
+    },
     manager: {
       type: DataTypes.STRING
     },
