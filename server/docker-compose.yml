@@ -1,0 +1,7 @@
+version: "3.8"
+services: 
+  todo_server:
+    container_name: todo_server
+    build: .
+    ports: 
+      - 9010:8090
