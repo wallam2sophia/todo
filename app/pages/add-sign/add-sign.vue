@@ -108,7 +108,7 @@
 					// 成功通知
 					this.notify({ 
 						context: this,
-						text: "打卡成功!",
+						text: res.data,
 						type: "success",
 						selector: "#sign-notify"
 					});

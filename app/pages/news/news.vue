@@ -2,21 +2,34 @@
 	<view class="my-news">
 		<view class="msg-list" v-if="!loading && msgLists.length > 0">
 			<view class="msg-item" v-for="item in msgLists" :key="item.id">
-				<view class="log-row base">
-					<view class="avatar">
-						<image :src="item.avatarUrl" mode="aspectFit"></image>
+				<view class="msg-content">
+					<view class="log-row base">
+						<view class="avatar">
+							<image :src="item.avatarUrl" mode="aspectFit"></image>
+						</view>
+						<view class="member-info">
+							<view class="name">
+								<text>{{item.sender}}</text>
+							</view>
+							<view class="asign-time">
+								{{dayjs(item.createTime).format("YYYY-MM-DD hh:mm:ss")}}
+							</view>
+						</view>
+						<view class="oper-btns flex-column" v-if="item.type === 'apply' && item.status == 0">
+							<view class="my-btn primary-btn small-btn" @click="approveSign(item, 1)">
+								同意
+							</view>
+							<view class="my-btn info-btn small-btn" @click="approveSign(item, -1)">
+								拒绝
+							</view>
+						</view>
 					</view>
-					<view class="member-info">
-						<view class="name">
-							<text>{{item.sender}}</text>
-						</view>
-						<view class="asign-time">
-							{{dayjs(item.createTime).format("YYYY-MM-DD hh:mm:ss")}}
-						</view>
+					<view class="log-row desc">
+						<text>{{item.message}}</text>
 					</view>
 				</view>
-				<view class="log-row desc">
-					<text>{{item.message}}</text>
+				<view class="title">
+					--内容来自【{{item.taskTitle}}】
 				</view>
 			</view>
 		</view>
@@ -24,11 +37,14 @@
 		<view class="no-data" v-if="dataFinishShow">
 			-------我是有底线的--------
 		</view>
+		<!-- 在页面内添加对应的节点 -->
+		<van-notify id="news-notify"/>
 	</view>
 </template>
 
 <script>
 	import messageApi from "../../utils/service/message.js"
+	import signApi from "../../utils/service/sign.js"
 	import dayjs from 'dayjs'
 	export default {
 		data() {
@@ -65,7 +81,32 @@
 			},
 			dayjs(data){
 				return dayjs(data)
-			}
+			},
+			approveSign(data, status){
+				let sendData = {
+					msgId: data.id,
+					signId: data.signId,
+					status
+				}
+				signApi.approveSign(sendData).then(res=>{
+					// 成功通知
+					this.notify({ 
+						context: this,
+						text: "审批成功!",
+						type: "success",
+						selector: "#news-notify"
+					});
+					this.refreshMsgList();
+				}).catch(error=>{
+					// 失败通知
+					this.notify({ 
+						context: this,
+						text: error.data,
+						type: "danger",
+						selector: "#news-notify"
+					});
+				})
+			},
 		},
 		onLoad(){
 			
@@ -100,9 +141,11 @@
 	padding: 10px 0;
 	.msg-list {
 		.msg-item {
-			padding: 10px;
-			background-color: #fff;
 			margin-bottom: 10px;
+			.msg-content {
+				padding: 10px;
+				background-color: #fff;
+			}
 		}
 		
 		.log-row {
@@ -138,8 +181,21 @@
 				color: #C0C0C0;
 			}
 		}
+		.oper-btns {
+			margin-left: auto;
+			
+			& > .my-btn:first-child {
+				margin-bottom: 5px;
+			}
+		}
 		.desc {
 			// padding-left: 20px;
+		}
+		.title {
+			font-size: 24rpx;
+		    text-align: right;
+		    margin-top: 10px;
+		    color: $main-icon-color;
 		}
 	}
 }

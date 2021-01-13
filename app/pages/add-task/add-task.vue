@@ -9,6 +9,42 @@
 		<van-cell title="结束日期" :value="formData.endTime" is-link @click="endShow=true"/>
 		<van-cell title="签到周期" :value="formData.signType" is-link @click="periodShow=true"/>
 		<van-cell title="提醒时间" :value="formData.remindTime" is-link @click="remindShow=true"/>
+		<van-cell title="必须在指定地点才能签到" :border="false">
+		  <van-switch :checked="formData.locationLimit" @change="locationSwitch" size="20px"/>
+		</van-cell>
+		<view class="location-row" v-if="formData.locationLimit">
+			<view v-for="(item, index) in formData.locations" :key="index" class="location-item">
+				<view class="select-location flex-row" @click="chooseLocation">
+					<van-icon name="location-o" custom-class="location"/>
+					<view class="location-name">
+						{{item.name}}
+					</view>
+					<van-icon name="close" custom-class="close"/>
+				</view>
+				<view class="set-offset flex-row">
+					<view class="placeholder">
+						设置签到范围(至少需要50米)
+					</view>
+					<input
+						:value="item.offset" 
+						placeholder="0" 
+						@input="(e)=>item.offset=e.detail.value" 
+						type="text" 
+						placeholder-class="comment-input-placeholder"
+						class="input"/>
+					<view class="unin">
+						米
+					</view>
+					<van-icon name="close" custom-class="close"/>
+				</view>
+			</view>
+			<view class="add-btn flex-row">
+				<van-icon name="add-o" custom-class="add"/>
+				<view class="text">
+					点击继续添加可签到地点
+				</view>
+			</view>
+		</view>
 		<van-action-sheet :show="typeShow" :actions="types" round :close-on-click-overlay="true" @select="setType"/>
 		<van-action-sheet :show="periodShow" :actions="periods" round :close-on-click-overlay="true" @select="setPeriod"/>
 		<van-popup :show="beginShow" position="bottom" round >
@@ -61,7 +97,14 @@
 					beginTime: "",
 					endTime: "",
 					remindTime: "",
-					signType: ""
+					signType: "",
+					locationLimit: false,
+					locations: [
+						{
+							name: "请指定签到地点"
+						},
+					]
+					
 				},
 				
 			}
@@ -98,6 +141,30 @@
 					that.handleAddTask()
 				}
 				
+			},
+			locationSwitch(e){
+				console.log(e)
+				this.formData.locationLimit = e.detail;
+				if(!e.detail){
+					this.formData.location = { name: "请指定签到地点"};
+					
+				}
+			},
+			chooseLocation(){
+				let that = this
+				uni.chooseLocation({
+					success: function (res) {
+							that.formData.location = {
+								name: res.name,
+								address: res.address,
+								latitude: res.latitude,
+								longitude: res.longitude
+							}
+					},
+					fail(error){
+						console.log(error)
+					}
+				})
 			},
 			handleAddTask(){
 				let sendData = Object.assign({}, this.formData, {creator: this.userInfo.nickName, members: [this.userInfo.nickName], creatorAvatar: this.userInfo.avatarUrl })
@@ -183,6 +250,58 @@
 		image {
 			width: 100%;
 			height: 100px;
+		}
+		.location-row {
+			padding: 0 16px;
+			.location-item {
+				margin-bottom: 10px;
+				.select-location {
+					line-height: 34px;
+					.location-name {
+						flex: 1;
+						color: $main-icon-color;
+					}
+					.location {
+						font-size: 20px;
+						color: $main-icon-color;
+						margin-right: 5px;
+					}
+					.close {
+						font-size: 20px;
+						color: $main-grey-text;
+						margin-left: 5px;
+					}
+				}
+				.set-offset {
+					line-height: 34px;
+					.placeholder{
+						font-size: 12px;
+						color: $main-grey-text;
+						margin-right: 10px;
+						flex: 1;
+					}
+					input {
+						width: 30%;
+					}
+					.unin {
+						margin-left: 10px;
+					}
+					.close {
+						font-size: 20px;
+						color: $main-grey-text;
+						margin-left: 5px;
+					}
+				}
+			}
+			.add-btn {
+				line-height: 34px;
+				color: $main-icon-color;
+				.add {
+					font-size: 20px;
+					margin-right: 5px;
+				}
+				
+			}
 		}
 		.submit-btn {
 			width: 70%;

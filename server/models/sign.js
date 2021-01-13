@@ -32,6 +32,10 @@ const sign = function(sequelize) {
     location: {
       type: DataTypes.JSON,
     },
+    status: {
+      type: DataTypes.STRING,
+      defaultValue: 1 // 1 已生效 0 未生效
+    }
   }, {
     // 这是其他模型参数
     sequelize, // 我们需要传递连接实例

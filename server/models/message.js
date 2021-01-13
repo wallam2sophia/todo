@@ -18,6 +18,9 @@ const message = function(sequelize) {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+    signId: {
+      type: DataTypes.INTEGER,
+    },
     taskTitle: DataTypes.STRING,
     sender: DataTypes.STRING,
     avatarUrl: DataTypes.STRING,

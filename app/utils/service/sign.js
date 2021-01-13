@@ -12,6 +12,17 @@ export default {
 			})
 		})
 	},
+	// 审批打卡
+	approveSign(data){
+		return new Promise((resolve, reject) => {
+			let url = "api/approve/sign"
+			postJSON(url, data).then(res=>{
+				resolve(res)
+			}).catch(error => {
+				reject(error)
+			})
+		})
+	},
 	// 查询打卡日志
 	listSign(data){
 		return new Promise((resolve, reject) => {

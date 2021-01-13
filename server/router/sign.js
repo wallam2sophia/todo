@@ -13,7 +13,30 @@ router.post("/add/sign", async (req, res) => {
     res.send({msg: error});
   }
 })
-
+// 修改打卡
+router.post("/edit/sign", async (req, res) => {
+  try {
+    const data = req.body;
+    const result = await signApi.editSign(data);
+    res.status(200);
+    res.send(result);
+  } catch (error) {
+    res.status(500);
+    res.send({msg: error});
+  }
+})
+// 补卡审批
+router.post("/approve/sign", async (req, res) => {
+  try {
+    const data = req.body;
+    const result = await signApi.approveSign(data);
+    res.status(200);
+    res.send(result);
+  } catch (error) {
+    res.status(500);
+    res.send({msg: error});
+  }
+})
 // 获取打卡日志
 router.post("/list/sign", async (req, res) => {
   try {

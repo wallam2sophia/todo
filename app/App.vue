@@ -87,6 +87,12 @@
 	.disabled-btn {
 		cursor: not-allowed;
 	}
+	.small-btn {
+		font-size: 24rpx;
+		padding: 16rpx 26rpx;
+		border-radius: 30rpx;
+		line-height: 24rpx;
+	}
 	.flex-column {
 		display: flex;
 		flex-direction: column;
