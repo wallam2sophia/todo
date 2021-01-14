@@ -9,17 +9,19 @@
 		<van-cell title="结束日期" :value="formData.endTime" is-link @click="endShow=true"/>
 		<van-cell title="签到周期" :value="formData.signType" is-link @click="periodShow=true"/>
 		<van-cell title="提醒时间" :value="formData.remindTime" is-link @click="remindShow=true"/>
-		<van-cell title="必须在指定地点才能签到" :border="false">
+		<van-cell title="指定签到地点" :border="false">
 		  <van-switch :checked="formData.locationLimit" @change="locationSwitch" size="20px"/>
 		</van-cell>
 		<view class="location-row" v-if="formData.locationLimit">
 			<view v-for="(item, index) in formData.locations" :key="index" class="location-item">
-				<view class="select-location flex-row" @click="chooseLocation(index)">
-					<van-icon name="location-o" custom-class="location"/>
-					<view class="location-name">
-						{{item.name}}
+				<view class="select-location flex-row" >
+					<view class="flex-row first" @click="chooseLocation(index)">
+						<van-icon name="location-o" custom-class="location"/>
+						<view class="location-name">
+							{{item.name}}
+						</view>
 					</view>
-					<van-icon name="close" custom-class="close"/>
+					<van-icon name="close" custom-class="close" @click.stop="delLoc(index)"/>
 				</view>
 				<view class="set-offset flex-row">
 					<view class="placeholder">
@@ -35,13 +37,34 @@
 					<view class="unin">
 						米
 					</view>
-					<van-icon name="close" custom-class="close"/>
 				</view>
 			</view>
-			<view class="add-btn flex-row">
+			<view class="add-btn flex-row" @click="addLoc">
 				<van-icon name="add-o" custom-class="add"/>
 				<view class="text">
-					点击继续添加可签到地点
+					点击继续添加
+				</view>
+			</view>
+		</view>
+		<van-cell title="指定签到wifi" :border="false">
+		  <van-switch :checked="formData.wifiLimit" @change="wifiSwitch" size="20px"/>
+		</van-cell>
+		<view class="location-row" v-if="formData.wifiLimit">
+			<view v-for="(item, index) in formData.wifis" :key="index" class="location-item">
+				<view class="select-location flex-row">
+					<view class="flex-row first"  @click="getWifi(index)">
+						<van-icon name="bar-chart-o" custom-class="location"/>
+						<view class="location-name">
+							{{item.SSID}}
+						</view>
+					</view>
+					<van-icon name="close" custom-class="close" @click.stop="delWifi(index)"/>
+				</view>
+			</view>
+			<view class="add-btn flex-row" @click="addWifi">
+				<van-icon name="add-o" custom-class="add"/>
+				<view class="text">
+					点击继续添加
 				</view>
 			</view>
 		</view>
@@ -104,6 +127,12 @@
 							name: "请指定签到地点",
 							offset: 50
 						},
+					],
+					wifiLimit: false,
+					wifis: [
+						{
+							SSID: "点击获取wifi",
+						}
 					]
 					
 				},
@@ -147,9 +176,32 @@
 				console.log(e)
 				this.formData.locationLimit = e.detail;
 				if(!e.detail){
-					this.formData.location = { name: "请指定签到地点"};
+					this.formData.locations = [{ name: "请指定签到地点"}];
 					
 				}
+			},
+			wifiSwitch(e){
+				this.formData.wifiLimit = e.detail;
+				if(!e.detail){
+					this.formData.wifis = [{ SSID: "点击获取wifi"}];
+				}
+			},
+			addLoc(){
+				this.formData.locations.push({
+					name: "请指定签到地点",
+					offset: 50
+				})
+			},
+			delLoc(index){
+				this.formData.locations.splice(index, 1)
+			},
+			addWifi(){
+				this.formData.wifis.push({
+					SSID: "点击获取wifi"
+				})
+			},
+			delWifi(index){
+				this.formData.wifis.splice(index, 1)
 			},
 			chooseLocation(index){
 				let that = this
@@ -163,6 +215,18 @@
 							longitude: res.longitude
 						}
 						that.formData.locations.splice(index, 1, location)
+					},
+					fail(error){
+						console.log(error)
+					}
+				})
+			},
+			getWifi(index){
+				let that = this
+				wx.getConnectedWifi({
+					success(res){
+						let wifi = res.wifi;
+						that.formData.wifis.splice(index, 1, wifi)
 					},
 					fail(error){
 						console.log(error)
@@ -311,6 +375,9 @@
 					margin-right: 5px;
 				}
 				
+			}
+			.first {
+				flex: 1;
 			}
 		}
 		.submit-btn {

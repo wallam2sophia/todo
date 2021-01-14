@@ -55,6 +55,13 @@ const task = function(sequelize) {
     locations: {
       type: DataTypes.JSON,
     },
+    wifiLimit: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    wifis: {
+      type: DataTypes.JSON,
+    },
     status: {
       type: DataTypes.STRING,
       defaultValue: 'todo' // todo 未开始  doing 进行中 done 已结束

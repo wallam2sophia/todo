@@ -68,7 +68,21 @@
 				<view v-if="taskInfo.members.includes(userInfo.nickName)">
 					<view  class="my-btn warning-btn disabled-btn" v-if="taskInfo.status === 'done'">打卡已结束</view>
 					<view  class="my-btn info-btn disabled-btn" v-else-if="taskInfo.status === 'todo'">打卡未开始</view>
-					<view  class="my-btn primary-btn" v-else-if="taskInfo.status === 'doing' && !taskInfo.isSigned" @click="signIn">点击打卡</view>
+					<view v-else-if="taskInfo.status === 'doing' && !taskInfo.isSigned">
+						<view  class="my-btn primary-btn"  @click="signIn">点击打卡</view>
+						<view class="notice-bar">
+							<view class="location" v-if="taskInfo.locationLimit">
+								<view class="loc" v-for="(item, index) in taskInfo.locations" :key="index">
+									<text class='loc-href' @click="goAddress(item)">{{item.name}}</text>-{{item.offset}}米以内
+								</view>
+							</view>
+							<view class="wifi" v-if="taskInfo.wifiLimit">
+								<view class="loc" v-for="(item, index) in taskInfo.wifis" :key="index">
+									{{item.SSID}}
+								</view>
+							</view>
+						</view>
+					</view>
 					<view class="my-btn success-btn disabled-btn" v-else>今日打卡已完成</view>
 				</view>
 				<view class="my-btn warning-btn" @click="joinPopShow=true" v-else>参与打卡</view>
@@ -106,6 +120,8 @@
 		<van-popup :show="dateShow" position="bottom" round @cloce="dateShow=false">
 			<van-datetime-picker type="date" :value="currentDate" :min-date="minDate" :max-date="maxDate" @input="onInput"  @cancel="dateShow=false" @confirm="changeSignData(currentDate)"/>
 		</van-popup>
+		<!-- 在页面内添加对应的节点 -->
+		<van-notify id="task-notify"/>
 	</view>
 </template>
 
@@ -115,7 +131,7 @@
 	import signApi from "../../utils/service/sign.js"
 	import joinTaskPop from "../../components/joinTaskPop.vue"
 	import dayjs from 'dayjs'
-	
+	import { getDistance } from "../../utils/util.js"
 	export default {
 		components:{ signLog, joinTaskPop },
 		data() {
@@ -203,9 +219,87 @@
 					url: `../task-rank/task-rank?taskId=${this.taskInfo.id}`
 				})
 			},
-			signIn(){
-				uni.navigateTo({
-					url: `../add-sign/add-sign?taskId=${this.taskInfo.id}`
+			async signIn(){
+				// 限制打卡地点
+				let locValid = true
+				if(this.taskInfo.locationLimit){
+					let [_, curLoc] = await uni.getLocation({type: 'wgs84', altitude: true })
+					// 获取当前位置
+					for(let location of this.taskInfo.locations){
+						let distance = getDistance(location.latitude, location.longitude, curLoc.latitude, curLoc.longitude)
+						if(distance > parseInt(location.offset)){
+							locValid = false;
+							break;
+						}
+					}
+				}
+				// 限制打卡wifi
+				let wifiValid = true
+				if(this.taskInfo.wifiLimit){
+					let [_, curWifi] = await wx.getConnectedWifi()
+					// 获取当前位置
+					console.log(curWifi)
+					for(let wifi of this.taskInfo.wifis){
+						console.log(wifi)
+						if(wifi.BSSID !== curWifi.BSSID){
+							wifiValid = false;
+							break;
+						}
+					}
+				}
+				if(locValid && wifiValid){
+					uni.navigateTo({
+						url: `../add-sign/add-sign?taskId=${this.taskInfo.id}`
+					})
+				}else if(!locValid){
+					// 失败通知
+					this.notify({ 
+						context: this,
+						text: "你当前不在可打卡的范围!",
+						type: "danger",
+						selector: "#task-notify"
+					});
+					return false
+				}else if(!wifiValid){
+					// 失败通知
+					this.notify({ 
+						context: this,
+						text: "请连接到指定wifi列表打卡!",
+						type: "danger",
+						selector: "#task-notify"
+					});
+					return false
+				}else{
+					// 失败通知
+					this.notify({ 
+						context: this,
+						text: "暂无法打卡,请联系管理员!",
+						type: "danger",
+						selector: "#task-notify"
+					});
+					return false
+				}
+				
+			},
+			goAddress(location){
+				uni.openLocation({
+					latitude: location.latitude,
+					longitude: location.longitude,
+					name: location.name,
+					address: location.address,
+					success(res){
+						console.log(res)
+					},
+					fail(error){
+						console.log(error)
+						// 失败通知
+						this.notify({ 
+							context: this,
+							text: "查看地图失败!",
+							type: "danger",
+							selector: "#task-notify"
+						});
+					}
 				})
 			},
 			onJoinSubmit(){
@@ -370,6 +464,20 @@
 	.oper-bar {
 		width: 80%;
 		margin: 10px auto;
+		
+		.notice-bar {
+			margin-top: 10px;
+			font-size: 12px;
+			color: #999;
+			.location {
+				margin-bottom: 5px;
+				line-height: 20px;
+				
+				.loc-href {
+					color: $main-bg-color;
+				}
+			}
+		}
 	}
 	.user {
 		display: flex;
