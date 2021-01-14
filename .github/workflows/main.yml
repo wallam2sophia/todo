@@ -8,7 +8,7 @@ jobs:
     name: pull_code
     runs-on: centos8
     steps:
-      name: pull
+      - name: pull
       uses: appleboy/ssh-action@master
       with:
           host: ${{ secrets.HOST }} # 服务器ip
@@ -23,7 +23,7 @@ jobs:
     needs: pull_code
     runs-on: centos8
     steps:
-      -name: deply
+      - name: deply
       uses: appleboy/ssh-action@master
       with:
           host: ${{ secrets.HOST }} # 服务器ip
