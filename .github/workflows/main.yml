@@ -1,7 +1,8 @@
 name: Todo Server Deploy
-on: push
-  branches:
-    feature-v1.0.0
+on: 
+  push:
+    branches:
+      feature-v1.0.0
 jobs:
   pull_code: 
     name: pull_code
