@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: pull
-        uses: actions/pull@master
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }} # 服务器ip
           username: ${{ secrets.HOST_USERNAME }} # 服务器登录用户名
@@ -19,7 +19,7 @@ jobs:
             cd /root/code/todo
             git pull
       - name: deploy
-        uses: actions/deploy@master
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }} # 服务器ip
           username: ${{ secrets.HOST_USERNAME }} # 服务器登录用户名
