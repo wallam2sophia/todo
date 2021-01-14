@@ -48,6 +48,13 @@ const task = function(sequelize) {
     manager: {
       type: DataTypes.STRING
     },
+    locationLimit: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    locations: {
+      type: DataTypes.JSON,
+    },
     status: {
       type: DataTypes.STRING,
       defaultValue: 'todo' // todo 未开始  doing 进行中 done 已结束
