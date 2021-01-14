@@ -31,4 +31,5 @@ jobs:
           password: ${{ secrets.HOST_PASSWORD }} # 服务器登录密码
           port: ${{ secrets.HOST_PORT }} # 服务器ssh端口
           script:
+            cd /root/code/todo/server
             docker-compose up -d
