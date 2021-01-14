@@ -6,7 +6,7 @@ on:
 jobs:
   pull_code: 
     name: pull_code
-    runs-on: centos8
+    runs-on: ubuntu-latest
     steps:
       - name: pull
         uses: appleboy/ssh-action@master
@@ -21,7 +21,7 @@ jobs:
   build:
     name: build_server
     needs: pull_code
-    runs-on: centos8
+    runs-on: ubuntu-latest
     steps:
       - name: deply
         uses: appleboy/ssh-action@master
