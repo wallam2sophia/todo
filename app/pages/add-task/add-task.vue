@@ -14,7 +14,7 @@
 		</van-cell>
 		<view class="location-row" v-if="formData.locationLimit">
 			<view v-for="(item, index) in formData.locations" :key="index" class="location-item">
-				<view class="select-location flex-row" @click="chooseLocation">
+				<view class="select-location flex-row" @click="chooseLocation(index)">
 					<van-icon name="location-o" custom-class="location"/>
 					<view class="location-name">
 						{{item.name}}
@@ -28,7 +28,7 @@
 					<input
 						:value="item.offset" 
 						placeholder="0" 
-						@input="(e)=>item.offset=e.detail.value" 
+						@change="(e)=>offsetChange(index, e.detail.value)" 
 						type="text" 
 						placeholder-class="comment-input-placeholder"
 						class="input"/>
@@ -101,7 +101,8 @@
 					locationLimit: false,
 					locations: [
 						{
-							name: "请指定签到地点"
+							name: "请指定签到地点",
+							offset: 50
 						},
 					]
 					
@@ -150,21 +151,30 @@
 					
 				}
 			},
-			chooseLocation(){
+			chooseLocation(index){
 				let that = this
 				uni.chooseLocation({
 					success: function (res) {
-							that.formData.location = {
-								name: res.name,
-								address: res.address,
-								latitude: res.latitude,
-								longitude: res.longitude
-							}
+						let location = {
+							...that.formData.locations[index],
+							name: res.name,
+							address: res.address,
+							latitude: res.latitude,
+							longitude: res.longitude
+						}
+						that.formData.locations.splice(index, 1, location)
 					},
 					fail(error){
 						console.log(error)
 					}
 				})
+			},
+			offsetChange(index, value){
+				let location = {
+					...this.formData.locations[index],
+					offset: value
+				}
+				this.formData.locations.splice(index, 1, location)
 			},
 			handleAddTask(){
 				let sendData = Object.assign({}, this.formData, {creator: this.userInfo.nickName, members: [this.userInfo.nickName], creatorAvatar: this.userInfo.avatarUrl })

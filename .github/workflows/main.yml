@@ -9,7 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: pull
-        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }} # 服务器ip
           username: ${{ secrets.HOST_USERNAME }} # 服务器登录用户名
@@ -24,7 +23,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: deply
-        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }} # 服务器ip
           username: ${{ secrets.HOST_USERNAME }} # 服务器登录用户名
