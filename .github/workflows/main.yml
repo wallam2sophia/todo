@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: pull
-        uses: wallam2sophia/todo@feature-v1.0.0
+        uses: actions/todo@master
         with:
           host: ${{ secrets.HOST }} # 服务器ip
           username: ${{ secrets.HOST_USERNAME }} # 服务器登录用户名
@@ -18,13 +18,8 @@ jobs:
           script:
             cd /root/code/todo
             git pull
-  build:
-    name: build_server
-    needs: pull_code
-    runs-on: ubuntu-latest
-    steps:
-      - name: deply
-        uses: wallam2sophia/todo@feature-v1.0.0
+      - name: deploy
+        uses: actions/todo@master
         with:
           host: ${{ secrets.HOST }} # 服务器ip
           username: ${{ secrets.HOST_USERNAME }} # 服务器登录用户名
