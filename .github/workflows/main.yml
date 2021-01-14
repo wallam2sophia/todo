@@ -9,8 +9,8 @@ jobs:
     runs-on: centos8
     steps:
       - name: pull
-      uses: appleboy/ssh-action@master
-      with:
+        uses: appleboy/ssh-action@master
+        with:
           host: ${{ secrets.HOST }} # 服务器ip
           username: ${{ secrets.HOST_USERNAME }} # 服务器登录用户名
           password: ${{ secrets.HOST_PASSWORD }} # 服务器登录密码
@@ -24,8 +24,8 @@ jobs:
     runs-on: centos8
     steps:
       - name: deply
-      uses: appleboy/ssh-action@master
-      with:
+        uses: appleboy/ssh-action@master
+        with:
           host: ${{ secrets.HOST }} # 服务器ip
           username: ${{ secrets.HOST_USERNAME }} # 服务器登录用户名
           password: ${{ secrets.HOST_PASSWORD }} # 服务器登录密码
