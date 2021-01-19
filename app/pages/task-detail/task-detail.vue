@@ -72,14 +72,21 @@
 						<view  class="my-btn primary-btn"  @click="signIn">点击打卡</view>
 						<view class="notice-bar">
 							<view class="location" v-if="taskInfo.locationLimit">
+								<!-- <view class="title">
+									指定打卡地点:
+								</view> -->
 								<view class="loc" v-for="(item, index) in taskInfo.locations" :key="index">
 									<text class='loc-href' @click="goAddress(item)">{{item.name}}</text>-{{item.offset}}米以内
 								</view>
 							</view>
-							<view class="wifi" v-if="taskInfo.wifiLimit">
-								<view class="loc" v-for="(item, index) in taskInfo.wifis" :key="index">
-									{{item.SSID}}
+							<view class="wifi-l" v-if="taskInfo.wifiLimit">
+								<!-- <view class="title">
+									指定打卡wifi:
+								</view> -->
+								<view class="wifi">
+									{{taskInfo.wifis.map(item=>item.SSID).join("/")}}
 								</view>
+								
 							</view>
 						</view>
 					</view>
@@ -211,7 +218,7 @@
 			},
 			goRecord(){
 				uni.navigateTo({
-					url: `../my-logs/my-logs?taskId=${this.taskInfo.id}&beginTime=${this.taskInfo.beginTime}&endTime=${this.taskInfo.endTime}&isSigned=${this.taskInfo.isSigned}&taskStatus=${this.taskInfo.status}`
+					url: `../my-logs/my-logs?taskId=${this.taskInfo.id}`
 				})
 			},
 			goRank(){
@@ -220,66 +227,67 @@
 				})
 			},
 			async signIn(){
-				// 限制打卡地点
-				let locValid = true
-				if(this.taskInfo.locationLimit){
-					let [_, curLoc] = await uni.getLocation({type: 'wgs84', altitude: true })
-					// 获取当前位置
-					for(let location of this.taskInfo.locations){
-						let distance = getDistance(location.latitude, location.longitude, curLoc.latitude, curLoc.longitude)
-						if(distance > parseInt(location.offset)){
-							locValid = false;
-							break;
+				try {
+					// 限制打卡地点
+					let locValid = true
+					if(this.taskInfo.locationLimit){
+						let [_, curLoc] = await uni.getLocation({type: 'wgs84', altitude: true })
+						// 获取当前位置
+						for(let location of this.taskInfo.locations){
+							let distance = getDistance(location.latitude, location.longitude, curLoc.latitude, curLoc.longitude)
+							if(distance > parseInt(location.offset)){
+								locValid = false;
+								break;
+							}
 						}
 					}
-				}
-				// 限制打卡wifi
-				let wifiValid = true
-				if(this.taskInfo.wifiLimit){
-					let [_, curWifi] = await wx.getConnectedWifi()
-					// 获取当前位置
-					console.log(curWifi)
-					for(let wifi of this.taskInfo.wifis){
-						console.log(wifi)
-						if(wifi.BSSID !== curWifi.BSSID){
-							wifiValid = false;
-							break;
+					// 限制打卡wifi
+					let wifiValid = true
+					if(this.taskInfo.wifiLimit){
+						let { wifi: curWifi }  = await wx.getConnectedWifi()
+						// 获取当前位置
+						for(let wifi of this.taskInfo.wifis){
+							if(wifi.BSSID !== curWifi.BSSID){
+								wifiValid = false;
+								break;
+							}
 						}
 					}
+					if(locValid && wifiValid){
+						uni.navigateTo({
+							url: `../add-sign/add-sign?taskId=${this.taskInfo.id}`
+						})
+					}else if(!locValid){
+						// 失败通知
+						this.notify({ 
+							context: this,
+							text: "你当前不在可打卡的范围!",
+							type: "danger",
+							selector: "#task-notify"
+						});
+						return false
+					}else if(!wifiValid){
+						// 失败通知
+						this.notify({ 
+							context: this,
+							text: "请连接到指定wifi列表打卡!",
+							type: "danger",
+							selector: "#task-notify"
+						});
+						return false
+					}else{
+						// 失败通知
+						this.notify({ 
+							context: this,
+							text: "暂无法打卡,请联系管理员!",
+							type: "danger",
+							selector: "#task-notify"
+						});
+						return false
+					}
+				}catch(error){
+					console.log(error)
 				}
-				if(locValid && wifiValid){
-					uni.navigateTo({
-						url: `../add-sign/add-sign?taskId=${this.taskInfo.id}`
-					})
-				}else if(!locValid){
-					// 失败通知
-					this.notify({ 
-						context: this,
-						text: "你当前不在可打卡的范围!",
-						type: "danger",
-						selector: "#task-notify"
-					});
-					return false
-				}else if(!wifiValid){
-					// 失败通知
-					this.notify({ 
-						context: this,
-						text: "请连接到指定wifi列表打卡!",
-						type: "danger",
-						selector: "#task-notify"
-					});
-					return false
-				}else{
-					// 失败通知
-					this.notify({ 
-						context: this,
-						text: "暂无法打卡,请联系管理员!",
-						type: "danger",
-						selector: "#task-notify"
-					});
-					return false
-				}
-				
 			},
 			goAddress(location){
 				uni.openLocation({
@@ -469,6 +477,7 @@
 			margin-top: 10px;
 			font-size: 12px;
 			color: #999;
+			text-align: center;
 			.location {
 				margin-bottom: 5px;
 				line-height: 20px;
@@ -476,6 +485,9 @@
 				.loc-href {
 					color: $main-bg-color;
 				}
+			}
+			.wifi{
+				color: $main-bg-color;
 			}
 		}
 	}

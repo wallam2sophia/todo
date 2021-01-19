@@ -26,7 +26,13 @@ const sign = function(sequelize) {
     text: {
       type: DataTypes.STRING,
     },
-    media: {
+    images: {
+      type: DataTypes.JSON,
+    },
+    videos: {
+      type: DataTypes.JSON,
+    },
+    audios: {
       type: DataTypes.JSON,
     },
     location: {

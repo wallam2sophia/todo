@@ -43,6 +43,15 @@
 				this. isAuthed = false
 			}
 		},
+		onShareAppMessage(options){
+			console.log(onShareAppMessage)
+			console.log(options)
+			return {
+				title: "打卡了吧",
+				path: "pages/home/home",
+				imageUrl: "../../static/imgs/111.jpg"
+			}
+		},
 		methods: {
 			handleAuth(res){
 				let that = this;

@@ -119,7 +119,8 @@
 			"van-swipe-cell": "./wxcomponents/vant-weapp/swipe-cell/index",
 			"van-dialog": "./wxcomponents/vant-weapp/dialog/index",
 			"van-loading": "./wxcomponents/vant-weapp/loading/index",
-			"van-switch": "./wxcomponents/vant-weapp/switch/index"
+			"van-switch": "./wxcomponents/vant-weapp/switch/index",
+			"van-overlay": "./wxcomponents/vant-weapp/overlay/index"
 		}
 	},
 	"tabBar": {
@@ -153,12 +154,12 @@
 	    "list": [{
 	            "name": "sign", //模式名称
 	            "path": "pages/add-sign/add-sign", //启动页面，必选
-	            "query": "taskId=4" //启动参数，在页面的onLoad函数里面得到。
+	            "query": "taskId=108" //启动参数，在页面的onLoad函数里面得到。
 	        },
 			{
 			        "name": "detail", //模式名称
 			        "path": "pages/task-detail/task-detail", //启动页面，必选
-			        "query": "taskId=114" //启动参数，在页面的onLoad函数里面得到。
+			        "query": "taskId=108" //启动参数，在页面的onLoad函数里面得到。
 			    },
 				{
 				        "name": "add", //模式名称

@@ -54,7 +54,7 @@ const dateCompare = function(startDate, endDate) {
 	}
 }
 
-const chooseFileUpload = function(count = 9) {
+const chooseImage = function({ count = 9, upload = true }) {
 	return new Promise((resolve, reject) => {
 		uni.chooseImage({
 			count: count, //默认9
@@ -64,48 +64,81 @@ const chooseFileUpload = function(count = 9) {
 				tempFilePaths,
 				tempFiles
 			}) {
-				console.log("tempFilePaths", tempFilePaths);
-				console.log("tempFiles", tempFiles);
-				const p = tempFilePaths.map(item => uploadFile(item))
-				uni.showLoading({
-					title: "上传中...",
-					mask: true
-				});
-				Promise.all(p).then(res => {
-					console.log(res)
-					uni.hideLoading()
-					resolve(res)
-				}).catch(err => {
-					uni.hideLoading()
-					reject([])
-				})
+				// upload为false时,直接返回临时文件
+				if(!upload){
+					resolve(tempFilePaths)
+				}else {
+					const p = tempFilePaths.map(item => uploadFile(item))
+					uni.showLoading({
+						title: "上传中...",
+						mask: true
+					});
+					Promise.all(p).then(res => {
+						console.log(res)
+						uni.hideLoading()
+						resolve(res)
+					}).catch(err => {
+						uni.hideLoading()
+						reject([])
+					})
+				}
+				
 			}
 		});
 	})
 }
-
+const chooseVideo = function({ count = 9, upload = true }) {
+	return new Promise((resolve, reject) => {
+		uni.chooseVideo({
+			count: count, //默认9
+			sourceType: ['album', 'camera '], //从相册选择
+			success: function(res) {
+				console.log(res)
+				// upload为false时,直接返回临时文件
+				if(!upload){
+					let result = {
+						src: res.tempFilePath,
+						cover: res.thumbTempFilePath
+					}
+					resolve([result])
+				}else {
+					const p = [uploadFile(res.tempFilePath), uploadFile(res.thumbTempFilePath)]
+					uni.showLoading({
+						title: "上传中...",
+						mask: true
+					});
+					Promise.all(p).then(res => {
+						console.log(res)
+						uni.hideLoading()
+						let result = {
+							src: res[0],
+							cover: res[1]
+						}
+						resolve([result])
+					}).catch(err => {
+						uni.hideLoading()
+						reject([])
+					})
+				}
+				
+			}
+		});
+	})
+}
 const uploadFile = function(file) {
 	return new Promise((resolve, reject) => {
 		console.log("file", file)
 		uniCloud.uploadFile({
 			filePath: file,
-			cloudPath: 'a.jpg',
+			cloudPath: file,
 			success(e) {
 				if (e.success == true) {
 					resolve(e.fileID);
 				} else {
-					uni.showModal({
-						title: "上传图片失败",
-						content: JSON.stringify(e) + file
-					})
 					reject(e)
 				}
 			},
 			fail(e) {
-				uni.showModal({
-					title: "上传图片失败",
-					content: JSON.stringify(e) + file
-				})
 				reject(e)
 			}
 		})
@@ -149,8 +182,9 @@ const getDistance = function( lat1,  lng1,  lat2,  lng2){
 export {
 	pySegSort,
 	dateCompare,
-	chooseFileUpload,
 	uploadFile,
 	hasWarning,
-	getDistance
+	getDistance,
+	chooseImage,
+	chooseVideo
 }

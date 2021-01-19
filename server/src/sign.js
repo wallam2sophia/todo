@@ -55,16 +55,18 @@ const signApi = {
           data: '补卡申请已发起,等待管理员审批!'
         };
       }
+      signData.signTime = dayjs(signData.signTime).format("YYYY-MM-DD HH:mm:ss");
+      const signInfo = await sequelize.models.Sign.create({ ...signData, status: 1});
       // 发送ws消息
       let wsMsg = {
         taskId: taskData.id,
         taskTitle: taskData.title,
         title: '打卡',
-        sender: signData.signer, 
-        receiver: signData.signer, 
+        sender: signInfo.signer, 
+        receiver: signInfo.signer, 
         message: `【${taskData.title}】今日打卡完成!`,
         type: 'sign',
-        avatarUrl: signData.avatarUrl
+        avatarUrl: signInfo.avatarUrl
       }
       await sendMsg(wsMsg)
       return {

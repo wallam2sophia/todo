@@ -18,9 +18,22 @@
 				<view class="log-row desc" v-if="item.text">
 					<text>{{item.text}}</text>
 				</view>
-				<view class="log-row media-box flex-row"  v-if="item.media.length > 0">
-					<view class="media-item" v-for="(item1,index) in item.media" :key="index">
+				<view class="log-row media-box flex-row"  v-if="item.images.length > 0 || item.videos.length > 0">
+					<view class="media-item" v-for="(image, index) in item.images" :key="index">
+						<image :src="image" mode="aspectFit"></image>
+					</view>
+					<view class="media-item" v-for="(video, index1) in item.videos" :key="index1" >
+						<image :src="video.cover" mode="aspectFit"></image>
+						<van-icon name="play-circle-o" custom-class="icon-play" @click="playVideo(video.src)"/>
+					</view>
+					<!-- <view class="media-item" v-for="(item1,index) in item.audios" :key="index">
 						<image :src="item1" mode="aspectFit"></image>
+					</view> -->
+				</view>
+				<view class="log-row flex-row audio-box" v-if="item.audios.length > 0">
+					<view class="audio-bar flex-row" @click="playAudio(audio.src)" v-for="(audio, index2) in item.audios" :key="index">
+						<van-icon name="volume-o" custom-class="icon-volume"/>
+						<text>{{audio.duration}}″</text>
 					</view>
 				</view>
 				<view class="log-row location" v-if="item.location.name">
@@ -50,6 +63,11 @@
 		<view class="empty-box" v-else>
 			<van-empty description="目前还没有人签到过哦,赶紧做第一个抢沙发的人吧!" />
 		</view>
+		<van-overlay :show="viewVideo" @click="viewVideo=false" z-index="999">
+		  <view class="wrapper" @click.stop="">
+			<video :src="videoSrc" controls :autoplay="true" :muted="true" object-fit="contain" enable-play-gesture></video>
+		  </view>
+		</van-overlay>
 	</view>
 </template>
 
@@ -64,7 +82,10 @@
 		data() {
 			return {
 				signList: [],
-				commentList:[]
+				commentList:[],
+				viewVideo: false,
+				videoSrc: "",
+				innerAudioContext: null,
 			};
 		},
 		computed:{
@@ -81,6 +102,7 @@
 			}
 		},
 		mounted(){
+			this.innerAudioContext = uni.createInnerAudioContext();
 		},
 		methods: {
 			openComment(data){
@@ -89,6 +111,14 @@
 			},
 			closeInput(data){
 				data.inputShow = false;
+			},
+			playVideo(src){
+				this.viewVideo = true;
+				this.videoSrc = src;
+			},
+			playAudio(src){
+				this.innerAudioContext.src = src;
+				this.innerAudioContext.play()
 			},
 			handleLike(signId, value, likeId){
 				this.signList.forEach(item=>{
@@ -196,6 +226,32 @@
 					top: 0;
 					right: -5px;
 				}
+				.icon-play {
+					font-size: 18px;
+					color: #fff;
+					position: absolute;
+					top: 50%;
+					left: 50%;
+					transform: translate(-50%, -50%);
+				}
+			}
+		}
+		.audio-box {
+			.audio-bar {
+				background-color: #0081ff;
+				color: #fff;
+				border: 1px solid #0081ff;
+				padding: 5px 15px;
+				display: inline-flex;
+				border-radius: 5px;
+				position: relative;
+				margin-right: 20px;
+				margin-bottom: 10px;
+				
+				.icon-volume {
+					font-size: 16px;
+					margin-right: 5px;
+				}
 			}
 		}
 		.action {
@@ -232,6 +288,16 @@
 	}
 	.is-liked {
 		color: $minor-icon-color;
+	}
+	.wrapper {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		
+		video {
+			width: 750rpx;
+		}
 	}
 	
 }

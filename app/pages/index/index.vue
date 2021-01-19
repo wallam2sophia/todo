@@ -44,7 +44,7 @@
 		</view> -->
 		<view class="my-tasks">
 			<!-- <van-loading type="spinner" color="#1989fa" v-show="loading"/> -->
-			<van-tabs :active="status" :border="false" @change="changeStatus" line-height="2" animated swipeable lazy-render sticky color="#ff5722">
+			<van-tabs :active="status" :border="false" @change="changeStatus" line-height="2" animated lazy-render sticky color="#ff5722">
 				<van-tab :title="item.title" :name="item.name" v-for="(item, index) in taskStatus" :key="index">
 					<van-search :value="searchTask" placeholder="请输入你要搜索的任务" @change="e=>searchTask=e.detail" @search="refreshTaskList"/>
 					<taskList :list="taskLists" :tabStatus="status" @task-click="goDetail" @refresh="refreshTaskList" v-if="!loading && taskLists.length > 0"></taskList>
@@ -232,7 +232,17 @@
 				this.page ++;
 				this.fetchTaskList();
 			}
-		}
+		},
+		onShareAppMessage(options){
+			if(options.from === 'menu'){
+				return {
+					title: `${this.userInfo.nickName}给您推荐了小程序打卡了吧`,
+					path: "pages/home/home",
+					imageUrl: "../../static/imgs/share.png"
+				}
+			}
+			
+		},
 	}
 </script>
 
