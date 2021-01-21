@@ -36,43 +36,49 @@ function timeContinusData(timeArr) {
 }
 
 // 用户认证
-const authSession = function (code) {
+const authSession = async function (code) {
   let url = `https://api.weixin.qq.com/sns/jscode2session?appid=${APPID}&secret=${SECRET}&js_code=${code}&grant_type=authorization_code`
-  return new Promise((resolve, reject) => {
-    https.get(url, res => {
-      let datas = [];
-      let size = 0;
-      res.on('data', function (data) {
-        datas.push(data);
-        size += data.length;
-      });
-      res.on("end", function () {
-        var buff = Buffer.concat(datas, size);
-        var result = iconv.decode(buff, "utf8"); //转码//var result = buff.toString();//不需要转编码,直接tostring  
-        resolve(result)
-      })
-    })
-  })
+  let res = await request
+      .get(url)
+      .set('Accept', 'application/json')
+    if(res.body.errcode !== 0){
+      console.log(res.body.errcode, res.body.errmsg)
+      return false
+    }
+    return {openid: res.body.openid, session_key: res.body.session_key};
 }
 
 // 获取AccessToken
 const getAccessToken = async function () {
-  return new Promise((resolve, reject) => {
-    let url = `https://api.weixin.qq.com/cgi-bin/token?appid=${APPID}&secret=${SECRET}&grant_type=client_credential`
-    https.get(url, res => {
-      let datas = [];
-      let size = 0;
-      res.on('data', function (data) {
-        datas.push(data);
-        size += data.length;
-      });
-      res.on("end", function () {
-        var buff = Buffer.concat(datas, size);
-        var result = iconv.decode(buff, "utf8"); //转码//var result = buff.toString();//不需要转编码,直接tostring  
-        resolve(JSON.parse(result))
-      })
-    })
-  })
+  let url = `https://api.weixin.qq.com/cgi-bin/token?appid=${APPID}&secret=${SECRET}&grant_type=client_credential`;
+  let res = await request
+      .get(url)
+      .set('Accept', 'application/json')
+  if(res.body.errcode && res.body.errcode !== 0){
+    console.log(res.body.errcode, res.body.errmsg)
+    return false
+  }
+  return res.body.access_token;
+}
+
+// 获取小程序二维码
+const getQRCode = async function(path){
+  const access_token = await getAccessToken();
+  let url = `https://api.weixin.qq.com/wxa/getwxacode?access_token=${access_token}`
+  let postData = {
+    path,
+    width: 280
+  }
+  let res = await request
+      .post(url)
+      .send(postData)
+      .set('Accept', 'application/json')
+  console.log(res.body)
+  if(res.body.errcode && res.body.errcode !== 0){
+    console.log(res.body.errcode, res.body.errmsg)
+    return false
+  }
+  return res.body;
 }
 // 发送模板消息
 const sendTemplateMessage = async function ({
@@ -86,7 +92,7 @@ const sendTemplateMessage = async function ({
     console.log(openId, templateId)
     console.log(`${title}发送定时任务`)
     let time = dayjs(new Date()).format("YYYY年M月D日")
-    const { access_token } = await getAccessToken();
+    const access_token = await getAccessToken();
     const postData = {
       touser: openId,
       template_id: templateId,
@@ -122,10 +128,12 @@ const sendTemplateMessage = async function ({
     return false
   }
 }
+
 module.exports = {
   timeContinusData,
   getAccessToken,
   authSession,
   sendTemplateMessage,
-  templateId
+  templateId,
+  getQRCode
 }

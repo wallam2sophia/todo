@@ -38,7 +38,7 @@
 			</view>
 		</view>
 		<view class="block-box tab-bars">
-			<van-button custom-class="bar-btn" open-type="share">
+			<van-button custom-class="bar-btn" @click="goShare">
 				<view class="btn-slot">
 					<van-icon name="share-o" custom-class="icon"></van-icon>
 					<text class='title'>分享</text>
@@ -127,6 +127,58 @@
 		<van-popup :show="dateShow" position="bottom" round @cloce="dateShow=false">
 			<van-datetime-picker type="date" :value="currentDate" :min-date="minDate" :max-date="maxDate" @input="onInput"  @cancel="dateShow=false" @confirm="changeSignData(currentDate)"/>
 		</van-popup>
+		<van-action-sheet :show="shareShow" cancel-text="取消" @cancel="shareShow = false" @select="shareShow = false">
+			<view class="share-sheet flex-row">
+				<van-button custom-class="share-btn" open-type="share" dataset="sharePage">
+					<view class="share-item flex-column">
+						<view class="share-icon">
+							<image src="../../static/icon/wechat.png" mode="aspectFit"></image>
+						</view>
+						<view class="share-text">
+							微信朋友
+						</view>
+					</view>
+				</van-button>
+				<view class="share-item flex-column">
+					<view class="share-icon tupian">
+						<image src="../../static/icon/tupian.png" mode="aspectFit"></image>
+					</view>
+					<view class="share-text">
+						日签分享图
+					</view>
+				</view>
+				<view class="share-item flex-column" @click="signQRCode">
+					<view class="share-icon">
+						<image src="../../static/icon/minipro.png" mode="aspectFit"></image>
+					</view>
+					<view class="share-text">
+						签到小程序码
+					</view>
+				</view>
+				<view class="share-item flex-column">
+					<view class="share-icon tupian">
+						<image src="../../static/icon/erweima.png" mode="aspectFit"></image>
+					</view>
+					<view class="share-text">
+						签到二维码
+					</view>
+				</view>
+			</view>
+		</van-action-sheet>
+		<!-- 分享图片 -->
+		<van-overlay :show="shareImgShow" @click="shareImgShow=false">
+		  <view class="wrapper pos-center"  @click.stop="shareSheetShow=true">
+		    <!-- <image :src="shareImg" mode="aspectFit"></image> -->
+			<canvas canvas-id="share-canvas" id="share-canvas" style="width: 320px; height: 350px;background:#fff"></canvas>
+		  </view>
+		</van-overlay>
+		<van-action-sheet
+		  :show="shareSheetShow"
+		  :actions="shareActions"
+		  cancel-text="取消"
+		  @cancel="shareSheetShow = false"
+		  @select="shareSheetShow = false"
+		/>
 		<!-- 在页面内添加对应的节点 -->
 		<van-notify id="task-notify"/>
 	</view>
@@ -136,6 +188,7 @@
 	import signLog from "../../components/sign-log.vue"
 	import taskApi from "../../utils/service/task.js"
 	import signApi from "../../utils/service/sign.js"
+	import commonApi from "../../utils/service/common.js"
 	import joinTaskPop from "../../components/joinTaskPop.vue"
 	import dayjs from 'dayjs'
 	import { getDistance } from "../../utils/util.js"
@@ -155,9 +208,18 @@
 				signTab: "all",
 				taskInfo: {},
 				signLogs:[],
+				shareImg: "",
+				shareSheetShow: false,
+				shareActions: [
+				  { name: '发送给朋友', openType: 'share' },
+				  { name: '收藏' },
+				  { name: '保存图片' },
+				],
 				joinPopShow: false,
 				dateShow: false,
-				dataFinishShow: false
+				dataFinishShow: false,
+				shareShow: false,
+				shareImgShow: false,
 			}
 		},
 		computed:{
@@ -225,6 +287,60 @@
 				uni.navigateTo({
 					url: `../task-rank/task-rank?taskId=${this.taskInfo.id}`
 				})
+			},
+			goShare(){
+				this.shareShow = true;
+			},
+			signQRCode(){
+				let sendData = {
+					path: "/page/task-detail/task-detail?taskId=" + this.taskId
+				}
+				commonApi.getQRCode(sendData).then(res=>{
+					console.log(res)
+					this.shareShow = false;
+					this.shareImgShow = true;
+					let imgSrc = "data:image/png;base64," + wx.arrayBufferToBase64(res.data.data);
+					this.createPoster(this.taskInfo.title, `${this.taskInfo.beginTime} 至 ${this.taskInfo.endTime}`, imgSrc, "长按或扫码进入")
+				})
+			},
+			createPoster(title, subTitle, imgSrc, tips){
+				let firstY = 50
+				let centerX = 160
+				let imgSize = 100
+				const ctx = wx.createCanvasContext('share-canvas')
+				// 清空之前内容
+				ctx.draw()
+				// 绘制顶部title
+				ctx.setFontSize(15)
+				ctx.setTextAlign('center')
+				ctx.fillStyle = "#0081FF"
+				ctx.fillText(`# ${title} #`, centerX, firstY)
+				// 绘制副title
+				ctx.setFontSize(12)
+				ctx.setTextAlign('center')
+				ctx.fillStyle = "#999"
+				ctx.fillText(subTitle, centerX, firstY + 30)
+				// 绘制图片
+				ctx.drawImage(imgSrc, centerX - imgSize / 2, firstY + 30 * 2, imgSize, imgSize)
+				// 绘制提示
+				ctx.setFontSize(12)
+				ctx.setTextAlign('center')
+				ctx.setTextBaseline('middle')
+				ctx.fillStyle = "#333"
+				ctx.fillText(tips, centerX, firstY + 30 * 3 + 120)
+				
+				ctx.setLineWidth(1)
+				ctx.setStrokeStyle('#333')
+				ctx.setLineDash([5, 5], 0);
+				ctx.beginPath();
+				ctx.moveTo(100, firstY + 30 * 3 + 100)
+				ctx.lineTo(220, firstY + 30 * 3 + 100)
+				ctx.lineTo(220, firstY + 30 * 3 + 140)
+				ctx.lineTo(100, firstY + 30 * 3 + 140)
+				ctx.lineTo(100, firstY + 30 * 3 + 100)
+				ctx.stroke()
+				
+				ctx.draw()
 			},
 			async signIn(){
 				try {
@@ -334,16 +450,24 @@
 		},
 		onShareAppMessage(options){
 			console.log(options)
-			return {
-				title: `${this.userInfo.nickName}邀请您一起参与【${this.taskInfo.title}】打卡任务!`,
-				path: `/pages/task-detail/task-detail?taskId=${this.taskInfo.id}`,
-				success: function(){
-					console.log('share success')
-				},
-				fail: function(error){
-					console.log('share fail:', error)
-				},
+			if(options.target.dataset.detail === 'sharePage'){
+				return {
+					title: `${this.userInfo.nickName}邀请您一起参与【${this.taskInfo.title}】打卡任务!`,
+					path: `/pages/task-detail/task-detail?taskId=${this.taskInfo.id}`,
+					success: function(){
+						console.log('share success')
+					},
+					fail: function(error){
+						console.log('share fail:', error)
+					},
+				}
+			}else {
+				return {
+					title: '小程序码分享',
+					path: `/pages/task-detail/task-detail?taskId=${this.taskInfo.id}`,
+				}
 			}
+			
 		},
 	}
 </script>
@@ -567,6 +691,38 @@
 	}
 	.asign-logs {
 		background-color: #fff;
+	}
+	.share-sheet {
+		padding: 40rpx 30rpx;
+		justify-content: space-around;
+		.share-btn {
+			cursor: pointer;
+			border: none;
+			padding: 0;
+			height: auto;
+		}
+		.share-item {
+			.share-icon {
+				line-height: 31px;
+				height: 31px;
+				image {
+					width: 62rpx;
+					height: 62rpx;
+					display: inherit;
+				}
+			}
+			.tupian {
+				image {
+					width: 52rpx;
+					height: 52rpx;
+					display: inherit;
+				}
+			}
+			.share-text {
+				font-size: 24rpx;
+				color: $main-grey-text;
+			}
+		}
 	}
 	.van-empty {
 		background-color: #fff !important;

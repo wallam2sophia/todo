@@ -31,7 +31,7 @@
 					</view> -->
 				</view>
 				<view class="log-row flex-row audio-box" v-if="item.audios.length > 0">
-					<view class="audio-bar flex-row" @click="playAudio(audio.src)" v-for="(audio, index2) in item.audios" :key="index">
+					<view class="audio-bar flex-row" @click="playAudio(audio.src)" v-for="(audio, index2) in item.audios" :key="index2">
 						<van-icon name="volume-o" custom-class="icon-volume"/>
 						<text>{{audio.duration}}″</text>
 					</view>
@@ -113,10 +113,12 @@
 				data.inputShow = false;
 			},
 			playVideo(src){
+				console.log("播放视频:", src)
 				this.viewVideo = true;
 				this.videoSrc = src;
 			},
 			playAudio(src){
+				console.log("播放音频:", src)
 				this.innerAudioContext.src = src;
 				this.innerAudioContext.play()
 			},

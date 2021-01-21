@@ -12,6 +12,17 @@ export default {
 			})
 		})
 	},
+	// 获取小程序码
+	getQRCode(data){
+		return new Promise((resolve, reject) => {
+			let url = "api/qrcode"
+			postJSON(url, data).then(res=>{
+				resolve(res)
+			}).catch(error => {
+				reject(error)
+			})
+		})
+	},
 	// 发送消息
 	sendMsg(data){
 		return new Promise((resolve, reject) => {

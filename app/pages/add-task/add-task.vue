@@ -12,6 +12,9 @@
 		<van-cell title="指定签到地点" :border="false">
 		  <van-switch :checked="formData.locationLimit" @change="locationSwitch" size="20px"/>
 		</van-cell>
+		<view class="location-row">
+			必填项
+		</view>
 		<view class="location-row" v-if="formData.locationLimit">
 			<view v-for="(item, index) in formData.locations" :key="index" class="location-item">
 				<view class="select-location flex-row" >

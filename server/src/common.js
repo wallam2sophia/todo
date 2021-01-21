@@ -6,7 +6,7 @@ const { Op } = require("sequelize");
 const dayjs = require("dayjs")
 const https = require("https");  
 const iconv = require("iconv-lite");
-const { authSession, sendTemplateMessage} = require("../utils/util")
+const { authSession, sendTemplateMessage, getQRCode} = require("../utils/util")
 const templateId = "I8PnqSS0b5pEWVAaV5I-OMRjK0WR5vPbYDjMhx-zihM"
 const commonApi = {
   // 登录
@@ -37,6 +37,26 @@ const commonApi = {
       };
     }
   },
+  // 获取小程序码
+  getQRCode: async function(data){
+    try {
+      let qrcode = await getQRCode(data.path);
+      return {
+        code: 100,
+        data: qrcode
+      };
+    }catch (error) {
+      console.log(error)
+      // LOG.error(JSON.stringify(error))
+      return {
+        code: 101,
+        data: "获取小程序码失败"
+      };
+    }
+   
+
+  },
+
   sendMsg: async function(data){
     try {
       const user = await sequelize.models.User.findOne({
