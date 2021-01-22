@@ -167,9 +167,12 @@
 		</van-action-sheet>
 		<!-- 分享图片 -->
 		<van-overlay :show="shareImgShow" @click="shareImgShow=false">
-		  <view class="wrapper pos-center"  @click.stop="shareSheetShow=true">
+		  <view class="wrapper pos-center"  @click.stop="previewImage">
 		    <!-- <image :src="shareImg" mode="aspectFit"></image> -->
-			<canvas canvas-id="share-canvas" id="share-canvas" style="width: 320px; height: 350px;background:#fff"></canvas>
+			<canvas canvas-id="share-canvas" id="share-canvas" style="width: 320px; height: 350px"></canvas>
+			<view class="tips-text">
+				点开图片长按可直接分享给朋友
+			</view>
 		  </view>
 		</van-overlay>
 		<van-action-sheet
@@ -291,12 +294,41 @@
 			goShare(){
 				this.shareShow = true;
 			},
+			previewImage(){
+				uni.canvasToTempFilePath({
+					canvasId: 'share-canvas',
+					success: function(res) {
+					    console.log(res.tempFilePath)
+						uni.previewImage({
+							current: 0,
+							urls: [
+								res.tempFilePath
+							],
+							longPressActions: {
+								itemList: ['发送给朋友', '保存图片', '收藏'],
+								success: function(data) {
+									console.log('选中了第' + (data.tapIndex + 1) + '个按钮,第' + (data.index + 1) + '张图片');
+								},
+								fail: function(err) {
+									console.log(err.errMsg);
+								}
+							},
+							success(res){
+								console.log(res)
+							},
+							fail(error){
+								console.log(error)
+							}
+						})
+					  } 
+				})
+
+			},
 			signQRCode(){
 				let sendData = {
 					path: "/page/task-detail/task-detail?taskId=" + this.taskId
 				}
 				commonApi.getQRCode(sendData).then(res=>{
-					console.log(res)
 					this.shareShow = false;
 					this.shareImgShow = true;
 					let imgSrc = "data:image/png;base64," + wx.arrayBufferToBase64(res.data.data);
@@ -310,6 +342,9 @@
 				const ctx = wx.createCanvasContext('share-canvas')
 				// 清空之前内容
 				ctx.draw()
+				// 填充背景
+				ctx.fillStyle = "#ffffff"
+				ctx.fillRect(0, 0, 320, 350)
 				// 绘制顶部title
 				ctx.setFontSize(15)
 				ctx.setTextAlign('center')
@@ -723,6 +758,18 @@
 				color: $main-grey-text;
 			}
 		}
+	}
+	.tips-text {
+		background-color: #fff;
+		font-size: 24rpx;
+		padding: 10px 12px;
+		position: fixed;
+		bottom: -90px;
+		left: 50%;
+		transform: translateX(-50%);
+		text-align: center;
+		white-space: nowrap;
+		color: $minor-icon-color;
 	}
 	.van-empty {
 		background-color: #fff !important;

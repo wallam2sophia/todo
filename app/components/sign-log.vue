@@ -31,8 +31,9 @@
 					</view> -->
 				</view>
 				<view class="log-row flex-row audio-box" v-if="item.audios.length > 0">
-					<view class="audio-bar flex-row" @click="playAudio(audio.src)" v-for="(audio, index2) in item.audios" :key="index2">
-						<van-icon name="volume-o" custom-class="icon-volume"/>
+					<view class="audio-bar flex-row" @click="playAudio(audio)" v-for="(audio, index2) in item.audios" :key="index2">
+						<!-- <van-icon name="volume-o" custom-class="icon-volume"/> -->
+						<audio-animation :isPlay="audio.isPlay"/>
 						<text>{{audio.duration}}″</text>
 					</view>
 				</view>
@@ -76,9 +77,10 @@
 	import commentApi from "../utils/service/comment.js"
 	import likeApi from "../utils/service/like.js"
 	import signComment from "./sign-comment.vue"
+	import audioAnimation from "./audio-animation.vue"
 	export default {
 		props: ["taskId", "taskStatus", "list"],
-		components:{ signComment },
+		components:{ signComment, audioAnimation },
 		data() {
 			return {
 				signList: [],
@@ -93,16 +95,20 @@
 		watch:{
 			list: {
 				deep: true,
+				immediate: true,
 				handler(val, oldVal){
-					this.signList = this.list.map(item=>{
+					let list = JSON.parse(JSON.stringify(val))
+					this.signList = list.map(item=>{
+						// if(item.audios){
+						// 	item.audios = item.audios.map(item1 => Object.assign({}, item1, {isPlay: false}))
+						// }
 						return Object.assign({}, item, {inputShow: false})
 					})
-					console.log(this.signList)
 				}
 			}
 		},
 		mounted(){
-			this.innerAudioContext = uni.createInnerAudioContext();
+			
 		},
 		methods: {
 			openComment(data){
@@ -117,10 +123,36 @@
 				this.viewVideo = true;
 				this.videoSrc = src;
 			},
-			playAudio(src){
-				console.log("播放音频:", src)
-				this.innerAudioContext.src = src;
-				this.innerAudioContext.play()
+			playAudio(audio){
+				if(!this.innerAudioContext){
+					this.innerAudioContext = uni.createInnerAudioContext();
+				}
+				let that = this;
+				this.innerAudioContext.src = audio.src;
+				if(!audio.isPlay){
+					// 播放音频
+					this.innerAudioContext.play()
+				}else {
+					// 停止播放音频
+					this.innerAudioContext.stop()
+				}
+				
+				this.innerAudioContext.onPlay(function(){
+					console.log('播放开始')
+					that.$set(audio, "isPlay", true);
+				})
+				this.innerAudioContext.onStop(function(){
+					console.log('播放停止')
+					// this.innerAudioContext.destory()
+					that.$set(audio, "isPlay", false);
+					that.innerAudioContext = null;
+				})
+				this.innerAudioContext.onEnded(function(){
+					console.log('播放结束')
+					// this.innerAudioContext.destory()
+					that.$set(audio, "isPlay", false);
+					that.innerAudioContext = null;
+				})
 			},
 			handleLike(signId, value, likeId){
 				this.signList.forEach(item=>{
