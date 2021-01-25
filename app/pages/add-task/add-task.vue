@@ -12,9 +12,9 @@
 		<van-cell title="指定签到地点" :border="false">
 		  <van-switch :checked="formData.locationLimit" @change="locationSwitch" size="20px"/>
 		</van-cell>
-		<view class="location-row">
+		<!-- <view class="location-row">
 			必填项
-		</view>
+		</view> -->
 		<view class="location-row" v-if="formData.locationLimit">
 			<view v-for="(item, index) in formData.locations" :key="index" class="location-item">
 				<view class="select-location flex-row" >
@@ -142,11 +142,19 @@
 				
 			}
 		},
-		onLoad(){
-			taskApi.getTaskBg().then(res=>{
-				console.log(res)
-				this.formData.bgImg = res.data;
-			})
+		onLoad(options){
+			if(options.taskInfo){
+				this.formData = JSON.parse(options.taskInfo);
+				this.currentBegin = new Date(this.formData.beginTime).getTime();
+				this.currentEnd = new Date(this.formData.endTime).getTime();
+				this.currentRemind = this.formData.remindTime;
+			}else {
+				taskApi.getTaskBg().then(res=>{
+					console.log(res)
+					this.formData.bgImg = res.data;
+				})
+			}
+			
 			// this.currentDate = dayjs(new Date()).format("YYYY-MM-DD")
 		},
 		computed:{

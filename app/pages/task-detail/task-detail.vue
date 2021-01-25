@@ -50,7 +50,7 @@
 					<text class='title'>排行榜</text>
 				</view>
 			</van-button>
-			<van-button custom-class="bar-btn">
+			<van-button custom-class="bar-btn" @click="goEdit">
 				<view class="btn-slot">
 					<van-icon name="setting-o" custom-class="icon"></van-icon>
 					<text class='title'>设置</text>
@@ -195,6 +195,8 @@
 	import joinTaskPop from "../../components/joinTaskPop.vue"
 	import dayjs from 'dayjs'
 	import { getDistance } from "../../utils/util.js"
+	
+	const fsm = wx.getFileSystemManager();
 	export default {
 		components:{ signLog, joinTaskPop },
 		data() {
@@ -291,6 +293,11 @@
 					url: `../task-rank/task-rank?taskId=${this.taskInfo.id}`
 				})
 			},
+			goEdit(){
+				uni.navigateTo({
+					url: `../add-task/add-task?taskInfo=${JSON.stringify(this.taskInfo)}`
+				})
+			},
 			goShare(){
 				this.shareShow = true;
 			},
@@ -325,20 +332,38 @@
 
 			},
 			signQRCode(){
+				let that = this;
 				let sendData = {
 					path: "/page/task-detail/task-detail?taskId=" + this.taskId
 				}
 				commonApi.getQRCode(sendData).then(res=>{
 					this.shareShow = false;
-					this.shareImgShow = true;
 					let imgSrc = "data:image/png;base64," + wx.arrayBufferToBase64(res.data.data);
-					this.createPoster(this.taskInfo.title, `${this.taskInfo.beginTime} 至 ${this.taskInfo.endTime}`, imgSrc, "长按或扫码进入")
+					const [, format, bodyData] = /data:image\/(\w+);base64,(.*)/.exec(imgSrc) || [];
+					this.shareImg = imgSrc
+					this.shareImgShow = true;
+					const fsm =  wx.getFileSystemManager();
+					const FILE_BASE_NAME = 'tmp_base64src';
+					const filePath = `${wx.env.USER_DATA_PATH}/${FILE_BASE_NAME}.${format}`;
+					const buffer = wx.base64ToArrayBuffer(bodyData);
+					fsm.writeFile({
+						filePath: filePath,
+						data: buffer,
+						encoding:"binary",
+						success() {
+							that.createPoster(that.taskInfo.title, `${that.taskInfo.beginTime} 至 ${that.taskInfo.endTime}`, filePath, "长按或扫码进入")
+						},
+						fail(error) {
+							console.log(error)
+						}
+					})
 				})
 			},
 			createPoster(title, subTitle, imgSrc, tips){
-				let firstY = 50
+				console.log('imgSrc', imgSrc)
+				let firstY = 30
 				let centerX = 160
-				let imgSize = 100
+				let imgSize = 150
 				const ctx = wx.createCanvasContext('share-canvas')
 				// 清空之前内容
 				ctx.draw()
@@ -356,23 +381,23 @@
 				ctx.fillStyle = "#999"
 				ctx.fillText(subTitle, centerX, firstY + 30)
 				// 绘制图片
-				ctx.drawImage(imgSrc, centerX - imgSize / 2, firstY + 30 * 2, imgSize, imgSize)
+				ctx.drawImage(imgSrc, centerX - imgSize / 2, firstY + 30 * 2 - 10, imgSize, imgSize)
 				// 绘制提示
 				ctx.setFontSize(12)
 				ctx.setTextAlign('center')
 				ctx.setTextBaseline('middle')
 				ctx.fillStyle = "#333"
-				ctx.fillText(tips, centerX, firstY + 30 * 3 + 120)
+				ctx.fillText(tips, centerX, firstY + 30 * 3 + imgSize + 10)
 				
 				ctx.setLineWidth(1)
 				ctx.setStrokeStyle('#333')
 				ctx.setLineDash([5, 5], 0);
 				ctx.beginPath();
-				ctx.moveTo(100, firstY + 30 * 3 + 100)
-				ctx.lineTo(220, firstY + 30 * 3 + 100)
-				ctx.lineTo(220, firstY + 30 * 3 + 140)
-				ctx.lineTo(100, firstY + 30 * 3 + 140)
-				ctx.lineTo(100, firstY + 30 * 3 + 100)
+				ctx.moveTo(100, firstY + 30 * 3 + imgSize - 10)
+				ctx.lineTo(220, firstY + 30 * 3 + imgSize - 10)
+				ctx.lineTo(220, firstY + 30 * 3 + imgSize + 30)
+				ctx.lineTo(100, firstY + 30 * 3 + imgSize + 30)
+				ctx.lineTo(100, firstY + 30 * 3 + imgSize - 10)
 				ctx.stroke()
 				
 				ctx.draw()

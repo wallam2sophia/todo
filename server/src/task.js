@@ -54,7 +54,10 @@ const taskApi = {
     try {
       // LOG.info(JSON.stringify(taskData))
       taskData.status = checkTaskStatus(taskData.beginTime, taskData.endTime)
-      const taskInfo = await sequelize.models.Task.create(taskData, { raw: true });
+      const taskInfo = await sequelize.models.Task.upsert(taskData, {
+        where: { id: taskData.id },
+        raw: true
+      });
       let p = []
       if(taskData.remindTime){
         let minute = taskData.remindTime.split(":")[1].replace(/^0/g,"")
@@ -62,7 +65,7 @@ const taskApi = {
         let reminPattern = `0 ${minute} ${hour} * * *`
         let members = taskData.members
         members.forEach(member => {
-          p.push(this.addTaskSchedule(member, taskInfo, reminPattern))
+          p.push(this.addTaskSchedule(member, taskInfo[0], reminPattern))
         })
       }
       await Promise.all(p)
@@ -111,6 +114,7 @@ const taskApi = {
       endTime: taskData.endTime,
       status: 1,
     }
+    console.log(scheduleData)
     const sch = await sequelize.models.Schedule.create(scheduleData, {raw: true});
     let jobs = !!scheduleTask.get(sch.taskId) ? [...scheduleTask.get(sch.taskId), job] : [job]
     scheduleTask.set(sch.taskId, jobs)
