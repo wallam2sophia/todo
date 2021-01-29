@@ -2,7 +2,7 @@
 	<view class="my-news">
 		<view class="msg-list" v-if="!loading && msgLists.length > 0">
 			<view class="msg-item" v-for="item in msgLists" :key="item.id">
-				<view class="msg-content">
+				<view class="msg-content" :class=" item.type+ '-border'">
 					<view class="log-row base">
 						<view class="avatar">
 							<image :src="item.avatarUrl" mode="aspectFit"></image>
@@ -23,13 +23,19 @@
 								拒绝
 							</view>
 						</view>
+						<view class="oper-btns flex-column" v-if="item.type === 'comment' && item.status == 0">
+							<view class="my-btn primary-btn small-btn" @click="replyComment(item)">
+								回复
+							</view>
+						</view>
 					</view>
 					<view class="log-row desc">
-						<text>{{item.message}}</text>
+						<van-icon name="like" custom-class="like-icon" v-if="item.type === 'like'"/>
+						<text v-else>{{item.message}}</text>
 					</view>
 				</view>
 				<view class="title">
-					--内容来自【{{item.taskTitle}}】
+					--内容来自《{{item.taskTitle}}》
 				</view>
 			</view>
 		</view>
@@ -39,11 +45,24 @@
 		</view>
 		<!-- 在页面内添加对应的节点 -->
 		<van-notify id="news-notify"/>
+		<van-dialog use-slot :show="inputShow" show-cancel-button @cancel="onClose" @confirm="handleReply">
+			<view class="comment-row">
+				<input
+					:value="commentText" 
+					placeholder="请输入回复内容" 
+					@input="(e)=>commentText=e.detail.value" 
+					@confirm="handleReply                                                                                                                   "
+					type="text" 
+					placeholder-class="comment-input-placeholder"
+					class="comment-input"/>
+			</view>
+		</van-dialog>
 	</view>
 </template>
 
 <script>
 	import messageApi from "../../utils/service/message.js"
+	import commentApi from "../../utils/service/comment.js"
 	import signApi from "../../utils/service/sign.js"
 	import dayjs from 'dayjs'
 	export default {
@@ -54,6 +73,9 @@
 				total: 0,
 				msgLists: [],
 				dataFinishShow: false,
+				inputShow: false,
+				commentText: "",
+				curMsg: {}
 			}
 		},
 		methods: {
@@ -78,6 +100,51 @@
 				this.msgLists = []
 				this.dataFinishShow = false
 				this.fetchMsgList();
+			},
+			handleInput(e){
+				console.log(111, e)
+				this.commentText = e.detail.value;
+			},
+			onClose(){
+				this.inputShow = false;
+				this.commentText = ""
+			},
+			replyComment(item){
+				this.inputShow = true;
+				this.curMsg = item;
+			},
+			handleReply(){
+				if(this.commentText === ''){
+					// 失败通知
+					this.notify({ 
+						context: this,
+						text: '回复内容不能为空',
+						type: "danger",
+						selector: "#news-notify"
+					});
+					return false;
+				}
+				let sendData = {
+					signId: this.curMsg.signId,
+					taskId: this.curMsg.taskId,
+					sender: this.userInfo.nickName,
+					content: this.commentText,
+					avatar: this.userInfo.avatarUrl,
+					receiver: this.curMsg.sender,
+				}
+				commentApi.addComment(sendData).then(res=>{
+					messageApi.addMessage({...this.curMsg, status: 1}).then(()=>{
+						this.refreshMsgList();
+						this.onClose()
+					}).catch(error=>{
+						console.log(error)
+						this.onClose()
+					})
+					
+				}).catch(error=>{
+					console.log(error)
+					this.onClose()
+				})
 			},
 			dayjs(data){
 				return dayjs(data)
@@ -137,7 +204,7 @@
 .my-news {
 	font-size: 26rpx;
 	background-color: #eee;
-	height: 100vh;
+	min-height: 100vh;
 	padding: 10px 0;
 	.msg-list {
 		.msg-item {
@@ -145,6 +212,20 @@
 			.msg-content {
 				padding: 10px;
 				background-color: #fff;
+				// border-top: 5px solid #fff;
+				border-radius: 3px;
+			}
+			.sign-border {
+				border-color: $uni-color-success
+			}
+			.comment-border {
+				border-color: $main-bg-color
+			}
+			.like-border {
+				border-color: $minor-icon-color
+			}
+			.apply-border {
+				border-color: $uni-color-error
 			}
 		}
 		
@@ -190,13 +271,31 @@
 		}
 		.desc {
 			// padding-left: 20px;
+			.like-icon {
+			}
 		}
 		.title {
 			font-size: 24rpx;
 		    text-align: right;
 		    margin-top: 10px;
 		    color: $main-icon-color;
+			padding-right: 10px;
 		}
+	}
+	.comment-row {
+		padding: 40rpx;
+	}
+	.comment-input {
+		border: 1px solid #eee;
+		-webkit-border-radius: 5px;
+		border-radius: 5px;
+		padding: 5px;
+		margin-bottom: 20rpx;
+		min-height: 100px;
+	}
+	.comment-input-placeholder {
+		font-size: 24rpx;
+		color: #999;
 	}
 }
 </style>

@@ -3,6 +3,7 @@ const {
 } = require("../sql")
 const { Op } = require("sequelize");
 const dayjs = require("dayjs")
+const { sendMsg } = require("../ws")
 
 const likeApi = {
   // 新增点赞
@@ -10,6 +11,20 @@ const likeApi = {
     try {
       // LOG.info(JSON.stringify(likeData))
       await sequelize.models.Like.create(likeData);
+      const taskInfo = await sequelize.models.Task.findByPk(likeData.taskId, { raw: true });
+      const signInfo = await sequelize.models.Sign.findByPk(likeData.signId, { raw: true });
+      // 发送ws消息
+      let wsMsg = {
+        taskId: taskInfo.id,
+        taskTitle: `${taskInfo.title} / ${signInfo.signTime.split(" ")[0]}`,
+        title: '点赞',
+        sender: taskInfo.creator, 
+        receiver: likeData.author, 
+        message: ``,
+        type: 'like',
+        avatarUrl: likeData.avatar
+      }
+      await sendMsg(wsMsg)
       return {
         code: 100,
         data: "点赞成功"

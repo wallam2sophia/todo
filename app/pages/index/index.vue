@@ -199,6 +199,7 @@
 				this.taskLists = []
 				this.dataFinishShow = false
 				this.fetchTaskList();
+				this.fetchMyGeneral();
 			},
 			changeStatus(status){
 				this.searchTask = ""
@@ -221,7 +222,6 @@
 			this.connectWS();
 		},
 		onShow(){
-			this.fetchMyGeneral();
 			this.refreshTaskList();
 		},
 		onReachBottom(){

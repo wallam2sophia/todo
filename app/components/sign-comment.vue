@@ -1,6 +1,6 @@
 <template>
 	<view class="sign-comment">
-		<view class="log-row" v-show="signInfo.inputShow">
+		<view class="log-row" v-show="inputShow">
 			<input 
 				:value="commentText" 
 				placeholder="请输入评论内容" 
@@ -19,8 +19,10 @@
 			</view>
 		</view>
 		<view class="comment-list" v-if="commentList.length > 0">
-			<view class="comment-item" v-for="com in commentList" :key="com.id" @click="handleOperCom(com.id)">
-				<text class="author">{{com.author}}</text>
+			<view class="comment-item" v-for="com in commentList" :key="com.id" @click="handleOperCom(com)">
+				<text class="author">{{com.sender}}</text>
+				<text v-if="com.receiver">&nbsp;&nbsp;回复&nbsp;&nbsp;</text>
+				<text class="author" v-if="com.receiver">{{com.receiver}}</text>
 				<text>:&nbsp;&nbsp;{{com.content}}</text>
 			</view>
 		</view>
@@ -43,37 +45,74 @@
 		props: ["taskId", "signInfo"],
 		data() {
 			return {
-				curCommentId: null,
+				curComment: {},
 				actionShow: false,
+				replyShow: false,
 				commentText: "",
 				likeList: [],
 				commentList: [],
 				actionList: [
 					{
-						name: '删除',
-					}
+						name: '回复',
+					},
 				]
 			};
 		},
 		computed:{
+			inputShow(){
+				return this.replyShow || this.signInfo.inputShow;
+			}
 		},
 		watch:{
 		},
 		mounted(){
-			console.log('userInfo', this.userInfo)
 			this.fetchComments();
 			this.fetchLikes();
 		},
 		methods: {
-			handleOperCom(id){
-				this.curCommentId = id;
+			handleOperCom(comment){
+				this.curComment = comment;
 				this.actionShow = true;
+				if(this.userInfo.nickName === comment.sender){
+					this.actionList = [
+						{
+							name: '删除',
+						},
+					]
+				}else if(this.userInfo.nickName === comment.receiver || this.userInfo.nickName === this.signInfo.signer){
+					this.actionList = [
+						{
+							name: '回复',
+						},
+					]
+				}else {
+					this.actionList = [
+						{
+							name: '复制',
+						},
+					]
+				}
+				
 			},
 			onSelect(e){
-				commentApi.deleteComment(this.curCommentId).then(res=>{
-					this.fetchComments();
-					this.actionShow = false;
-				})
+				let action = e.detail.name;
+				switch(action){
+					case '删除':
+						commentApi.deleteComment(this.curComment.id).then(res=>{
+							this.fetchComments();
+							this.actionShow = false;
+						})
+						break;
+					case '回复':
+						this.replyShow = true;
+						break;
+					case '复制':
+						wx.setClipboardData({
+							data: this.curComment.content,
+						})
+						break;
+				}
+				
 			},
 			closeInput(){
 				this.$emit("closeInput")
@@ -82,12 +121,22 @@
 				let sendData = {
 					signId: this.signInfo.id,
 					taskId: this.taskId,
-					author: this.userInfo.nickName,
-					content: this.commentText
+					sender: this.userInfo.nickName,
+					content: this.commentText,
+					avatar: this.userInfo.avatarUrl
 				}
+				if(this.replyShow){
+					sendData.receiver = this.curComment.sender;
+				}
+				console.log(sendData)
 				commentApi.addComment(sendData).then(res=>{
 					this.fetchComments();
 					this.$emit("closeInput")
+					this.replyShow = false;
+				}).catch(error=>{
+					console.log(error)
+					this.$emit("closeInput")
+					this.replyShow = false;
 				})
 			},
 			fetchComments(){

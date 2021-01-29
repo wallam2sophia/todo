@@ -22,7 +22,8 @@ const comment = function(sequelize) {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    author: DataTypes.STRING,
+    sender: DataTypes.STRING,
+    receiver: DataTypes.STRING,
     content: DataTypes.STRING,
   }, {
     // 这是其他模型参数

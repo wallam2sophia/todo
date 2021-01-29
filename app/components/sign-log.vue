@@ -172,6 +172,7 @@
 						signId: data.id,
 						taskId: this.taskId,
 						author: this.userInfo.nickName,
+						avatar: this.userInfo.avatarUrl
 					}
 					likeApi.addLike(sendData).then(res=>{
 						this.$refs.signComment[index].fetchLikes();

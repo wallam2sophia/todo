@@ -5,7 +5,7 @@ const APPID = "wx1bdebb28c99f1a74"
 const SECRET = "a3b1eb4dc9a613c23b9dd8403a98d74b"
 const querystring = require('querystring')
 const request = require('superagent');
-
+const crypto = require('crypto')
 const templateId = "I8PnqSS0b5pEWVAaV5I-OMRjK0WR5vPbYDjMhx-zihM"
 
 function timeContinusData(timeArr) {
@@ -40,12 +40,15 @@ const authSession = async function (code) {
   let url = `https://api.weixin.qq.com/sns/jscode2session?appid=${APPID}&secret=${SECRET}&js_code=${code}&grant_type=authorization_code`
   let res = await request
       .get(url)
+      .set('Content-Type', 'application/json')
       .set('Accept', 'application/json')
-    if(res.body.errcode !== 0){
-      console.log(res.body.errcode, res.body.errmsg)
+    let bodyJson = JSON.parse(res.text)
+    console.log(bodyJson)
+    if(bodyJson.errcode && bodyJson.errcode !== 0){
+      console.log(bodyJson.errcode, bodyJson.errmsg)
       return false
     }
-    return {openid: res.body.openid, session_key: res.body.session_key};
+    return {openid: bodyJson.openid, session_key: bodyJson.session_key};
 }
 
 // 获取AccessToken
@@ -129,11 +132,37 @@ const sendTemplateMessage = async function ({
   }
 }
 
+// 解密数据
+const decryptData = function (sessionKey, encryptedData, iv) {
+  // base64 decode
+  try {
+    sessionKey = new Buffer(sessionKey, 'base64')
+    encryptedData = new Buffer(encryptedData, 'base64')
+    iv = new Buffer(iv, 'base64')
+     // 解密
+    var decipher = crypto.createDecipheriv('aes-128-cbc', sessionKey, iv)
+    // 设置自动 padding 为 true，删除填充补位
+    decipher.setAutoPadding(true)
+    var decoded = decipher.update(encryptedData, 'binary', 'utf8')
+    decoded += decipher.final('utf8')
+    
+    decoded = JSON.parse(decoded)
+    if (decoded.watermark.appid !== APPID) {
+      return null;
+    }
+    return decoded
+  } catch (err) {
+    console.log(err)
+    return null
+  }
+ 
+}
 module.exports = {
   timeContinusData,
   getAccessToken,
   authSession,
   sendTemplateMessage,
   templateId,
-  getQRCode
+  getQRCode,
+  decryptData
 }

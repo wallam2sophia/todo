@@ -9,7 +9,10 @@ const messageApi = {
   addMessage: async function (msgData) {
     try {
       // LOG.info(JSON.stringify(commentData))
-      await sequelize.models.Message.create(msgData);
+      console.log(msgData)
+      await sequelize.models.Message.upsert(msgData, {
+        where: { id: msgData.id }
+      });
       return {
         code: 100,
         data: "新增消息成功"

@@ -6,14 +6,14 @@ const { Op } = require("sequelize");
 const dayjs = require("dayjs")
 const https = require("https");  
 const iconv = require("iconv-lite");
-const { authSession, sendTemplateMessage, getQRCode} = require("../utils/util")
+const { authSession, sendTemplateMessage, getQRCode, decryptData} = require("../utils/util")
 const templateId = "I8PnqSS0b5pEWVAaV5I-OMRjK0WR5vPbYDjMhx-zihM"
 const commonApi = {
   // 登录
   login: async function (data) {
     try {
       // LOG.info(JSON.stringify(likeData))
-      let session = JSON.parse(await authSession(data.code))
+      let session = await authSession(data.code)
       let userData = {
         nickName: data.nickName,
         avatarUrl: data.avatarUrl,
@@ -53,8 +53,31 @@ const commonApi = {
         data: "获取小程序码失败"
       };
     }
-   
+  },
 
+  getRunData: async function(data){
+    try {
+      const { nickName, encryptedData, iv} = data;
+      const userInfo = await sequelize.models.User.findOne({ where: { nickName: nickName } });
+      if(userInfo === null){
+        return {
+          code: 101,
+          data: "请先登录小程序!"
+        };
+      }
+      const result = decryptData(userInfo.sessionKey, encryptedData, iv)
+      return {
+        code: 100,
+        data: result
+      }
+    }catch(error){
+      console.log(error)
+      return {
+        code: 101,
+        data: '获取数据失败!'
+      }
+    }
+    
   },
 
   sendMsg: async function(data){

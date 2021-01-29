@@ -3,12 +3,12 @@
 		
 		<view v-for="item in list" :key="item.id">
 			<van-swipe-cell :right-width="65" :left-width="65" async-close :name="item.id" @close="onClose">
-			 <view slot="left">
-				 <view class="swipe-icon">
-				 	修改
-				 </view>
-			 </view>
-			  <view class="task-card card-item" @click="goDetail(item.id, item.status)">
+				<view slot="left">
+					 <view class="swipe-icon">
+						修改
+					 </view>
+				</view>
+				<view class="task-card card-item" @click="goDetail(item.id, item.status)">
 			  	<view class="task-status" :class="item.status + '-status'" v-if="tabStatus === 'all'">
 			  		{{statusMap[item.status]}}
 			  	</view>
@@ -34,7 +34,7 @@
 			  			<text>{{item.beginTime}} 至 {{item.endTime}}</text>
 			  		</view>
 			  		<view v-if="item.status==='doing'">
-			  			<view class="my-btn primary-btn btn-pos" v-if="!item.isSigned" @click.stop="signIn(item.id)">
+			  			<view class="my-btn primary-btn btn-pos" v-if="!item.isSigned" @click.stop="signIn(item)">
 			  				打卡
 			  			</view>
 			  			<view class="my-btn info-btn disabled-btn btn-pos" v-else @click.stop="">
@@ -45,11 +45,11 @@
 			  	</view>
 				
 			  </view>
-			 <view slot="right">
-				 <view class="swipe-icon">
-				 	删除
-				 </view>
-			 </view>
+				<view slot="right">
+					<view class="swipe-icon">
+						删除
+					</view>
+				</view>
 			</van-swipe-cell>
 			
 		</view>
@@ -143,37 +143,78 @@
 				}
 				
 			},
-			handleEdit(data){
-				console.log(data)
+			handleEdit(taskId){
+				let taskInfo = this.list.find(item=>item.id===taskId)
+				console.log(taskInfo)
+				uni.navigateTo({
+					url: `../add-task/add-task?taskInfo=${JSON.stringify(taskInfo)}`
+				})
 			},
 			goDetail(id, status){
 				this.$emit('task-click', id, status)
 			},
-			signIn(taskId){
-				let sendData = {
-					taskId: taskId,
-					signer: this.userInfo.nickName,
-					avatarUrl: this.userInfo.avatarUrl,
-					signTime: new Date().getTime()
+			async signIn(taskInfo){
+				try {
+					// 限制打卡地点
+					let locValid = true
+					if(taskInfo.locationLimit){
+						let [_, curLoc] = await uni.getLocation({type: 'wgs84', altitude: true })
+						// 获取当前位置
+						for(let location of taskInfo.locations){
+							let distance = getDistance(location.latitude, location.longitude, curLoc.latitude, curLoc.longitude)
+							if(distance > parseInt(location.offset)){
+								locValid = false;
+								break;
+							}
+						}
+					}
+					// 限制打卡wifi
+					let wifiValid = true
+					if(taskInfo.wifiLimit){
+						let { wifi: curWifi }  = await wx.getConnectedWifi()
+						// 获取当前位置
+						for(let wifi of taskInfo.wifis){
+							if(wifi.BSSID !== curWifi.BSSID){
+								wifiValid = false;
+								break;
+							}
+						}
+					}
+					if(locValid && wifiValid){
+						uni.navigateTo({
+							url: `../add-sign/add-sign?taskId=${taskInfo.id}`
+						})
+					}else if(!locValid){
+						// 失败通知
+						this.notify({ 
+							context: this,
+							text: "你当前不在可打卡的范围!",
+							type: "danger",
+							selector: "#detail-notify"
+						});
+						return false
+					}else if(!wifiValid){
+						// 失败通知
+						this.notify({ 
+							context: this,
+							text: "请连接到指定wifi列表打卡!",
+							type: "danger",
+							selector: "#detail-notify"
+						});
+						return false
+					}else{
+						// 失败通知
+						this.notify({ 
+							context: this,
+							text: "暂无法打卡,请联系管理员!",
+							type: "danger",
+							selector: "#detail-notify"
+						});
+						return false
+					}
+				}catch(error){
+					console.log(error)
 				}
-				signApi.addSign(sendData).then(res => {
-					// 成功通知
-					this.notify({ 
-						context: this,
-						text: "打卡成功!",
-						type: "sucess",
-						selector: "#detail-notify"
-					});
-					this.$emit("refresh")
-				}).catch(error=>{
-					// 失败通知
-					this.notify({ 
-						context: this,
-						text: error.data,
-						type: "danger",
-						selector: "#detail-notify"
-					});
-				})
 			},
 		}
 	}

@@ -3,6 +3,7 @@ const {
 } = require("../sql")
 const { Op } = require("sequelize");
 const dayjs = require("dayjs")
+const { sendMsg } = require("../ws")
 
 const commentApi = {
   // 新增评论
@@ -10,6 +11,21 @@ const commentApi = {
     try {
       // LOG.info(JSON.stringify(commentData))
       await sequelize.models.Comment.create(commentData);
+      const taskInfo = await sequelize.models.Task.findByPk(commentData.taskId, { raw: true });
+      const signInfo = await sequelize.models.Sign.findByPk(commentData.signId, { raw: true });
+      // 发送ws消息
+      let wsMsg = {
+        signId: signInfo.id,
+        taskId: taskInfo.id,
+        taskTitle: `${taskInfo.title} / ${signInfo.signTime.split(" ")[0]}`,
+        title: '打卡评论',
+        sender: commentData.sender, 
+        receiver: commentData.receiver || signInfo.signer, 
+        message: `${commentData.content}`,
+        type: 'comment',
+        avatarUrl: commentData.avatar
+      }
+      await sendMsg(wsMsg)
       return {
         code: 100,
         data: "评论成功"
@@ -53,7 +69,7 @@ deleteComment: async function (commentId) {
       const res = await sequelize.models.Comment.findAll({
         where: queryObj,
         order: [
-          ['createTime', 'DESC'],
+          ['createTime', 'ASC'],
         ]
       });
       const comments = JSON.parse(JSON.stringify(res, null, 2));

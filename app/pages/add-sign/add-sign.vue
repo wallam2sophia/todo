@@ -23,10 +23,16 @@
 						上传视频
 					</view>
 				</view>
-				<view class="volumn bar-item flex-column" v-if="!recordOpen" @click="openRecord">
+				<view class="volumn bar-item flex-column" @click="openRecord">
 					<van-icon name="volume-o" custom-class="icon" />
 					<view class="text">
 						打开录音
+					</view>
+				</view>
+				<view class="volumn bar-item flex-column" v-if="!recordOpen" @click="getRunData">
+					<van-icon name="award-o" custom-class="icon" />
+					<view class="text">
+						{{runText}}
 					</view>
 				</view>
 			</view>
@@ -99,6 +105,7 @@
 
 <script>
 	import signApi from "../../utils/service/sign.js"
+	import commonApi from "../../utils/service/common.js"
 	import { chooseImage, chooseVideo, uploadFile } from "../../utils/util.js"
 	
 	export default {
@@ -110,6 +117,7 @@
 				recordOpen: false,
 				recordStart: false,
 				videoSrc: "",
+				runText: "运动步数",
 				form: {
 					text: "",
 					images: [],
@@ -126,6 +134,27 @@
 			}
 		},
 		methods: {
+			getRunData(){
+				let that = this;
+				wx.getWeRunData({
+					success(res){
+						console.log(res)
+						let sendData = {
+							nickName: that.userInfo.nickName,
+							encryptedData: res.encryptedData,
+							iv: res.iv
+						}
+						commonApi.getRunData(sendData).then(res=>{
+							console.log(res)
+							let runData = res.data.stepInfoList
+							that.runText = runData[runData.length - 1].step
+						})
+					},
+					fail(error){
+						console.log(error)
+					}
+				})
+			},
 			openRecord(){
 				let that = this
 				let timer = null

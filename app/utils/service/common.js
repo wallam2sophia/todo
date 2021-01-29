@@ -23,6 +23,17 @@ export default {
 			})
 		})
 	},
+	// 获取运动数据
+	getRunData(data){
+		return new Promise((resolve, reject) => {
+			let url = "api/run/data"
+			postJSON(url, data).then(res=>{
+				resolve(res)
+			}).catch(error => {
+				reject(error)
+			})
+		})
+	},
 	// 发送消息
 	sendMsg(data){
 		return new Promise((resolve, reject) => {
