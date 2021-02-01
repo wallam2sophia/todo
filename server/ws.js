@@ -4,7 +4,8 @@ const wss = new Server({ port: 8091 });
 const clientsInfo = new Map();
 
 wss.on('connection', function (ws, req) {
-  let nickName = decodeURI(req.url.split('//')[1]);
+  console.log(req.url)
+  let nickName = decodeURI(req.url.split('//ws/')[1]);
   console.log(`用户${nickName}已上线`);
   // 保存住当前用户连接
   clientsInfo.set(nickName, ws);

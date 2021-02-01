@@ -109,7 +109,7 @@
 		methods: {
 			connectWS(){
 				uni.connectSocket({
-				    url: this.WS_URL + "/" + encodeURI(this.userInfo.nickName),
+				    url: this.WS_URL + "/ws/" + encodeURI(this.userInfo.nickName),
 				    header: {
 				        'content-type': 'application/json'
 				    },
