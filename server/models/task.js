@@ -48,6 +48,9 @@ const task = function(sequelize) {
     manager: {
       type: DataTypes.STRING
     },
+    requireds: {
+      type: DataTypes.JSON,
+    },
     locationLimit: {
       type: DataTypes.BOOLEAN,
       defaultValue: false

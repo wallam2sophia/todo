@@ -5,7 +5,7 @@
 				{{item.label}}
 			</view>
 		</view>
-		<view class="rank-lists">
+		<view class="rank-lists" v-if="rankList.length > 0">
 			<view class="rank-item flex-row" v-for="(item, index) in rankList" :key="index">
 				<view class="rank-number">
 					<image :src="SERVER_URL+'imgs/gold1.png'" mode="aspectFit" v-if="index == 0"></image>
@@ -23,6 +23,9 @@
 					累计{{item.sign_count}}次
 				</view>
 			</view>
+		</view>
+		<view class="empty-box" v-else>
+			<van-empty description="暂无数据!" />
 		</view>
 	</view>
 </template>

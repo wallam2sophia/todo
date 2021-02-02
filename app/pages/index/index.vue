@@ -107,6 +107,11 @@
 			}
 		},
 		methods: {
+			getPhoneNumber(e){
+				console.log(e.detail.errMsg)
+				console.log(e.detail.iv)
+				console.log(e.detail.encryptedData)
+			},
 			connectWS(){
 				uni.connectSocket({
 				    url: this.WS_URL + "/ws/" + encodeURI(this.userInfo.nickName),
@@ -241,7 +246,13 @@
 					imageUrl: "../../static/imgs/share.png"
 				}
 			}
-			
+		},
+		onShareTimeline(){
+			return {
+				title: `${this.userInfo.nickName}给您推荐了小程序打卡了吧`,
+				query: "",
+				imageUrl: "../../static/imgs/111.jpg"
+			}
 		},
 	}
 </script>

@@ -111,6 +111,7 @@ const signApi = {
         const msgInfo = await sequelize.models.Message.upsert({ status: 1 }, {
           where: { id: msgId },
         });
+        
         const taskInfo =  await sequelize.models.Task.findByPk(msgInfo.taskId);
         // 发送ws消息
         let wsMsg = {

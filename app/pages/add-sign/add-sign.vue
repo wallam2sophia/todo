@@ -8,22 +8,22 @@
 			    placeholder="请输入文字内容"
 			    :autosize="{ maxHeight: 250, minHeight: 150}"
 			    :border="false"
-				input-class="text-input required"
+				:input-class="['text-input', requireds.includes('text') ? 'required': '']"
 			/>
 			<view class="oper-bars flex-row">
-				<view class="picture bar-item flex-column required" @click="chooseImage">
+				<view class="picture bar-item flex-column" @click="chooseImage" :class="{'required': requireds.includes('images')}">
 					<van-icon name="photo-o" custom-class="icon"/>
 					<view class="text">
 						上传图片
 					</view>
 				</view>
-				<view class="video bar-item flex-column required">
+				<view class="video bar-item flex-column" :class="{'required': requireds.includes('videos')}">
 					<van-icon name="video-o" custom-class="icon" @click="chooseVideo"/>
 					<view class="text">
 						上传视频
 					</view>
 				</view>
-				<view class="volumn bar-item flex-column" @click="openRecord">
+				<view class="volumn bar-item flex-column" @click="openRecord" :class="{'required': requireds.includes('audios')}">
 					<van-icon name="volume-o" custom-class="icon" />
 					<view class="text">
 						打开录音
@@ -106,11 +106,12 @@
 <script>
 	import signApi from "../../utils/service/sign.js"
 	import commonApi from "../../utils/service/common.js"
-	import { chooseImage, chooseVideo, uploadFile } from "../../utils/util.js"
+	import { chooseImage, chooseVideo, uploadFile, validateForm } from "../../utils/util.js"
 	
 	export default {
 		data() {
 			return {
+				requireds: [],
 				taskId: "",
 				signDate: "",
 				viewVideo: false,
@@ -134,6 +135,7 @@
 			}
 		},
 		methods: {
+
 			getRunData(){
 				let that = this;
 				wx.getWeRunData({
@@ -321,6 +323,16 @@
 				})
 			},
 			signIn(){
+				if(!validateForm(this.requireds, this.form)){
+					// 成功通知
+					this.notify({ 
+						context: this,
+						text: "页面上有错误!",
+						type: "success",
+						selector: "#sign-notify"
+					});
+					return;
+				}
 				this.uploadMediaFile().then(res=>{
 					uni.hideLoading()
 					let sendData = {
@@ -379,6 +391,7 @@
 		},
 		onLoad(options){
 			this.taskId = options.taskId;
+			this.requireds = JSON.parse(options.requireds);
 			this.signDate = options.signDate || new Date().getTime()
 		},
 	}

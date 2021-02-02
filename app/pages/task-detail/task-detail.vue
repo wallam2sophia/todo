@@ -431,7 +431,7 @@
 					}
 					if(locValid && wifiValid){
 						uni.navigateTo({
-							url: `../add-sign/add-sign?taskId=${this.taskInfo.id}`
+							url: `../add-sign/add-sign?taskId=${this.taskInfo.id}&requireds=${JSON.stringify(this.taskInfo.requireds)}`
 						})
 					}else if(!locValid){
 						// 失败通知

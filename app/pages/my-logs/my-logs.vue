@@ -128,15 +128,14 @@
 					member: this.userInfo.nickName
 				}
 				signApi.statisticSign(sendData).then(res => {
-					console.log(res.data)
 					this.signInfo = res.data;
 					this.selected = res.data.signs.map(item=>{
 						return {date: item.signTime.split(" ")[0]}
 					})
-					if(this.selected.filter(item=>item.date === this.selectDay).length > 0){
-						this.btnText = "已打卡"
-						this.btnClass = ["success-btn", "disabled-btn"]
-					}
+					// if(this.selected.filter(item=>item.date === this.selectDay).length > 0){
+					// 	this.btnText = "已打卡"
+					// 	this.btnClass = ["success-btn", "disabled-btn"]
+					// }
 				})
 			},
 			fetchSignLogs(){
@@ -254,11 +253,11 @@
 			fetchTaskInfo(){
 				taskApi.detailTask(this.userInfo.nickName, this.taskId).then(res => {
 					this.taskInfo = res.data;
-					this.taskStatus = res.data.taskStatus;
+					this.taskStatus = res.data.status;
 					this.beginTime = res.data.beginTime;
 					this.endTime = res.data.endTime;
 					let isSigned = res.data.isSigned;
-					if(isSigned === 'true'){
+					if(isSigned){
 						this.btnText = "已打卡"
 						this.btnClass = ["success-btn", "disabled-btn"]
 					}
@@ -268,6 +267,7 @@
 		onLoad(options){
 			this.taskId = options.taskId;
 			this.today = dayjs(dayjs(new Date()).format("YYYY-MM-DD"));
+			this.selectDay = this.today.format("YYYY-MM-DD");
 		},
 		onShow(){
 			this.refreshSignLogs();

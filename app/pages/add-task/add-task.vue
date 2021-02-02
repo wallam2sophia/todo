@@ -9,6 +9,22 @@
 		<van-cell title="结束日期" :value="formData.endTime" is-link @click="endShow=true"/>
 		<van-cell title="签到周期" :value="formData.signType" is-link @click="periodShow=true"/>
 		<van-cell title="提醒时间" :value="formData.remindTime" is-link @click="remindShow=true"/>
+		<view class="required-row">
+			必填项
+		</view>
+		<view class="required-options flex-row">
+			<view class="required-item flex-row" v-for="(item, index) in signRequireds" :key="index" :class="{'selected-item': formData.requireds.includes(item.value)}" @click="selectRequireds(item.value)">
+				<view class="selceted-icon" v-show="formData.requireds.includes(item.value)">
+					<van-icon name="passed" custom-class="icon"/>
+				</view>
+				<view class="selceted-icon" v-show="!formData.requireds.includes(item.value)">
+					<van-icon name="circle" custom-class="icon"/>
+				</view>
+				<view class="select-text">
+					{{item.label}}
+				</view>
+			</view>
+		</view>
 		<van-cell title="指定签到地点" :border="false">
 		  <van-switch :checked="formData.locationLimit" @change="locationSwitch" size="20px"/>
 		</van-cell>
@@ -93,7 +109,7 @@
 	import taskApi from "../../utils/service/task.js"
 	import { chooseFileUpload, hasWarning } from "../../utils/util.js"
 	import dayjs from 'dayjs';
-	import { periods, types} from "../../utils/const.js"
+	import { periods, types, signRequireds} from "../../utils/const.js"
 	import isSameOrAfter from'dayjs/plugin/isSameOrAfter';
 	dayjs.extend(isSameOrAfter)
 	export default {
@@ -104,6 +120,7 @@
 			return {
 				periods: periods,
 				types: types,
+				signRequireds,
 				beginShow: false,
 				endShow: false,
 				periodShow: false,
@@ -124,6 +141,7 @@
 					endTime: "",
 					remindTime: "",
 					signType: "",
+					requireds: [],
 					locationLimit: false,
 					locations: [
 						{
@@ -182,6 +200,14 @@
 					that.handleAddTask()
 				}
 				
+			},
+			selectRequireds(value){
+				let index = this.formData.requireds.indexOf(value)
+				if(index > -1){
+					this.formData.requireds.splice(index, 1)
+				}else {
+					this.formData.requireds.push(value)
+				}
 			},
 			locationSwitch(e){
 				console.log(e)
@@ -335,6 +361,33 @@
 		image {
 			width: 100%;
 			height: 100px;
+		}
+		.required-row {
+			padding: 10px 16px;
+			
+			
+		}
+		.required-options {
+			padding: 10px 16px;
+			border-bottom: 1px solid #ebedf0;
+			.required-item {
+				padding: 6px 10px;
+				border: 1px solid $main-icon-color;
+				border-radius: 4px;
+				margin-right: 5px;
+				color: $main-icon-color;
+				background-color: #fff;
+				font-size: 12px;
+				.icon {
+					font-size: 16px;
+					margin-right: 5px;
+					vertical-align: top;
+				}
+			}
+			.selected-item {
+				background-color: $main-icon-color;
+				color: #fff;
+			}
 		}
 		.location-row {
 			padding: 0 16px;

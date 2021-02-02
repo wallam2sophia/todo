@@ -179,6 +179,22 @@ const getDistance = function( lat1,  lng1,  lat2,  lng2){
     s = Math.round(s * 10000) / 10000 * 1000;
     return s;
 }
+
+const isNull = function(data){
+	return data.length === 0
+}
+
+const validateForm = function(rules, formData){
+	for(let rule of rules){
+		if(rule in formData && !isNull(formData[rule])){
+			continue
+		}else {
+			return false;
+		}
+	}
+	return true
+}
+
 export {
 	pySegSort,
 	dateCompare,
@@ -186,5 +202,6 @@ export {
 	hasWarning,
 	getDistance,
 	chooseImage,
-	chooseVideo
+	chooseVideo,
+	validateForm
 }
